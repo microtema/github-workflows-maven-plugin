@@ -29,17 +29,18 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Shell: sed pom.xml'
+        id: pom
         run: |
           export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
           export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
           export NEW_VERSION=${POM_VERSION/-SNAPSHOT/-RC}
           sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
           mv pom.xml.bac pom.xml
+          echo ::set-output name=VERSION::$NEW_VERSION
       - name: 'Maven: versions:set'
         run: |
           mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
-          mvn versions:set -DnewVersion=$NEW_VERSION $MAVEN_CLI_OPTS
-          echo ::set-output name=VERSION::$NEW_VERSION
+          mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS
 
   compile:
     name: Compile

@@ -20,6 +20,13 @@ public class VersioningTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName()).replace("[ %NEEDS% ]", "[ ]");
+        String template = PipelineGeneratorUtil.getTemplate(getName()).replace("[ %NEEDS% ]", "[ ]");
+
+        if (StringUtils.equals(metaData.getBranchName(), "master")) {
+
+            template = template.replace("{POM_VERSION/-SNAPSHOT/-RC}", "{POM_VERSION/-RC/}");
+        }
+
+        return template;
     }
 }
