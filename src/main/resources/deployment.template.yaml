@@ -1,0 +1,12 @@
+%STAGE_DISPLAY_NAME%:
+  image: $CI_REGISTRY/container-images/glab-cli:master
+  stage: deployment
+  variables:
+    DEPLOYMENT_REPO: "http://$CI_SERVER_HOST/container-deployments/interface-services/naomi/$CI_PROJECT_NAME-deployments"
+  before_script:
+    - export GITLAB_HOST=$CI_SERVER_HOST
+  script:
+    - glab config -g set api_protocol http
+    - glab ci run --repo $DEPLOYMENT_REPO --branch master --variables "%GLAB_VARIABLES%"
+  only:
+    refs: %REFS%

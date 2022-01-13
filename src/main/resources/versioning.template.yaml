@@ -1,0 +1,63 @@
+Versioning:
+  <<: *stage-template
+  stage: versioning
+  artifacts:
+    paths:
+      - version
+    expire_in: 6 hour
+  before_script:
+    - export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
+  script:
+    - echo $POM_VERSION > version
+  only:
+    refs:
+      - develop
+
+Versioning Release:
+  <<: *stage-template
+  stage: versioning
+  artifacts:
+    paths:
+      - pom.xml
+      - "*/pom.xml"
+      - "**/*/pom.xml"
+      - version
+    expire_in: 6 hour
+  before_script:
+    - export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
+    - export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
+    - export NEW_VERSION=${POM_VERSION/-SNAPSHOT/-rc}
+    - sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
+    - mv pom.xml.bac pom.xml
+  script:
+    - mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
+    - mvn versions:set -DnewVersion=$NEW_VERSION $MAVEN_CLI_OPTS
+    - echo $NEW_VERSION > version
+  only:
+    refs:
+      - /^release/.*$/
+
+Versioning Master:
+  <<: *stage-template
+  stage: versioning
+  artifacts:
+    paths:
+      - pom.xml
+      - "*/pom.xml"
+      - "**/*/pom.xml"
+      - version
+    expire_in: 6 hour
+  before_script:
+    - export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
+    - export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
+    - export NEW_VERSION=${POM_VERSION/-SNAPSHOT/-rc}
+    - export NEW_VERSION=${NEW_VERSION/-rc/}
+    - sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
+    - mv pom.xml.bac pom.xml
+  script:
+    - mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
+    - mvn versions:set -DnewVersion=$NEW_VERSION $MAVEN_CLI_OPTS
+    - echo $NEW_VERSION > version
+  only:
+    refs:
+      - master

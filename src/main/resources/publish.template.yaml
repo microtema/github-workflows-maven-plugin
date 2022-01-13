@@ -1,0 +1,11 @@
+Publish:
+  <<: *stage-template
+  stage: publish
+  script:
+    - mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS
+  only:
+    refs:
+      - develop
+      - /^release/.*$/
+      - /^hotfix/.*$/
+      - master

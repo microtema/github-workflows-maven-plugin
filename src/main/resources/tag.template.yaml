@@ -1,0 +1,17 @@
+Tag Release:
+  <<: *stage-template
+  stage: tag
+  before_script:
+    - export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
+    - export TAG_VERSION=v${POM_VERSION}.${CI_COMMIT_SHORT_SHA}
+    - export REMOTE_ORIGIN_URL=$(echo "$CI_PROJECT_URL.git" | sed "s/s:\/\//:\/\/gitlab-ci-token:$GITLAB_TOKEN@/g")
+  script:
+    - git remote remove origin
+    - git remote add origin $REMOTE_ORIGIN_URL
+    - git config --global user.email $GITLAB_USER_EMAIL
+    - git config --global user.name $GITLAB_USER_NAME
+    - git tag -a $TAG_VERSION -m "$CI_COMMIT_MESSAGE \#comment Tag $TAG_VERSION"
+    - git push origin $TAG_VERSION
+  only:
+    refs:
+      - master

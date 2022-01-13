@@ -1,0 +1,17 @@
+Quality Gate:
+  <<: *stage-template
+  stage: quality
+  script:
+    - mvn verify -DskipTests $MAVEN_CLI_OPTS
+    - mvn sonar:sonar $MAVEN_CLI_OPTS
+  only:
+    refs:
+      - develop
+      - /^feature/.*$/
+      - /^release/.*$/
+      - master
+  artifacts:
+    paths:
+      - target
+    expire_in: 6 hour
+  allow_failure: true

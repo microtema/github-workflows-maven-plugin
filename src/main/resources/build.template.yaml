@@ -1,0 +1,14 @@
+Build:
+  <<: *stage-template
+  stage: build
+  cache:
+    <<: *project-cache
+    policy: pull-push
+  artifacts:
+    paths:
+      - target
+    expire_in: 6 hour
+  script:
+    - mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
+  except:
+    - tags

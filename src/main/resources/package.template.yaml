@@ -1,0 +1,26 @@
+Package:
+  image: docker:19.03.12
+  stage: package
+  before_script:
+    - export CONTAINER_TAG=$(cat version)
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CONTAINER_TAG .
+    - docker push $CI_REGISTRY_IMAGE:$CONTAINER_TAG
+  only:
+    refs:
+      - develop
+      - /^release/.*$/
+
+Package Master:
+  image: docker:19.03.12
+  stage: package
+  before_script:
+    - export CONTAINER_TAG=$(cat version).${CI_COMMIT_SHORT_SHA}
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CONTAINER_TAG .
+    - docker push $CI_REGISTRY_IMAGE:$CONTAINER_TAG
+  only:
+    refs:
+      - master

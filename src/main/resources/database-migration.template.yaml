@@ -1,0 +1,7 @@
+%STAGE_DISPLAY_NAME%:
+   <<: *stage-template
+  stage: database-migration
+  script:
+    - mvn flyway:migrate -P %PROFILE_NAME% -Doracle.jdbc.fanEnabled=false $MAVEN_CLI_OPTS
+  only:
+    refs: %REFS%

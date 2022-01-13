@@ -1,0 +1,7 @@
+Compile:
+  <<: *stage-template
+  stage: compile
+  script:
+    - mvn compile $MAVEN_CLI_OPTS
+  except:
+    - tags

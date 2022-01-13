@@ -1,0 +1,11 @@
+%STAGE_DISPLAY_NAME%:
+  <<: *stage-template
+  stage: performance
+  script:
+    - mvn compile jmeter:jmeter -P %PROFILE_NAME% -DstageName=%STAGE_NAME% $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - target
+    expire_in: 6 hour
+  only:
+    refs: %REFS%

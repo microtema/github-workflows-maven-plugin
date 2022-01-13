@@ -1,0 +1,17 @@
+Unit Test:
+  <<: *stage-template
+  stage: test
+  cache:
+    <<: *project-cache
+    policy: pull
+  script:
+    - mvn test $MAVEN_CLI_OPTS
+  artifacts:
+    when: always
+    paths:
+      - target
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+  except:
+    - tags
