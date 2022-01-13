@@ -18,7 +18,7 @@ Reducing Boilerplate Code with github workflows maven plugin
 ```
 <plugin>
     <groupId>de.microtema</groupId>
-    <artifactId>github-workflow-maven-plugin</artifactId>
+    <artifactId>github-workflows-maven-plugin</artifactId>
     <version>2.0.1-SNAPSHOT</version>
     <configuration>
         <variables>
@@ -27,7 +27,7 @@ Reducing Boilerplate Code with github workflows maven plugin
     </configuration>
     <executions>
         <execution>
-            <id>github-workflow</id>
+            <id>github-workflows</id>
             <phase>compile</phase>
             <goals>
                 <goal>generate</goal>
