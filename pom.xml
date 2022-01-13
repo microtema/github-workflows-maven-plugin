@@ -133,7 +133,10 @@
                                 <DOCKER_REGISTRY>docker.registry.local</DOCKER_REGISTRY>
                             </variables>
                             <stages>
+                                <local>feature/*</local>
                                 <dev>develop</dev>
+                                <release>release/*,hotfix/*</release>
+                                <prod>master</prod>
                             </stages>
                         </configuration>
                         <executions>
