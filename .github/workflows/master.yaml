@@ -46,10 +46,11 @@ jobs:
           mkdir -p artifact
           mv pom.xml artifact/pom.xml
           echo 'foo' > test.txt
+           mv pom.xml artifact/test.txt
       - uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
-          path: artifact/test.xml
+          path: artifact/test.txt
       - run: ls artifact
 
   compile:
