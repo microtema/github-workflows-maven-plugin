@@ -121,6 +121,35 @@
 
     <profiles>
         <profile>
+            <id>dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>de.microtema</groupId>
+                        <artifactId>github-workflows-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <configuration>
+                            <variables>
+                                <DOCKER_REGISTRY>docker.registry.local</DOCKER_REGISTRY>
+                            </variables>
+                            <stages>
+                                <dev>develop</dev>
+                            </stages>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>github-workflows</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release</id>
             <build>
                 <plugins>

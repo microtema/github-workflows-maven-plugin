@@ -1,0 +1,215 @@
+package de.microtema.maven.plugin.github.workflow;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import de.microtema.maven.plugin.github.workflow.job.CompileTemplateStageService;
+import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
+import de.microtema.maven.plugin.github.workflow.job.VersioningTemplateStageService;
+import de.microtema.maven.plugin.github.workflow.model.MetaData;
+import de.microtema.model.converter.util.ClassUtil;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE)
+public class PipelineGeneratorMojo extends AbstractMojo {
+
+    ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+
+    String githubWorkflowsDir = ".github/workflows";
+
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
+    MavenProject project;
+
+    @Parameter(property = "variables")
+    LinkedHashMap<String, String> variables = new LinkedHashMap<>();
+
+    @Parameter(property = "stages")
+    LinkedHashMap<String, String> stages = new LinkedHashMap<>();
+
+    @Parameter(property = "clusters")
+    LinkedHashMap<String, String> clusters = new LinkedHashMap<>();
+
+    @Parameter(property = "service-url")
+    String serviceUrl;
+
+    @Parameter(property = "runs-on")
+    String runsOn;
+
+    List<TemplateStageService> templateStageServices = new ArrayList<>();
+
+    LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
+
+    @SneakyThrows
+    public void execute() {
+
+        String appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
+
+        // Skip maven sub modules
+        if (!PipelineGeneratorUtil.isGitRepo(project)) {
+
+            logMessage("Skip maven module: " + appName + " since it is not a git repo!");
+
+            return;
+        }
+
+        String javaVersion = PipelineGeneratorUtil.getProperty(project, "maven.compiler.target.version", PipelineGeneratorUtil.getProperty(project, "java.version", "17.x"));
+
+        defaultVariables.put("JAVA_VERSION", javaVersion);
+        defaultVariables.put("GIT_STRATEGY", "clone");
+        defaultVariables.put("GIT_DEPTH", "10");
+
+        String mavenCliOptions = "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true";
+
+        if (PipelineGeneratorUtil.existsMavenSettings(project)) {
+            mavenCliOptions = "-s settings.xml " + mavenCliOptions;
+        }
+
+        defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
+
+        defaultVariables.forEach((key, value) -> variables.putIfAbsent(key, value));
+
+        templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
+        /*
+        templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(TestTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(SonarTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(DbMigrationTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(TagTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(PublishTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(PromoteTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(ReadynessTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(RegressionTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(PerformanceTemplateStageService.class));
+
+         */
+
+        for (Map.Entry<String, String> stage : stages.entrySet()) {
+
+            String stageName = stage.getValue();
+            String[] branches = StringUtils.split(stage.getValue(), ",");
+
+            for (String branchPattern : branches) {
+
+                String branchName = branchPattern.replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
+
+                MetaData metaData = new MetaData();
+
+                metaData.setStageName(stageName);
+                metaData.setBranchName(branchName);
+                metaData.setBranchPattern(branchPattern);
+
+                executeImpl(appName, metaData);
+            }
+        }
+    }
+
+    void executeImpl(String appName, MetaData metaData) {
+
+        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+
+        File dir = new File(rootPath, githubWorkflowsDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
+
+        pipeline = pipeline
+                .replace("%PIPELINE_NAME%", appName)
+                .replace("%BRANCH_NAME%", metaData.getBranchPattern())
+                .replace("%ENV%", getVariablesTemplate())
+                .replace("%JOBS%", getStagesTemplate(metaData));
+
+        File githubWorkflow = new File(dir, metaData.getBranchName() + ".yaml");
+
+        logMessage("Generate Github Workflows Pipeline for " + appName + " -> " + githubWorkflow.getPath());
+
+        if (PipelineGeneratorUtil.hasMavenWrapper(project)) {
+            pipeline = pipeline.replaceAll("mvn ", "./mvnw ");
+        }
+
+        runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
+
+        pipeline = pipeline.replaceAll("%RUNS_ON%", String.join(", ", runsOn.split(",")));
+
+        try (PrintWriter out = new PrintWriter(githubWorkflow)) {
+            out.println(pipeline);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @SneakyThrows
+    String getVariablesTemplate() {
+
+        this.variables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
+
+        String template = objectMapper.writeValueAsString(Collections.singletonMap("env", this.variables));
+
+        return PipelineGeneratorUtil.trimEmptyLines(template);
+    }
+
+    String getStagesTemplate(MetaData metaData) {
+
+        return templateStageServices.stream()
+                .map(it -> it.getTemplate(this, metaData))
+                .filter(Objects::nonNull)
+                // .map(PipelineGeneratorUtil::trimEmptyLines)
+                .map(it -> PipelineGeneratorUtil.trimEmptyLines(it, 2))
+                .collect(Collectors.joining("\n\n"));
+    }
+
+    String unMask(String value) {
+
+        if (StringUtils.isEmpty(value)) {
+            return StringUtils.EMPTY;
+        }
+
+        return value.replaceAll("\"", "");
+    }
+
+    void logMessage(String message) {
+
+        Log log = getLog();
+
+        log.info("+----------------------------------+");
+        log.info(message);
+        log.info("+----------------------------------+");
+    }
+
+    public Map<String, String> getStages() {
+
+        return stages;
+    }
+
+    public Map<String, String> getClusters() {
+
+        return clusters;
+    }
+
+    public String getServiceUrl() {
+
+        return serviceUrl;
+    }
+
+    public MavenProject getProject() {
+
+        return project;
+    }
+}
