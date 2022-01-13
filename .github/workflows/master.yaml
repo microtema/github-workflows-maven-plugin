@@ -43,7 +43,7 @@ jobs:
           mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS
       - name: 'Artifact: upload'
         run: |
-          mkdir -p artifact
+          mkdir -p target/artifact
           mv pom.xml target/artifact/pom.xml
       - uses: actions/upload-artifact@v2
         with:
