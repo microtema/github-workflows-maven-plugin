@@ -9,5 +9,9 @@ compile:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Artifact: download'
+      uses: actions/download-artifact@v2
+      with:
+        name: pom-artifact
     - name: 'Maven: Compile'
       run: mvn compile $MAVEN_CLI_OPTS

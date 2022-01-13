@@ -96,6 +96,10 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
@@ -163,6 +167,10 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
@@ -264,6 +272,10 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
@@ -365,6 +377,10 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
