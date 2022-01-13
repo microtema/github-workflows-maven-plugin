@@ -45,6 +45,7 @@ jobs:
         run: |
           mkdir -p artifact
           mv pom.xml artifact/pom.xml
+          echo 'foo' > test.txt
       - uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
@@ -68,5 +69,5 @@ jobs:
           name: pom-artifact
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
-      - run: ls artifact
+      - run: ls .
 
