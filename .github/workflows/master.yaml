@@ -49,7 +49,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
-          path: artifact/pom.xml
+          path: artifact/test.xml
       - run: ls artifact
 
   compile:
