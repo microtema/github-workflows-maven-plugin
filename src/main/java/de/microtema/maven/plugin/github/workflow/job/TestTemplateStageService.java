@@ -5,10 +5,6 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @RequiredArgsConstructor
 public class TestTemplateStageService implements TemplateStageService {
 
@@ -23,17 +19,6 @@ public class TestTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = getStagesTemplate(mojo, metaData);
-
-        return PipelineGeneratorUtil.trimEmptyLines(template);
-    }
-
-    private String getStagesTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
-
-        return Stream.of(unitTestTemplateStageService, integrationTestTemplateStageService)
-                .map(it -> it.getTemplate(mojo, metaData))
-                .filter(Objects::nonNull)
-                .map(PipelineGeneratorUtil::trimEmptyLines)
-                .collect(Collectors.joining("\n\n"));
+        return PipelineGeneratorUtil.getTemplate(getName());
     }
 }

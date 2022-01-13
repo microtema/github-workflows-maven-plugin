@@ -1,17 +1,17 @@
-Acceptance Test:
-  <<: *stage-template
-  stage: test
-  cache:
-    <<: *project-cache
-    policy: pull
-  script:
-    - mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS
-  artifacts:
-    when: always
-    paths:
-      - target
-    reports:
-      junit:
-        - target/failsafe-reports/TEST-*.xml
-  except:
-    - tags
+it-test:
+  name: Acceptance Test
+  runs-on: [ %RUNS_ON% ]
+  needs: [ compile ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Java: Setup'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Artifact: download'
+      uses: actions/download-artifact@v2
+      with:
+        name: pom-artifact
+    - name: 'Maven: integration-test'
+      run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS

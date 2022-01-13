@@ -3,10 +3,7 @@ package de.microtema.maven.plugin.github.workflow;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import de.microtema.maven.plugin.github.workflow.job.CompileTemplateStageService;
-import de.microtema.maven.plugin.github.workflow.job.SecurityTemplateStageService;
-import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
-import de.microtema.maven.plugin.github.workflow.job.VersioningTemplateStageService;
+import de.microtema.maven.plugin.github.workflow.job.*;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import de.microtema.model.converter.util.ClassUtil;
 import lombok.SneakyThrows;
@@ -88,8 +85,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(UnitTestTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(IntegrationTestTemplateStageService.class));
         /*
-        templateStageServices.add(ClassUtil.createInstance(TestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SonarTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));

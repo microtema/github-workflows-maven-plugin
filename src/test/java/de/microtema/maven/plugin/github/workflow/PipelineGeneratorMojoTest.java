@@ -116,6 +116,42 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  unit-test:\n" +
+                "    name: Unit Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: test'\n" +
+                "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  it-test:\n" +
+                "    name: Acceptance Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: integration-test'\n" +
+                "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -187,6 +223,42 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  unit-test:\n" +
+                "    name: Unit Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: test'\n" +
+                "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  it-test:\n" +
+                "    name: Acceptance Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: integration-test'\n" +
+                "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -292,6 +364,42 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  unit-test:\n" +
+                "    name: Unit Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: test'\n" +
+                "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  it-test:\n" +
+                "    name: Acceptance Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: integration-test'\n" +
+                "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -397,6 +505,42 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  unit-test:\n" +
+                "    name: Unit Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: test'\n" +
+                "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  it-test:\n" +
+                "    name: Acceptance Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: integration-test'\n" +
+                "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
