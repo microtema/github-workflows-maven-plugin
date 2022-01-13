@@ -326,12 +326,12 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact\n" +
-                "          mv pom.xml artifact/new-pom.xml\n" +
+                "          mv pom.xml artifact/pom.xml\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "          path: artifact/new-pom.xml\n" +
+                "          path: artifact/pom.xml\n" +
                 "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
@@ -467,12 +467,12 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact\n" +
-                "          mv pom.xml artifact/new-pom.xml\n" +
+                "          mv pom.xml artifact/pom.xml\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "          path: artifact/new-pom.xml\n" +
+                "          path: artifact/pom.xml\n" +
                 "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +

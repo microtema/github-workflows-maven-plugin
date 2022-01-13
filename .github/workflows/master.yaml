@@ -44,12 +44,12 @@ jobs:
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact
-          mv pom.xml artifact/new-pom.xml
+          mv pom.xml artifact/pom.xml
       - name: 'Artifact: upload'
         uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
-          path: artifact/new-pom.xml
+          path: artifact/pom.xml
 
   compile:
     name: Compile
