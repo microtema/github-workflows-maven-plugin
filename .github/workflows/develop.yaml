@@ -28,6 +28,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
+      - name: 'Artifact: download'
+        uses: actions/download-artifact@v2
+        with:
+          name: pom-artifact
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
 
@@ -44,4 +48,40 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Maven: dependency-check'
         run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS
+
+  unit-test:
+    name: Unit Test
+    runs-on: [ ubuntu-latest ]
+    needs: [ compile ]
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+      - name: 'Java: Setup'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: 'Artifact: download'
+        uses: actions/download-artifact@v2
+        with:
+          name: pom-artifact
+      - name: 'Maven: test'
+        run: mvn test $MAVEN_CLI_OPTS
+
+  it-test:
+    name: Acceptance Test
+    runs-on: [ ubuntu-latest ]
+    needs: [ compile ]
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+      - name: 'Java: Setup'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: 'Artifact: download'
+        uses: actions/download-artifact@v2
+        with:
+          name: pom-artifact
+      - name: 'Maven: integration-test'
+        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS
 
