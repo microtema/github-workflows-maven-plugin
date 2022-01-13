@@ -98,6 +98,20 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  security_check:\n" +
+                "    name: Security Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: dependency-check'\n" +
+                "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -151,6 +165,20 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  security_check:\n" +
+                "    name: Security Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: dependency-check'\n" +
+                "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -238,6 +266,20 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  security_check:\n" +
+                "    name: Security Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: dependency-check'\n" +
+                "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -325,6 +367,20 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  security_check:\n" +
+                "    name: Security Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: dependency-check'\n" +
+                "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 

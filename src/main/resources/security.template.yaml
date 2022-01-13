@@ -1,10 +1,13 @@
-Security Check:
-  <<: *stage-template
-  stage: security
-  script:
-    - mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS
-  only:
-    refs:
-      - /^feature/.*$/
-      - develop
-      - /^release/.*$/
+security_check:
+  name: Security Check
+  runs-on: [ %RUNS_ON% ]
+  needs: [ compile ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Java: Setup'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Maven: dependency-check'
+      run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS
