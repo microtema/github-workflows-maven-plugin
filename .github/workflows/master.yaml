@@ -36,6 +36,7 @@ jobs:
           export NEW_VERSION=${POM_VERSION/-RC/}
           sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
           mv pom.xml.bac pom.xml
+          echo "new version $NEW_VERSION"
           echo ::set-output name=VERSION::$NEW_VERSION
       - name: 'Maven: versions:set'
         run: |
@@ -66,7 +67,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
+      - run: |
+          mv new-pom.xml pom.xml
+          cat pom.xml
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
-      - run: ls .
 
