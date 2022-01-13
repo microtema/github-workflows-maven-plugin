@@ -41,6 +41,15 @@ jobs:
         run: |
           mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
           mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS
+      - name: 'Artifact: prepare'
+        run: |
+          mkdir -p artifact
+          mv pom.xml artifact/new-pom.xml
+      - name: 'Artifact: upload'
+        uses: actions/upload-artifact@v2
+        with:
+          name: pom-artifact
+          path: artifact/new-pom.xml
 
   compile:
     name: Compile

@@ -36,21 +36,20 @@ jobs:
           export NEW_VERSION=${POM_VERSION/-SNAPSHOT/}
           sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
           mv pom.xml.bac pom.xml
-          echo "new version $NEW_VERSION"
           echo ::set-output name=VERSION::$NEW_VERSION
       - name: 'Maven: versions:set'
         run: |
           mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
           mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS
-      - name: 'Artifact: upload'
+      - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact
           mv pom.xml artifact/new-pom.xml
-      - uses: actions/upload-artifact@v2
+      - name: 'Artifact: upload'
+        uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
           path: artifact/new-pom.xml
-      - run: ls artifact
 
   compile:
     name: Compile
@@ -63,13 +62,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: 'Artifact: download'
-        uses: actions/download-artifact@v2
-        with:
-          name: pom-artifact
-      - run: |
-          mv new-pom.xml pom.xml
-          cat pom.xml
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
 

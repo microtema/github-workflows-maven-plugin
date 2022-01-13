@@ -24,7 +24,7 @@ public class VersioningTemplateStageService implements TemplateStageService {
 
         if (StringUtils.equals(metaData.getBranchName(), "master")) {
 
-            template = template.replace("{POM_VERSION/-SNAPSHOT/-RC}", "{POM_VERSION/-RC/}");
+            template = template.replace("{POM_VERSION/-SNAPSHOT/-RC}", "{POM_VERSION/-SNAPSHOT/}");
         }
 
         return template;

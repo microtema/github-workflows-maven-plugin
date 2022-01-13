@@ -215,6 +215,15 @@ class PipelineGeneratorMojoTest {
                 "        run: |\n" +
                 "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
                 "          mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv pom.xml artifact/new-pom.xml\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "          path: artifact/new-pom.xml\n" +
                 "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
@@ -285,7 +294,7 @@ class PipelineGeneratorMojoTest {
                 "        run: |\n" +
                 "          export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
                 "          export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
-                "          export NEW_VERSION=${POM_VERSION/-RC/}\n" +
+                "          export NEW_VERSION=${POM_VERSION/-SNAPSHOT/}\n" +
                 "          sed \"s/<version>$POM_PARENT_VERSION<\\/version>/<version>$NEW_VERSION<\\/version>/g\" pom.xml > pom.xml.bac\n" +
                 "          mv pom.xml.bac pom.xml\n" +
                 "          echo ::set-output name=VERSION::$NEW_VERSION\n" +
@@ -293,6 +302,15 @@ class PipelineGeneratorMojoTest {
                 "        run: |\n" +
                 "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
                 "          mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv pom.xml artifact/new-pom.xml\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "          path: artifact/new-pom.xml\n" +
                 "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
