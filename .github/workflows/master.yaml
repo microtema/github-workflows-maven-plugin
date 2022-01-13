@@ -49,7 +49,7 @@ jobs:
         with:
           name: pom-artifact
           path: target/artifact/pom.xml
-      - run: ls artifact
+      - run: ls target/artifact
 
   compile:
     name: Compile
