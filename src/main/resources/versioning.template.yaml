@@ -8,7 +8,7 @@ versioning:
     - name: 'Java: Setup'
       uses: actions/setup-java@v1
       with:
-        java-version: $JAVA_VERSION
+        java-version: ${{ env.JAVA_VERSION }}
     - name: 'Shell: sed pom.xml'
       run: |
         export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
