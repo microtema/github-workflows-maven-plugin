@@ -1,4 +1,4 @@
-name: github-workflows-maven-plugin Maven Mojo
+name: GitHub Workflows Maven-Plugin
 
 on:
   push:
