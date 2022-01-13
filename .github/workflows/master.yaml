@@ -43,8 +43,8 @@ jobs:
           mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS
       - name: 'Artifact: upload'
         run: |
-          mkdir -p artifact/artifact
-          mv pom.xml artifact/artifact/pom.xml
+          mkdir -p artifact
+          mv pom.xml artifact/new-pom.xml
       - uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
@@ -68,5 +68,5 @@ jobs:
           name: pom-artifact
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
-      - run: ls artifact
+      - run: ls .
 
