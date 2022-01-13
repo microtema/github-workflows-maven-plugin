@@ -44,8 +44,7 @@ jobs:
       - name: 'Artifact: upload'
         run: |
           mkdir -p artifact
-          echo 'foo' > test.txt
-          mv pom.xml artifact/test.txt
+          echo 'foo' > artifact/test.txt
       - uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
