@@ -64,9 +64,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return;
         }
 
-        String javaVersion = PipelineGeneratorUtil.getProperty(project, "maven.compiler.target.version", PipelineGeneratorUtil.getProperty(project, "java.version", "17.x"));
+        if (!defaultVariables.containsKey("JAVA_VERSION")) {
 
-        defaultVariables.put("JAVA_VERSION", javaVersion);
+            String javaVersion = PipelineGeneratorUtil.getProperty(project, "maven.compiler.target.version", PipelineGeneratorUtil.getProperty(project, "java.version", "17.x"));
+
+            defaultVariables.put("JAVA_VERSION", javaVersion);
+        }
+
         defaultVariables.put("GIT_STRATEGY", "clone");
         defaultVariables.put("GIT_DEPTH", "10");
 
@@ -133,8 +137,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         pipeline = pipeline
                 .replace("%PIPELINE_NAME%", appName)
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
-                .replace("%ENV%", getVariablesTemplate())
-                .replace("%JOBS%", getStagesTemplate(metaData));
+                .replace("  %ENV%", getVariablesTemplate())
+                .replace("  %JOBS%", getStagesTemplate(metaData));
 
         File githubWorkflow = new File(dir, metaData.getBranchName() + ".yaml");
 

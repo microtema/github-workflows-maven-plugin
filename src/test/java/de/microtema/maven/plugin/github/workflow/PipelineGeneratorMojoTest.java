@@ -95,7 +95,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
@@ -148,7 +148,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
@@ -225,7 +225,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
