@@ -2,3 +2,4 @@
 .idea/
 model-builder.iml
 target/
+.DS_Store
