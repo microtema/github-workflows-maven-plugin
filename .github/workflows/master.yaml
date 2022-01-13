@@ -48,7 +48,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
-          path: artifact/artifact/pom.xml
+          path: artifact/pom.xml
       - run: ls artifact
 
   compile:
