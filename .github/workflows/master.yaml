@@ -33,7 +33,7 @@ jobs:
         run: |
           export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
           export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
-          export NEW_VERSION=${POM_VERSION/-RC/}
+          export NEW_VERSION=${POM_VERSION/-SNAPSHOT/}
           sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
           mv pom.xml.bac pom.xml
           echo "new version $NEW_VERSION"
