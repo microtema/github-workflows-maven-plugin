@@ -38,7 +38,7 @@ jobs:
       - name: 'Maven: versions:set'
         run: |
           mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
-          echo  new version $NEW_VERSION
+          echo  "new version $NEW_VERSION"
           mvn versions:set -DnewVersion=$NEW_VERSION $MAVEN_CLI_OPTS
           echo ::set-output name=VERSION::$NEW_VERSION
 
