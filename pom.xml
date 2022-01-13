@@ -9,8 +9,8 @@
     <version>2.0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
-    <name>github-workflows-maven-plugin Maven Mojo</name>
-    <description>GitLab CI generator</description>
+    <name>GitHub Workflows Maven-Plugin</name>
+    <description>GitHub CI generator</description>
     <url>http://maven.apache.org</url>
 
     <properties>

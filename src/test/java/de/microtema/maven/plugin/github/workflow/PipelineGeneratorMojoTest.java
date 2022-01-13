@@ -95,7 +95,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
@@ -148,7 +148,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
@@ -201,7 +201,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Shell: sed pom.xml'\n" +
                 "        run: |\n" +
                 "          export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
@@ -225,7 +225,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
-                "          java-version: $JAVA_VERSION\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: Compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
