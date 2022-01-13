@@ -68,4 +68,5 @@ jobs:
           name: pom-artifact
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
+      - run: ls artifact
 
