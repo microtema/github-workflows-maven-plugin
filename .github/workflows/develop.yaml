@@ -10,7 +10,7 @@ on:
 
 env:
   DOCKER_REGISTRY: "docker.registry.local"
-  JAVA_VERSION: "17.x"
+  JAVA_VERSION: "1.8"
   GIT_STRATEGY: "clone"
   GIT_DEPTH: "10"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
@@ -27,7 +27,7 @@ jobs:
       - name: 'Java: Setup'
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: {{env.JAVA_VERSION}}
       - name: 'Maven: Compile'
         run: mvn compile $MAVEN_CLI_OPTS
 
