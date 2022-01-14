@@ -97,6 +97,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -129,6 +130,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -147,6 +149,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -204,6 +207,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -236,6 +240,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -254,6 +259,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -345,6 +351,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -377,6 +384,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -395,6 +403,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -486,6 +495,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -518,6 +528,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -536,6 +547,7 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +

@@ -62,6 +62,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
+        if: false
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
@@ -80,6 +81,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
+        if: false
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE)
 public class PipelineGeneratorMojo extends AbstractMojo {
@@ -149,7 +150,11 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
 
-        pipeline = pipeline.replaceAll("%RUNS_ON%", String.join(", ", runsOn.split(",")));
+        boolean supportVersionJob = Stream.of("develop", "feature").noneMatch(it -> StringUtils.equalsIgnoreCase(it, metaData.getBranchName()));
+
+        pipeline = pipeline
+                .replaceAll("%RUNS_ON%", String.join(", ", runsOn.split(",")))
+                .replaceAll("%POM_ARTIFACT%", String.valueOf(supportVersionJob));
 
         try (PrintWriter out = new PrintWriter(githubWorkflow)) {
             out.println(pipeline);

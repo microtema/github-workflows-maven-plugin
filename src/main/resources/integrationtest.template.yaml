@@ -10,6 +10,7 @@ it-test:
       with:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Artifact: download'
+      if: %POM_ARTIFACT%
       uses: actions/download-artifact@v2
       with:
         name: pom-artifact
