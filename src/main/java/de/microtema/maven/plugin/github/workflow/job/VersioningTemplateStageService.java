@@ -5,17 +5,20 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.stream.Stream;
+
 public class VersioningTemplateStageService implements TemplateStageService {
+
+    @Override
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        return Stream.of("develop", "feature").noneMatch(it -> StringUtils.equalsIgnoreCase(it, metaData.getBranchName()));
+    }
 
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (StringUtils.equals(metaData.getBranchName(), "develop")) {
-
-            return null;
-        }
-
-        if (StringUtils.equals(metaData.getBranchName(), "feature")) {
+        if (!access(mojo, metaData)) {
 
             return null;
         }

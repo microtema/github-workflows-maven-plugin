@@ -10,13 +10,19 @@ import java.util.List;
 public class SonarTemplateStageService implements TemplateStageService {
 
     @Override
-    public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         if (!PipelineGeneratorUtil.hasSourceCode(mojo.getProject())) {
-            return null;
+            return false;
         }
 
-        if (!PipelineGeneratorUtil.hasSonarProperties(mojo.getProject())) {
+        return PipelineGeneratorUtil.hasSonarProperties(mojo.getProject());
+    }
+
+    @Override
+    public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        if (!access(mojo, metaData)) {
             return null;
         }
 

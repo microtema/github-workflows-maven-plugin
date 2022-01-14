@@ -22,6 +22,11 @@ public interface TemplateStageService {
         return PipelineGeneratorUtil.getTemplate(getName());
     }
 
+    default boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        return false;
+    }
+
     default String getTemplate(String template, List<String> stages) {
         return template;
     }

@@ -1,14 +1,18 @@
-Build:
-  <<: *stage-template
-  stage: build
-  cache:
-    <<: *project-cache
-    policy: pull-push
-  artifacts:
-    paths:
-      - target
-    expire_in: 6 hour
-  script:
-    - mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
-  except:
-    - tags
+build:
+  name: Build
+  runs-on: [ %RUNS_ON% ]
+  needs: [ %NEEDS% ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Java: Setup'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Artifact: download'
+      if: %POM_ARTIFACT%
+      uses: actions/download-artifact@v2
+      with:
+        name: pom-artifact
+    - name: 'Maven: Compile'
+      run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
