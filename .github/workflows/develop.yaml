@@ -108,5 +108,5 @@ jobs:
       - name: 'Maven: sonar'
         run: |
           mvn verify -DskipTests $MAVEN_CLI_OPTS
-          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
+          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS
 
