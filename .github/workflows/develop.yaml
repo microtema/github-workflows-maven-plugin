@@ -10,7 +10,7 @@ on:
 
 env:
   DOCKER_REGISTRY: "docker.registry.local"
-  JAVA_VERSION: "17.x"
+  JAVA_VERSION: "1.8"
   GIT_STRATEGY: "clone"
   GIT_DEPTH: "10"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
@@ -67,7 +67,7 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: test'
-        run: mvn test $MAVEN_CLI_OPTS
+        run: mvn verify $MAVEN_CLI_OPTS
 
   it-test:
     name: Acceptance Test
