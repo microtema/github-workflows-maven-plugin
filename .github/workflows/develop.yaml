@@ -107,6 +107,6 @@ jobs:
           name: target-artifact
       - name: 'Maven: sonar'
         run: |
-          mvn verify -DskipTests -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
-          mvn sonar:sonar $MAVEN_CLI_OPTS
+          mvn verify -DskipTests $MAVEN_CLI_OPTS
+          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
