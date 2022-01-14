@@ -14,5 +14,5 @@ compile:
       uses: actions/download-artifact@v2
       with:
         name: pom-artifact
-    - name: 'Maven: Compile'
+    - name: 'Maven: compile'
       run: mvn compile $MAVEN_CLI_OPTS

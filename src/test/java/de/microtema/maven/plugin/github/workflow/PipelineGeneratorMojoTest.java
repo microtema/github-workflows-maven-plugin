@@ -60,13 +60,13 @@ class PipelineGeneratorMojoTest {
 
         sut.stages.put("local", "feature/*");
 
-        pipelineFile = new File(sut.githubWorkflowsDir, "feature.yaml");
+        pipelineFile = new File(sut.githubWorkflowsDir, "feature-workflow.yaml");
 
         sut.execute();
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [local]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -102,7 +102,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  security_check:\n" +
@@ -139,7 +139,7 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  it-test:\n" +
-                "    name: Acceptance Test\n" +
+                "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
@@ -175,8 +175,8 @@ class PipelineGeneratorMojoTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
+                "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
@@ -211,13 +211,13 @@ class PipelineGeneratorMojoTest {
 
         sut.stages.put("dev", "develop");
 
-        pipelineFile = new File(sut.githubWorkflowsDir, "develop.yaml");
+        pipelineFile = new File(sut.githubWorkflowsDir, "develop-workflow.yaml");
 
         sut.execute();
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [dev]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -253,7 +253,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  security_check:\n" +
@@ -290,7 +290,7 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  it-test:\n" +
-                "    name: Acceptance Test\n" +
+                "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
@@ -326,8 +326,8 @@ class PipelineGeneratorMojoTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
+                "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
@@ -362,13 +362,13 @@ class PipelineGeneratorMojoTest {
 
         sut.stages.put("stage", "release/*");
 
-        pipelineFile = new File(sut.githubWorkflowsDir, "release.yaml");
+        pipelineFile = new File(sut.githubWorkflowsDir, "release-workflow.yaml");
 
         sut.execute();
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [stage]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -438,7 +438,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  security_check:\n" +
@@ -475,7 +475,7 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  it-test:\n" +
-                "    name: Acceptance Test\n" +
+                "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
@@ -511,8 +511,8 @@ class PipelineGeneratorMojoTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
+                "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
@@ -547,13 +547,13 @@ class PipelineGeneratorMojoTest {
 
         sut.stages.put("prod", "master");
 
-        pipelineFile = new File(sut.githubWorkflowsDir, "master.yaml");
+        pipelineFile = new File(sut.githubWorkflowsDir, "master-workflow.yaml");
 
         sut.execute();
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [prod]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -623,7 +623,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  security_check:\n" +
@@ -660,7 +660,7 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  it-test:\n" +
-                "    name: Acceptance Test\n" +
+                "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
@@ -696,8 +696,8 @@ class PipelineGeneratorMojoTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
+                "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +

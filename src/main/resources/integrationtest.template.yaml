@@ -1,5 +1,5 @@
 it-test:
-  name: Acceptance Test
+  name: Integration Test
   runs-on: [ %RUNS_ON% ]
   needs: [ compile ]
   steps:

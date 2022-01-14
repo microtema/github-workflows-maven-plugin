@@ -136,7 +136,6 @@
                             <stages>
                                 <local>feature/*</local>
                                 <dev>develop</dev>
-                                <release>release/*,hotfix/*</release>
                                 <prod>master</prod>
                             </stages>
                         </configuration>
