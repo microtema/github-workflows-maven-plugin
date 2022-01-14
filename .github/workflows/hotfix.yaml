@@ -160,6 +160,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
-      - name: 'Maven: Compile'
+      - name: 'Maven: package'
         run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
 

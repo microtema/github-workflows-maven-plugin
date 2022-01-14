@@ -194,7 +194,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
@@ -345,7 +345,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
@@ -530,7 +530,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
@@ -715,7 +715,7 @@ class PipelineGeneratorMojoTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
-                "      - name: 'Maven: Compile'\n" +
+                "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
