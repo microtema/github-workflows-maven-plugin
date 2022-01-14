@@ -62,6 +62,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return;
         }
 
+        if (PipelineGeneratorUtil.hasSonarProperties(project)) {
+
+            String sonarToken = PipelineGeneratorUtil.getProperty(project, "sonar.login", "${{ secrets.SONAR_TOKEN }}");
+
+            defaultVariables.put("SONAR_TOKEN", sonarToken);
+        }
+
         if (!defaultVariables.containsKey("JAVA_VERSION")) {
 
             String javaVersion = PipelineGeneratorUtil.getProperty(project, "maven.compiler.target.version", PipelineGeneratorUtil.getProperty(project, "java.version", "17.x"));
@@ -87,8 +94,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(UnitTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(IntegrationTestTemplateStageService.class));
-        /*
         templateStageServices.add(ClassUtil.createInstance(SonarTemplateStageService.class));
+        /*
         templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DbMigrationTemplateStageService.class));

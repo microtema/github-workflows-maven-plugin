@@ -10,8 +10,8 @@ on:
 
 env:
   DOCKER_REGISTRY: "docker.registry.local"
-  JAVA_VERSION: "17"
   SONAR_TOKEN: "d44e1870f40de9c4556bb1f507393396721e21aa"
+  JAVA_VERSION: "17"
   GIT_STRATEGY: "clone"
   GIT_DEPTH: "10"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\

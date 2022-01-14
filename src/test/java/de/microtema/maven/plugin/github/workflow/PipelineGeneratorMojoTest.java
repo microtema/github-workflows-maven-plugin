@@ -78,6 +78,7 @@ class PipelineGeneratorMojoTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  GIT_STRATEGY: \"clone\"\n" +
                 "  GIT_DEPTH: \"10\"\n" +
@@ -155,6 +156,27 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
                 "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  quality_gate:\n" +
+                "    name: Quality Gate\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ unit-test, it-test ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven: sonar'\n" +
+                "        run: |\n" +
+                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -188,6 +210,7 @@ class PipelineGeneratorMojoTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  GIT_STRATEGY: \"clone\"\n" +
                 "  GIT_DEPTH: \"10\"\n" +
@@ -265,6 +288,27 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
                 "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  quality_gate:\n" +
+                "    name: Quality Gate\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ unit-test, it-test ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven: sonar'\n" +
+                "        run: |\n" +
+                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -298,6 +342,7 @@ class PipelineGeneratorMojoTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  GIT_STRATEGY: \"clone\"\n" +
                 "  GIT_DEPTH: \"10\"\n" +
@@ -409,6 +454,27 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
                 "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  quality_gate:\n" +
+                "    name: Quality Gate\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ unit-test, it-test ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven: sonar'\n" +
+                "        run: |\n" +
+                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -442,6 +508,7 @@ class PipelineGeneratorMojoTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  GIT_STRATEGY: \"clone\"\n" +
                 "  GIT_DEPTH: \"10\"\n" +
@@ -553,6 +620,27 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
                 "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  quality_gate:\n" +
+                "    name: Quality Gate\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ unit-test, it-test ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven: sonar'\n" +
+                "        run: |\n" +
+                "          mvn verify -DskipTests $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 

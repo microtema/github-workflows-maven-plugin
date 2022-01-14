@@ -4,6 +4,7 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SonarTemplateStageService implements TemplateStageService {
@@ -22,6 +23,15 @@ public class SonarTemplateStageService implements TemplateStageService {
         String template = PipelineGeneratorUtil.getTemplate(getName());
 
         List<String> sonarExcludes = PipelineGeneratorUtil.getSonarExcludes(mojo.getProject());
+
+        List<String> needs = new ArrayList<>();
+        needs.add("unit-test");
+
+        if (PipelineGeneratorUtil.existsIntegrationTests(mojo.getProject())) {
+            needs.add("it-test");
+        }
+
+        template = template.replaceFirst("%NEEDS%", String.join(", ", needs));
 
         if (sonarExcludes.isEmpty()) {
             return template;
