@@ -3,13 +3,15 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-@RequiredArgsConstructor
 public class CompileTemplateStageService implements TemplateStageService {
 
     private final VersioningTemplateStageService versioningTemplateStageService;
+
+    public CompileTemplateStageService(VersioningTemplateStageService versioningTemplateStageService) {
+        this.versioningTemplateStageService = versioningTemplateStageService;
+    }
 
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {

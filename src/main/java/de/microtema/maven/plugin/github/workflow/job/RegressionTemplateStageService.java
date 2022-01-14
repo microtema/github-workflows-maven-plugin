@@ -3,7 +3,6 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class RegressionTemplateStageService implements TemplateStageService {
 
     @Override

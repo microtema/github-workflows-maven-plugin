@@ -14,11 +14,12 @@
     <url>http://maven.apache.org</url>
 
     <properties>
+        <lava.version>17</lava.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source.version>1.8</maven.compiler.source.version>
-        <maven.compiler.target.version>1.8</maven.compiler.target.version>
+        <maven.compiler.source.version>17</maven.compiler.source.version>
+        <maven.compiler.target.version>17</maven.compiler.target.version>
         <maven.source.plugin>2.2.1</maven.source.plugin>
-        <maven.compiler.plugin>2.3.2</maven.compiler.plugin>
+        <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <maven.javadoc.plugin>2.10.4</maven.javadoc.plugin>
 
         <sonar.projectKey>mtema_${project.artifactId}</sonar.projectKey>
@@ -73,15 +74,15 @@
             <version>${commons.lang3.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>de.microtema</groupId>
             <artifactId>model-converter</artifactId>
             <version>2.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -236,6 +237,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.6.2</version>
+                <configuration>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -265,13 +270,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin}</version>
                 <configuration>
-                    <argLine>
-                        --illegal-access=permit
-                    </argLine>
                     <skipTests>${skipTests}</skipTests>
                     <skip>${skipTests}</skip>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
+                    <forkCount>3</forkCount>
+                    <reuseForks>false</reuseForks>
                     <failIfNoTests>${failIfNoTests}</failIfNoTests>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
@@ -380,7 +382,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.2</version>
+                    <configuration>
+                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

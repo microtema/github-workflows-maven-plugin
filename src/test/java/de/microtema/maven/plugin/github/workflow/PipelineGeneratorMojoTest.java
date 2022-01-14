@@ -48,7 +48,7 @@ class PipelineGeneratorMojoTest {
         sut.runsOn = "self-hosted,azure-runners";
     }
 
- //   @Test
+    @Test
     void generateFeatureDeployment() throws Exception {
 
         when(project.getBasedir()).thenReturn(basePath);
@@ -158,7 +158,7 @@ class PipelineGeneratorMojoTest {
                 "\n", answer);
     }
 
-    //  @Test
+    @Test
     void generateDevelopmentDeployment() throws Exception {
 
         when(project.getBasedir()).thenReturn(basePath);
@@ -268,7 +268,7 @@ class PipelineGeneratorMojoTest {
                 "\n", answer);
     }
 
-    //  @Test
+    @Test
     void generateReleaseDeployment() throws Exception {
 
         when(project.getBasedir()).thenReturn(basePath);

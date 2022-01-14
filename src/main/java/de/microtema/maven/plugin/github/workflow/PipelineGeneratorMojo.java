@@ -1,12 +1,12 @@
 package de.microtema.maven.plugin.github.workflow;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import de.microtema.maven.plugin.github.workflow.job.*;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import de.microtema.model.converter.util.ClassUtil;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
@@ -50,7 +50,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
 
-    @SneakyThrows
     public void execute() {
 
         String appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
@@ -163,12 +162,17 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
     }
 
-    @SneakyThrows
+
     String getVariablesTemplate() {
 
         this.variables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
 
-        String template = objectMapper.writeValueAsString(Collections.singletonMap("env", this.variables));
+        String template = null;
+        try {
+            template = objectMapper.writeValueAsString(Collections.singletonMap("env", this.variables));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         return PipelineGeneratorUtil.trimEmptyLines(template);
     }
