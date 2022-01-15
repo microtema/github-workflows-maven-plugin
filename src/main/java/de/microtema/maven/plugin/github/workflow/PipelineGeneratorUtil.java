@@ -49,7 +49,12 @@ public class PipelineGeneratorUtil {
         return new File(getRootPath(project), "settings.xml").exists();
     }
 
-    public static boolean existsDbMigrationScripts(MavenProject project) {
+    public static boolean existsLiquibase(MavenProject project) {
+
+        return new File(getRootPath(project), "src/main/resources/db/changelog").exists();
+    }
+
+    public static boolean existsFlyway(MavenProject project) {
 
         return new File(getRootPath(project), "src/main/resources/db/migration").exists();
     }

@@ -80,8 +80,6 @@ class PipelineGeneratorMojoTest {
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
-                "  GIT_STRATEGY: \"clone\"\n" +
-                "  GIT_DEPTH: \"10\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "\n" +
@@ -144,7 +142,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: Surefire Test results\n" +
+                "          name: target_artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -213,6 +211,20 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
+                "\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Flyway: migration'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n", answer);
     }
 
@@ -248,8 +260,6 @@ class PipelineGeneratorMojoTest {
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
-                "  GIT_STRATEGY: \"clone\"\n" +
-                "  GIT_DEPTH: \"10\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "\n" +
@@ -312,7 +322,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: Surefire Test results\n" +
+                "          name: target_artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -399,6 +409,20 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
+                "\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Flyway: migration'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n", answer);
     }
 
@@ -434,8 +458,6 @@ class PipelineGeneratorMojoTest {
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
-                "  GIT_STRATEGY: \"clone\"\n" +
-                "  GIT_DEPTH: \"10\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "\n" +
@@ -532,7 +554,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: Surefire Test results\n" +
+                "          name: target_artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -619,6 +641,20 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
+                "\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Flyway: migration'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n", answer);
     }
 
@@ -654,8 +690,6 @@ class PipelineGeneratorMojoTest {
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
-                "  GIT_STRATEGY: \"clone\"\n" +
-                "  GIT_DEPTH: \"10\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "\n" +
@@ -752,7 +786,7 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: Surefire Test results\n" +
+                "          name: target_artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -839,6 +873,20 @@ class PipelineGeneratorMojoTest {
                 "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION.$GITHUB_SHA $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA\n" +
+                "\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Flyway: migration'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n", answer);
     }
 
