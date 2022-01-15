@@ -191,7 +191,7 @@ jobs:
     needs: [ tag ]
     steps:
       - name: 'Shell: promote'
-        run: acho 'TBD'
+        run: echo 'TBD'
 
   deployment:
     name: Deployment
@@ -199,7 +199,7 @@ jobs:
     needs: [ promote ]
     steps:
       - name: 'Shell: deployment'
-        run: acho 'TBD'
+        run: echo 'TBD'
 
   readiness:
     name: Readiness Check
