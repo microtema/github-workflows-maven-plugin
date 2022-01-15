@@ -162,29 +162,6 @@ jobs:
       - name: 'Docker: push'
         run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION
 
-  tag:
-    name: Tag Release
-    runs-on: [ ubuntu-latest ]
-    needs: [ package ]
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
-      - name: 'Artifact: download'
-        uses: actions/download-artifact@v2
-        with:
-          name: pom-artifact
-      - name: 'Bump version and push tag'
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-
   promote:
     name: Promote
     runs-on: [ ubuntu-latest ]

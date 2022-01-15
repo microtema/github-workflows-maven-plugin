@@ -31,7 +31,7 @@ public class TagTemplateStageService implements TemplateStageService {
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (access(mojo, metaData)) {
+        if (!access(mojo, metaData)) {
             return null;
         }
 
