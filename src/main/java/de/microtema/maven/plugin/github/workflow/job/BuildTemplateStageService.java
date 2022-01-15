@@ -3,10 +3,12 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class BuildTemplateStageService implements TemplateStageService {
 
@@ -54,7 +56,9 @@ public class BuildTemplateStageService implements TemplateStageService {
             needs.add("compile");
         }
 
+        boolean pomArtifact = Stream.of("develop", "feature").noneMatch(it -> StringUtils.equalsIgnoreCase(it, metaData.getBranchName()));
+
         return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)))
-                .replace("%POM_ARTIFACT%", "true");
+                .replace("%POM_ARTIFACT%", String.valueOf(pomArtifact));
     }
 }
