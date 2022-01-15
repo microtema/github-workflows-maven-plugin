@@ -63,7 +63,7 @@ jobs:
           name: target-artifact
       - name: 'Maven: deploy'
         env:
-          GITHUB_USERNAME: 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
+          GITHUB_USERNAME: microtema
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
 
