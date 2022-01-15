@@ -173,7 +173,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Artifact: download'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
-                "          name: target-artifact\n" +
+                "          name: target_artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
                 "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
