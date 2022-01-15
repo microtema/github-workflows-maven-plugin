@@ -4,4 +4,4 @@ promote:
   needs: [ tag ]
   steps:
     - name: 'Shell: promote'
-      run: acho 'TBD'
+      run: echo 'TBD'

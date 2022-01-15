@@ -66,216 +66,214 @@ class PipelineGeneratorMojoTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("""
-                name: github-workflows-maven-plugin Maven Mojo [local]
-                                
-                on:
-                  push:
-                    branches:
-                      - feature/*
-                  pull_request:
-                    branches:
-                      - feature/*
-                                
-                env:
-                  DOCKER_REGISTRY: "docker.registry.local"
-                  SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
-                  JAVA_VERSION: "17.x"
-                  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\
-                    \\ -DdeployAtEnd=true"
-                                
-                jobs:
-                  compile:
-                    name: Compile
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Artifact: download'
-                        if: false
-                        uses: actions/download-artifact@v2
-                        with:
-                          name: pom-artifact
-                      - name: 'Maven: compile'
-                        run: mvn compile $MAVEN_CLI_OPTS
-                                
-                  security_check:
-                    name: Security Check
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ compile ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Maven: dependency-check'
-                        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS
-                                
-                  unit-test:
-                    name: Unit Test
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ compile ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Artifact: download'
-                        if: false
-                        uses: actions/download-artifact@v2
-                        with:
-                          name: pom-artifact
-                      - name: 'Maven: test'
-                        run: mvn test $MAVEN_CLI_OPTS
-                      - name: 'Artifact: prepare'
-                        run: |
-                          mkdir -p artifact
-                          mv target artifact/target
-                      - name: 'Test result'
-                        uses: actions/upload-artifact@v2
-                        with:
-                          name: target_artifact
-                          path: artifact/target
-                                
-                  it-test:
-                    name: Integration Test
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ compile ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Artifact: download'
-                        if: false
-                        uses: actions/download-artifact@v2
-                        with:
-                          name: pom-artifact
-                      - name: 'Maven: integration-test'
-                        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS
-                                
-                  quality-gate:
-                    name: Quality Gate
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ unit-test, it-test ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Artifact: download'
-                        uses: actions/download-artifact@v2
-                        with:
-                          name: target-artifact
-                      - name: 'Maven: sonar'
-                        run: |
-                          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
-                          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
-                                
-                  build:
-                    name: Build
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ quality-gate ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Artifact: download'
-                        if: true
-                        uses: actions/download-artifact@v2
-                        with:
-                          name: pom-artifact
-                      - name: 'Maven: package'
-                        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
-                      - name: 'Artifact: prepare'
-                        run: |
-                          mkdir -p artifact/target
-                          mv target artifact/target
-                      - name: 'Artifact: upload'
-                        uses: actions/upload-artifact@v2
-                        with:
-                          name: target-artifact
-                          path: artifact/target
-                                
-                  db-migration:
-                    name: Database Migration
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ package ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Java: Setup'
-                        uses: actions/setup-java@v1
-                        with:
-                          java-version: ${{ env.JAVA_VERSION }}
-                      - name: 'Flyway: migration'
-                        run: echo 'TBD'
-                                
-                  tag:
-                    name: Tag Release
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ db-migration ]
-                    steps:
-                      - name: 'Checkout'
-                        uses: actions/checkout@v2
-                      - name: 'Artifact: download'
-                        uses: actions/download-artifact@v2
-                        with:
-                          name: pom-artifact
-                      - name: 'Bump version and push tag'
-                        id: tag_version
-                        uses: mathieudutour/github-tag-action@v6.0
-                        with:
-                          github_token: ${{ secrets.GITHUB_TOKEN }}
-                      - name: Create a GitHub release
-                        uses: ncipollo/release-action@v1
-                        with:
-                          tag: ${{ steps.tag_version.outputs.new_tag }}
-                          name: Release ${{ steps.tag_version.outputs.new_tag }}
-                          body: ${{ steps.tag_version.outputs.changelog }}
-                                
-                  promote:
-                    name: Promote
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ tag ]
-                    steps:
-                      - name: 'Shell: promote'
-                        run: acho 'TBD'
-                                
-                  deployment:
-                    name: Deployment
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ promote ]
-                    steps:
-                      - name: 'Shell: deployment'
-                        run: acho 'TBD'
-                                
-                  readiness:
-                    name: Readiness Check
-                    runs-on: [ self-hosted, azure-runners ]
-                    needs: [ deployment ]
-                    timeout-minutes: 15
-                    steps:
-                      - name: 'Shell: readiness'
-                        run: while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
-                                             
-                """, answer);
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [local]\n" +
+                "\n" +
+                "on:\n" +
+                "  push:\n" +
+                "    branches:\n" +
+                "      - feature/*\n" +
+                "  pull_request:\n" +
+                "    branches:\n" +
+                "      - feature/*\n" +
+                "\n" +
+                "env:\n" +
+                "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
+                "  JAVA_VERSION: \"17.x\"\n" +
+                "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
+                "    \\ -DdeployAtEnd=true\"\n" +
+                "\n" +
+                "jobs:\n" +
+                "  compile:\n" +
+                "    name: Compile\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: compile'\n" +
+                "        run: mvn compile $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  security_check:\n" +
+                "    name: Security Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: dependency-check'\n" +
+                "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  unit-test:\n" +
+                "    name: Unit Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: test'\n" +
+                "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target_artifact\n" +
+                "          path: artifact/target\n" +
+                "\n" +
+                "  it-test:\n" +
+                "    name: Integration Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ compile ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: false\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: integration-test'\n" +
+                "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  quality-gate:\n" +
+                "    name: Quality Gate\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ unit-test, it-test ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven: sonar'\n" +
+                "        run: |\n" +
+                "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
+                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  build:\n" +
+                "    name: Build\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ quality-gate ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        if: true\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Maven: package'\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact/target\n" +
+                "\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Flyway: migration'\n" +
+                "        run: echo 'TBD'\n" +
+                "\n" +
+                "  tag:\n" +
+                "    name: Tag Release\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ db-migration ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "      - name: 'Bump version and push tag'\n" +
+                "        id: tag_version\n" +
+                "        uses: mathieudutour/github-tag-action@v6.0\n" +
+                "        with:\n" +
+                "          github_token: ${{ secrets.GITHUB_TOKEN }}\n" +
+                "      - name: Create a GitHub release\n" +
+                "        uses: ncipollo/release-action@v1\n" +
+                "        with:\n" +
+                "          tag: ${{ steps.tag_version.outputs.new_tag }}\n" +
+                "          name: Release ${{ steps.tag_version.outputs.new_tag }}\n" +
+                "          body: ${{ steps.tag_version.outputs.changelog }}\n" +
+                "\n" +
+                "  promote:\n" +
+                "    name: Promote\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ tag ]\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: promote'\n" +
+                "        run: acho 'TBD'\n" +
+                "\n" +
+                "  deployment:\n" +
+                "    name: Deployment\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ promote ]\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: deployment'\n" +
+                "        run: acho 'TBD'\n" +
+                "\n" +
+                "  readiness:\n" +
+                "    name: Readiness Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ deployment ]\n" +
+                "    timeout-minutes: 15\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: readiness'\n" +
+                "        run: while [[ \"$(curl -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
+                "\n", answer);
     }
 
     @Test

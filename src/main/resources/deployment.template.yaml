@@ -4,4 +4,4 @@ deployment:
   needs: [ promote ]
   steps:
     - name: 'Shell: deployment'
-      run: acho 'TBD'
+      run: echo 'TBD'
