@@ -16,3 +16,12 @@ build:
         name: pom-artifact
     - name: 'Maven: package'
       run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
+    - name: 'Artifact: prepare'
+      run: |
+        mkdir -p artifact/target
+        mv target artifact/target
+    - name: 'Artifact: upload'
+      uses: actions/upload-artifact@v2
+      with:
+        name: target-artifact
+        path: artifact/target

@@ -20,7 +20,7 @@ public class PipelineGeneratorUtil {
 
     public static String getTemplate(String templateName) {
 
-        InputStream inputStream = PipelineGeneratorUtil.class.getResourceAsStream("/" + templateName + ".template.yaml");
+    InputStream inputStream = PipelineGeneratorUtil.class.getResourceAsStream("/" + templateName + ".template.yaml");
 
         try {
             return IOUtils.toString(inputStream, Charset.defaultCharset());

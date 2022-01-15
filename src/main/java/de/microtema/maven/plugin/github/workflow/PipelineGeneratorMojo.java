@@ -89,9 +89,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             defaultVariables.put("JAVA_VERSION", javaVersion);
         }
 
-        defaultVariables.put("GIT_STRATEGY", "clone");
-        defaultVariables.put("GIT_DEPTH", "10");
-
         String mavenCliOptions = "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true";
 
         if (PipelineGeneratorUtil.existsMavenSettings(project)) {
@@ -99,6 +96,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
+
+        variables.entrySet().stream().filter(it -> StringUtils.startsWith(it.getValue(), "secrets.")).forEach(it -> it.setValue("${{ " + it.getValue() + " }}"));
 
         defaultVariables.forEach((key, value) -> variables.putIfAbsent(key, value));
 
@@ -109,8 +108,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(IntegrationTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SonarTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
-        /*
         templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));
+        /*
         templateStageServices.add(ClassUtil.createInstance(DbMigrationTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(TagTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PublishTemplateStageService.class));

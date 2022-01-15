@@ -16,3 +16,12 @@ unit-test:
         name: pom-artifact
     - name: 'Maven: test'
       run: mvn test $MAVEN_CLI_OPTS
+    - name: 'Artifact: prepare'
+      run: |
+        mkdir -p artifact
+        mv target artifact/target
+    - name: 'Test result'
+      uses: actions/upload-artifact@v2
+      with:
+        name: Surefire Test results
+        path: artifact/target

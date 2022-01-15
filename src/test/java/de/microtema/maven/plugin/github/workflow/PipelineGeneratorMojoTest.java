@@ -137,6 +137,15 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: Surefire Test results\n" +
+                "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -169,7 +178,6 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
@@ -190,12 +198,21 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact/target\n" +
                 "\n", answer);
     }
 
@@ -288,6 +305,15 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: Surefire Test results\n" +
+                "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -320,7 +346,6 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
@@ -341,12 +366,39 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact/target\n" +
+                "\n" +
+                "  package:\n" +
+                "    name: Package\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ build ]\n" +
+                "    steps:\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven versions:get'\n" +
+                "        run: export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
+                "      - name: 'Docker: login'\n" +
+                "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
+                "      - name: 'Docker: build'\n" +
+                "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Docker: push'\n" +
+                "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n", answer);
     }
 
@@ -473,6 +525,15 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: Surefire Test results\n" +
+                "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -505,7 +566,6 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
@@ -532,6 +592,33 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact/target\n" +
+                "\n" +
+                "  package:\n" +
+                "    name: Package\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ build ]\n" +
+                "    steps:\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven versions:get'\n" +
+                "        run: export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
+                "      - name: 'Docker: login'\n" +
+                "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
+                "      - name: 'Docker: build'\n" +
+                "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Docker: push'\n" +
+                "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n", answer);
     }
 
@@ -658,6 +745,15 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: Surefire Test results\n" +
+                "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -690,7 +786,6 @@ class PipelineGeneratorMojoTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
@@ -717,6 +812,33 @@ class PipelineGeneratorMojoTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target\n" +
+                "          mv target artifact/target\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact/target\n" +
+                "\n" +
+                "  package:\n" +
+                "    name: Package\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ build ]\n" +
+                "    steps:\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven versions:get'\n" +
+                "        run: export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
+                "      - name: 'Docker: login'\n" +
+                "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
+                "      - name: 'Docker: build'\n" +
+                "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION.$GITHUB_SHA $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Docker: push'\n" +
+                "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA\n" +
                 "\n", answer);
     }
 

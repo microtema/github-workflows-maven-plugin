@@ -11,7 +11,7 @@ security_check:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Maven: package'
       run: mvn package -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
-    - name: Synopsys BlackDuck Scan
+    - name: 'BlackDuck: scan'
       uses: blackducksoftware/github-action@2.1
       with:
         args: |

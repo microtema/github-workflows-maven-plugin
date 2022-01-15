@@ -54,6 +54,7 @@ public class BuildTemplateStageService implements TemplateStageService {
             needs.add("compile");
         }
 
-        return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)));
+        return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)))
+                .replace("%POM_ARTIFACT%", "true");
     }
 }
