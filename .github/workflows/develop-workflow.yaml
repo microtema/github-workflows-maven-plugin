@@ -162,14 +162,6 @@ jobs:
       - name: 'Docker: push'
         run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION
 
-  promote:
-    name: Promote
-    runs-on: [ ubuntu-latest ]
-    needs: [ tag ]
-    steps:
-      - name: 'Shell: promote'
-        run: echo 'TBD'
-
   regression-test-e2e:
     name: Regression Test [e2e]
     runs-on: [ ubuntu-latest ]
