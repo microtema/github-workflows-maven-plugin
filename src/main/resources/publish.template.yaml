@@ -1,7 +1,7 @@
 publish:
   name: Publish
   runs-on: [ %RUNS_ON% ]
-  needs: [ tag ]
+  needs: [ %NEEDS% ]
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
