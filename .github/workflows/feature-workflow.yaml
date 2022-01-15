@@ -13,8 +13,8 @@ env:
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   SONAR_TOKEN: "d44e1870f40de9c4556bb1f507393396721e21aa"
   JAVA_VERSION: "17"
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
-    \ -DdeployAtEnd=true"
+  MAVEN_CLI_OPTS: "-s settings.xml --batch-mode --errors --fail-at-end --show-version\
+    \ -DinstallAtEnd=true -DdeployAtEnd=true"
 
 jobs:
   compile:
@@ -158,5 +158,8 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Maven: deploy'
-        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS
+        env:
+          GITHUB_USERNAME: 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
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
 

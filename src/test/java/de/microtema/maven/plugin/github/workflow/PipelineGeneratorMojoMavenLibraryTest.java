@@ -76,8 +76,8 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
-                "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
-                "    \\ -DdeployAtEnd=true\"\n" +
+                "  MAVEN_CLI_OPTS: \"-s settings.xml --batch-mode --errors --fail-at-end --show-version\\\n" +
+                "    \\ -DinstallAtEnd=true -DdeployAtEnd=true\"\n" +
                 "\n" +
                 "jobs:\n" +
                 "  compile:\n" +
@@ -221,7 +221,10 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: deploy'\n" +
-                "        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS\n" +
+                "        env:\n" +
+                "          GITHUB_USERNAME: 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\n" +
+                "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n" +
+                "        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 

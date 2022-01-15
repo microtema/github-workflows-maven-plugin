@@ -13,4 +13,4 @@ publish:
       env:
         GITHUB_USERNAME: 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
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: mvn deploy -P release -Dcode.coverage=0.0 -DskipTests=true -DrepoUsername=$GITHUB_USERNAME -DrepoPassword=$GITHUB_TOKEN $MAVEN_CLI_OPTS
+      run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
