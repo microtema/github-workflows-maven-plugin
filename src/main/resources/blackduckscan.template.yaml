@@ -1,0 +1,22 @@
+security_check:
+  name: Security Check
+  runs-on: [ %RUNS_ON% ]
+  needs: [ compile ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Java: Setup'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Maven: package'
+      run: mvn package -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
+    - name: Synopsys BlackDuck Scan
+      uses: blackducksoftware/github-action@2.1
+      with:
+        args: |
+          --blackduck.url="%blackduck.url%" \
+          --blackduck.api.token="${{secrets.BLACK_DUCK_TOKEN}}" \
+          --detect.project.name="%detect.project.name%" \
+          --detect.project.version.name="%detect.project.version.name%" \
+          --detect.project.version.update=true
