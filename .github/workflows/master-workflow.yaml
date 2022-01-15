@@ -178,28 +178,10 @@ jobs:
           name: target-artifact
           path: artifact/target
 
-  package:
-    name: Package
-    runs-on: [ ubuntu-latest ]
-    needs: [ build ]
-    steps:
-      - name: 'Artifact: download'
-        uses: actions/download-artifact@v2
-        with:
-          name: target-artifact
-      - name: 'Maven versions:get'
-        run: export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
-      - name: 'Docker: login'
-        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
-      - name: 'Docker: build'
-        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION.$GITHUB_SHA $MAVEN_CLI_OPTS
-      - name: 'Docker: push'
-        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA
-
   tag:
     name: Tag Release
     runs-on: [ ubuntu-latest ]
-    needs: [ package ]
+    needs: [ compile ]
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -219,70 +201,17 @@ jobs:
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
 
-  promote:
-    name: Promote
+  publish:
+    name: Publish
     runs-on: [ ubuntu-latest ]
     needs: [ tag ]
     steps:
-      - name: 'Shell: promote'
-        run: echo 'TBD'
-
-  deployment:
-    name: Deployment
-    runs-on: [ ubuntu-latest ]
-    needs: [ promote ]
-    steps:
-      - name: 'Shell: deployment'
-        run: echo 'TBD'
-
-  readiness:
-    name: Readiness Check
-    runs-on: [ ubuntu-latest ]
-    needs: [ deployment ]
-    timeout-minutes: 15
-    steps:
-      - name: 'Shell: readiness'
-        run: while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
-
-  regression-test-e2e:
-    name: Regression Test [e2e]
-    runs-on: [ ubuntu-latest ]
-    needs: [ readiness ]
-    steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
       - name: 'Java: Setup'
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: 'Maven: regression test'
-        run: mvn integration-test -P e2e -DstageName=prod $MAVEN_CLI_OPTS
-
-  regression-test-i2e:
-    name: Regression Test [i2e]
-    runs-on: [ ubuntu-latest ]
-    needs: [ readiness ]
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
-      - name: 'Java: Setup'
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-      - name: 'Maven: regression test'
-        run: mvn integration-test -P i2e -DstageName=prod $MAVEN_CLI_OPTS
-
-  regression-test-s2e:
-    name: Regression Test [s2e]
-    runs-on: [ ubuntu-latest ]
-    needs: [ readiness ]
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
-      - name: 'Java: Setup'
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-      - name: 'Maven: regression test'
-        run: mvn integration-test -P s2e -DstageName=prod $MAVEN_CLI_OPTS
+      - name: 'Maven: deploy'
+        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS
 
