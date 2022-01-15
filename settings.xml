@@ -10,7 +10,8 @@
         <profile>
             <id>github</id>
             <properties>
-                <altDeploymentRepository>nexus::default::https://maven.pkg.github.com/microtema
+                <altDeploymentRepository>
+                    nexus::default::https://maven.pkg.github.com/${env.GITHUB_USERNAME}/${env.APP_NAME}
                 </altDeploymentRepository>
             </properties>
             <repositories>
@@ -27,7 +28,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub OWNER Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/microtema</url>
+                    <url>https://maven.pkg.github.com/${env.GITHUB_USERNAME}/${env.APP_NAME}</url>
                 </repository>
             </repositories>
         </profile>
