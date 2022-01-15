@@ -239,29 +239,6 @@ class PipelineGeneratorMojoTest {
                 "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "\n" +
-                "  tag:\n" +
-                "    name: Tag Release\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ db-migration ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
-                "      - name: 'Bump version and push tag'\n" +
-                "        id: tag_version\n" +
-                "        uses: mathieudutour/github-tag-action@v6.0\n" +
-                "        with:\n" +
-                "          github_token: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "      - name: Create a GitHub release\n" +
-                "        uses: ncipollo/release-action@v1\n" +
-                "        with:\n" +
-                "          tag: ${{ steps.tag_version.outputs.new_tag }}\n" +
-                "          name: Release ${{ steps.tag_version.outputs.new_tag }}\n" +
-                "          body: ${{ steps.tag_version.outputs.changelog }}\n" +
-                "\n" +
                 "  promote:\n" +
                 "    name: Promote\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -484,29 +461,6 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
-                "  tag:\n" +
-                "    name: Tag Release\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ db-migration ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
-                "      - name: 'Bump version and push tag'\n" +
-                "        id: tag_version\n" +
-                "        uses: mathieudutour/github-tag-action@v6.0\n" +
-                "        with:\n" +
-                "          github_token: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "      - name: Create a GitHub release\n" +
-                "        uses: ncipollo/release-action@v1\n" +
-                "        with:\n" +
-                "          tag: ${{ steps.tag_version.outputs.new_tag }}\n" +
-                "          name: Release ${{ steps.tag_version.outputs.new_tag }}\n" +
-                "          body: ${{ steps.tag_version.outputs.changelog }}\n" +
                 "\n" +
                 "  promote:\n" +
                 "    name: Promote\n" +
@@ -806,29 +760,6 @@ class PipelineGeneratorMojoTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
-                "  tag:\n" +
-                "    name: Tag Release\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ db-migration ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
-                "      - name: 'Bump version and push tag'\n" +
-                "        id: tag_version\n" +
-                "        uses: mathieudutour/github-tag-action@v6.0\n" +
-                "        with:\n" +
-                "          github_token: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "      - name: Create a GitHub release\n" +
-                "        uses: ncipollo/release-action@v1\n" +
-                "        with:\n" +
-                "          tag: ${{ steps.tag_version.outputs.new_tag }}\n" +
-                "          name: Release ${{ steps.tag_version.outputs.new_tag }}\n" +
-                "          body: ${{ steps.tag_version.outputs.changelog }}\n" +
                 "\n" +
                 "  promote:\n" +
                 "    name: Promote\n" +

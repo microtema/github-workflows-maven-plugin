@@ -31,6 +31,10 @@ public class TagTemplateStageService implements TemplateStageService {
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (!access(mojo, metaData)) {
+            return null;
+        }
+
         String template = PipelineGeneratorUtil.getTemplate(getName());
 
         String needs = templateStageServices.stream()
