@@ -13,7 +13,7 @@ env:
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   SONAR_TOKEN: "d44e1870f40de9c4556bb1f507393396721e21aa"
   JAVA_VERSION: "17"
-  MAVEN_CLI_OPTS: "-s settings.xml --batch-mode --errors --fail-at-end --show-version\
+  MAVEN_CLI_OPTS: "--ntp --batch-mode --errors --fail-at-end --show-version\
     \ -DinstallAtEnd=true -DdeployAtEnd=true"
 
 jobs:
@@ -48,4 +48,4 @@ jobs:
       - name: 'Maven: deploy'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn -B --no-transfer-progress deploy -DskipTests
+        run: mvn deploy -DskipTests $MAVEN_CLI_OPTS
