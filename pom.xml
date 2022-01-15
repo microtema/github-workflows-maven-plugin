@@ -25,7 +25,6 @@
         <sonar.projectKey>mtema_${project.artifactId}</sonar.projectKey>
         <sonar.organization>mtema-bitbucket</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.login>d44e1870f40de9c4556bb1f507393396721e21aa</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
