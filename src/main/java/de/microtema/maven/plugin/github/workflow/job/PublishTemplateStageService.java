@@ -7,9 +7,15 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 public class PublishTemplateStageService implements TemplateStageService {
 
     @Override
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        return !PipelineGeneratorUtil.existsDockerfile(mojo.getProject());
+    }
+
+    @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+        if (!access(mojo, metaData)) {
             return null;
         }
 

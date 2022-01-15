@@ -20,7 +20,7 @@ public class PipelineGeneratorUtil {
 
     public static String getTemplate(String templateName) {
 
-    InputStream inputStream = PipelineGeneratorUtil.class.getResourceAsStream("/" + templateName + ".template.yaml");
+        InputStream inputStream = PipelineGeneratorUtil.class.getResourceAsStream("/" + templateName + ".template.yaml");
 
         try {
             return IOUtils.toString(inputStream, Charset.defaultCharset());
@@ -171,7 +171,7 @@ public class PipelineGeneratorUtil {
 
         return Stream.of(files)
                 .filter(it -> it.isDirectory() && !defaultFolders.contains(it.getName().toLowerCase()))
-                .map(File::getName).collect(Collectors.toList());
+                .map(File::getName).sorted().collect(Collectors.toList());
     }
 
     static boolean findFile(Path targetDir, String fileName) {

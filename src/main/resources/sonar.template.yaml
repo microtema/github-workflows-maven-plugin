@@ -1,4 +1,4 @@
-quality_gate:
+quality-gate:
   name: Quality Gate
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]

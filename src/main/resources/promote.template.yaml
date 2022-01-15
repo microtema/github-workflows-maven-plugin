@@ -1,26 +1,7 @@
-%STAGE_DISPLAY_NAME%:
-  <<: *stage-template
-  stage: promote
-  variables:
-    STAGE_NAME: %STAGE_NAME%
-    DEPLOYMENT_REPO_NAME: "$CI_PROJECT_NAME-deployments"
-    DEPLOYMENT_REPO: "http://$CI_SERVER_HOST/container-deployments/interface-services/naomi/$CI_PROJECT_NAME-deployments.git"
-  before_script:
-    - export CONTAINER_TAG=%CONTAINER_TAG%
-    - export REMOTE_ORIGIN_URL=$(echo $DEPLOYMENT_REPO | sed "s/:\/\//:\/\/gitlab-ci-token:$GITLAB_TOKEN@/g")
-  script:
-    - git remote remove origin
-    - git remote add origin $REMOTE_ORIGIN_URL
-    - git config --global user.email $GITLAB_USER_EMAIL
-    - git config --global user.name $GITLAB_USER_NAME
-    - git clone $REMOTE_ORIGIN_URL
-    - cd $DEPLOYMENT_REPO_NAME
-    - sed "s/CONTAINER_TAG=.*/CONTAINER_TAG=$CONTAINER_TAG/g" .env-$STAGE_NAME > .env-$STAGE_NAME.bac
-    - mv .env-$STAGE_NAME.bac .env-$STAGE_NAME
-    - |
-      if [[ `git status --porcelain` ]]; then
-        git commit -am "Update CONTAINER_TAG with new value $CONTAINER_TAG in .env-$STAGE_NAME [SKIP-CI]"
-        git push
-      fi
-  only:
-    refs: %REFS%
+promote:
+  name: Promote
+  runs-on: [ %RUNS_ON% ]
+  needs: [ tag ]
+  steps:
+    - name: 'Shell: promote'
+      run: acho 'TBD'

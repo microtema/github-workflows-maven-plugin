@@ -1,11 +1,13 @@
-Publish:
-  <<: *stage-template
-  stage: publish
-  script:
-    - mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS
-  only:
-    refs:
-      - develop
-      - /^release/.*$/
-      - /^hotfix/.*$/
-      - master
+publish:
+  name: Publish
+  runs-on: [ %RUNS_ON% ]
+  needs: [ tag ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Java: Setup'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Maven: deploy'
+      run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS

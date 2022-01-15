@@ -1,17 +1,22 @@
-Tag Release:
-  <<: *stage-template
-  stage: tag
-  before_script:
-    - export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
-    - export TAG_VERSION=v${POM_VERSION}.${CI_COMMIT_SHORT_SHA}
-    - export REMOTE_ORIGIN_URL=$(echo "$CI_PROJECT_URL.git" | sed "s/s:\/\//:\/\/gitlab-ci-token:$GITLAB_TOKEN@/g")
-  script:
-    - git remote remove origin
-    - git remote add origin $REMOTE_ORIGIN_URL
-    - git config --global user.email $GITLAB_USER_EMAIL
-    - git config --global user.name $GITLAB_USER_NAME
-    - git tag -a $TAG_VERSION -m "$CI_COMMIT_MESSAGE \#comment Tag $TAG_VERSION"
-    - git push origin $TAG_VERSION
-  only:
-    refs:
-      - master
+tag:
+  name: Tag Release
+  runs-on: [ %RUNS_ON% ]
+  needs: [ %NEEDS% ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Artifact: download'
+      uses: actions/download-artifact@v2
+      with:
+        name: pom-artifact
+    - name: 'Bump version and push tag'
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}

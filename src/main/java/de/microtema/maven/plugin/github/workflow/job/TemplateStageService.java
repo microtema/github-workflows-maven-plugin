@@ -17,6 +17,11 @@ public interface TemplateStageService {
         return getClass().getSimpleName().replace("TemplateStageService", "").toLowerCase();
     }
 
+    default String getJobName() {
+
+        return getName();
+    }
+
     default String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         return PipelineGeneratorUtil.getTemplate(getName());

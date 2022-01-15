@@ -110,13 +110,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DbMigrationTemplateStageService.class));
-        /*
         templateStageServices.add(ClassUtil.createInstance(TagTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PublishTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PromoteTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(ReadynessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(RegressionTemplateStageService.class));
+        /*
         templateStageServices.add(ClassUtil.createInstance(PerformanceTemplateStageService.class));
 
          */

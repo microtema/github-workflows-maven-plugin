@@ -7,6 +7,11 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 public class FlywayTemplateStageService implements TemplateStageService {
 
     @Override
+    public String getJobName() {
+        return "db-migration";
+    }
+
+    @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         return PipelineGeneratorUtil.existsFlyway(mojo.getProject());

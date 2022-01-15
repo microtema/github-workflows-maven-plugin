@@ -37,7 +37,7 @@ public class BuildTemplateStageService implements TemplateStageService {
 
         if (sonarTemplateStageService.access(mojo, metaData)) {
 
-            needs.add("quality_gate");
+            needs.add("quality-gate");
         } else {
 
             if (unitTestTemplateStageService.access(mojo, metaData)) {

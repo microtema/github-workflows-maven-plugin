@@ -1,7 +1,6 @@
 package de.microtema.maven.plugin.github.workflow.job;
 
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
-import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class DbMigrationTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return PipelineGeneratorUtil.existsLiquibase(mojo.getProject());
+        return templateStageServices.stream().anyMatch(it -> it.access(mojo, metaData));
     }
 
     @Override
