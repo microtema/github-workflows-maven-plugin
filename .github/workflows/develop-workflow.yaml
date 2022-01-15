@@ -162,24 +162,10 @@ jobs:
       - name: 'Docker: push'
         run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION
 
-  db-migration:
-    name: Database Migration
-    runs-on: [ ubuntu-latest ]
-    needs: [ package ]
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
-      - name: 'Java: Setup'
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-      - name: 'Flyway: migration'
-        run: echo 'TBD'
-
   tag:
     name: Tag Release
     runs-on: [ ubuntu-latest ]
-    needs: [ db-migration ]
+    needs: [ package ]
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2

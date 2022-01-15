@@ -2,6 +2,7 @@ package de.microtema.maven.plugin.github.workflow;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,8 @@ class PipelineGeneratorMojoTest {
 
     File pipelineFile;
 
+    File dbMigrationDir = new File("./src/main/resources/db/migration");
+
     @BeforeEach
     void setUp() {
 
@@ -46,6 +49,16 @@ class PipelineGeneratorMojoTest {
         sut.serviceUrl = "http://$STAGE.$CLUSTER.local/supplier/git/info";
 
         sut.runsOn = "self-hosted,azure-runners";
+
+        if (!dbMigrationDir.exists()) {
+            dbMigrationDir.mkdirs();
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        dbMigrationDir.delete();
+        dbMigrationDir.getParentFile().delete();
     }
 
     @Test
@@ -255,7 +268,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ tag ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment:\n" +
                 "    name: Deployment\n" +
@@ -263,7 +276,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ promote ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: deployment'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
@@ -501,7 +514,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ tag ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment:\n" +
                 "    name: Deployment\n" +
@@ -509,7 +522,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ promote ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: deployment'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
@@ -823,7 +836,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ tag ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment:\n" +
                 "    name: Deployment\n" +
@@ -831,7 +844,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ promote ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: deployment'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
@@ -1145,7 +1158,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ tag ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment:\n" +
                 "    name: Deployment\n" +
@@ -1153,7 +1166,7 @@ class PipelineGeneratorMojoTest {
                 "    needs: [ promote ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: deployment'\n" +
-                "        run: acho 'TBD'\n" +
+                "        run: echo 'TBD'\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
