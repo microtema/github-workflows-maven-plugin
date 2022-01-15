@@ -189,8 +189,9 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
                 "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
+                "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
+                "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
                 "        if: false\n" +
@@ -198,7 +199,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -217,12 +218,12 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
                 "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
+                "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
+                "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: deploy'\n" +
                 "        env:\n" +
-                "          GITHUB_USERNAME: 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\n" +
                 "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n" +
                 "        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);

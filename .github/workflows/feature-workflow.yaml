@@ -126,8 +126,9 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v2
       - name: 'Java: Setup'
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
         if: false
@@ -135,7 +136,7 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: package'
-        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
+        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact/target
@@ -154,12 +155,12 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v2
       - name: 'Java: Setup'
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Maven: deploy'
         env:
-          GITHUB_USERNAME: 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
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
 

@@ -58,6 +58,11 @@ public class BuildTemplateStageService implements TemplateStageService {
 
         boolean pomArtifact = Stream.of("develop", "feature").noneMatch(it -> StringUtils.equalsIgnoreCase(it, metaData.getBranchName()));
 
+        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+
+            template = template.replace("mvn package", "mvn install");
+        }
+
         return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)))
                 .replace("%POM_ARTIFACT%", String.valueOf(pomArtifact));
     }
