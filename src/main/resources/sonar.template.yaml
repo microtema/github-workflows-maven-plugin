@@ -11,8 +11,9 @@ quality-gate:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Artifact: download'
       uses: actions/download-artifact@v2
+      if: false
       with:
-        name: target_artifact
+        name: target-artifact
     - name: 'Maven: sonar'
       run: |
         mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
