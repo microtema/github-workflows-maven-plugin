@@ -108,7 +108,7 @@ jobs:
       - name: 'Test result'
         uses: actions/upload-artifact@v2
         with:
-          name: target_artifact
+          name: target-artifact
           path: artifact/target
 
   it-test:
@@ -143,8 +143,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
         uses: actions/download-artifact@v2
+        if: false
         with:
-          name: target_artifact
+          name: target-artifact
       - name: 'Maven: sonar'
         run: |
           mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
