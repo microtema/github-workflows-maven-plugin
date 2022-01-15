@@ -10,4 +10,7 @@ publish:
       with:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Maven: deploy'
-      run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS
+      env:
+        GITHUB_USERNAME: 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
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: mvn deploy -P release -Dcode.coverage=0.0 -DskipTests=true -DrepoUsername=$GITHUB_USERNAME -DrepoPassword=$GITHUB_TOKEN $MAVEN_CLI_OPTS
