@@ -9,6 +9,10 @@
     <profiles>
         <profile>
             <id>github</id>
+            <properties>
+                <altDeploymentRepository>nexus::default::https://maven.pkg.github.com/microtema
+                </altDeploymentRepository>
+            </properties>
             <repositories>
                 <repository>
                     <id>central</id>
