@@ -75,6 +75,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         cleanupWorkflows(rootDir, workflows);
 
+        defaultVariables.put("GITHUB_TOKEN", "${{ secrets.GITHUB_TOKEN }}");
+
         if (PipelineGeneratorUtil.hasSonarProperties(project)) {
 
             String sonarToken = PipelineGeneratorUtil.getProperty(project, "sonar.login", "${{ secrets.SONAR_TOKEN }}");

@@ -73,6 +73,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - feature/*\n" +
                 "\n" +
                 "env:\n" +
+                "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
