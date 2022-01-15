@@ -6,6 +6,12 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
 public class PromoteTemplateStageService implements TemplateStageService {
 
+    private final TagTemplateStageService tagTemplateStageService;
+
+    public PromoteTemplateStageService(TagTemplateStageService tagTemplateStageService) {
+        this.tagTemplateStageService = tagTemplateStageService;
+    }
+
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
@@ -19,7 +25,15 @@ public class PromoteTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getName());
+
+        String needs = "tag";
+
+        if (!tagTemplateStageService.access(mojo, metaData)) {
+            needs = "package";
+        }
+
+        return template.replace("%NEEDS%", needs);
     }
 
 }
