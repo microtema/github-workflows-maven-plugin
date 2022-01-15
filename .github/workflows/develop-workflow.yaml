@@ -170,23 +170,6 @@ jobs:
       - name: 'Shell: promote'
         run: echo 'TBD'
 
-  deployment:
-    name: Deployment
-    runs-on: [ ubuntu-latest ]
-    needs: [ promote ]
-    steps:
-      - name: 'Shell: deployment'
-        run: echo 'TBD'
-
-  readiness:
-    name: Readiness Check
-    runs-on: [ ubuntu-latest ]
-    needs: [ deployment ]
-    timeout-minutes: 15
-    steps:
-      - name: 'Shell: readiness'
-        run: while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
-
   regression-test-e2e:
     name: Regression Test [e2e]
     runs-on: [ ubuntu-latest ]
