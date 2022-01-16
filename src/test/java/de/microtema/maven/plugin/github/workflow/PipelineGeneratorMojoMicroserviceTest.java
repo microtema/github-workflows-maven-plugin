@@ -24,14 +24,19 @@ class PipelineGeneratorMojoMicroserviceTest {
     static File dbMigrationDir = new File("./src/main/resources/db/migration");
     static File dbChangelogDir = new File("./src/main/resources/db/changelog");
     static File dockerFileDir = new File("./Dockerfile");
+
     @InjectMocks
     PipelineGeneratorMojo sut;
+
     @Mock
     MavenProject project;
+
     @Mock
     File basePath;
+
     @Mock
     Properties properties;
+
     File pipelineFile;
 
     @BeforeAll
@@ -70,7 +75,6 @@ class PipelineGeneratorMojoMicroserviceTest {
     }
 
     @Test
-    @Disabled
     void generateFeatureWorkflowFile() throws Exception {
 
         when(project.getBasedir()).thenReturn(basePath);
@@ -100,6 +104,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
@@ -164,7 +169,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: target_artifact\n" +
+                "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -199,6 +204,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
                 "        uses: actions/download-artifact@v2\n" +
+                "        if: false\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
@@ -214,11 +220,12 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
                 "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
+                "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
+                "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -233,34 +240,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
-                "\n" +
-                "  db-migration:\n" +
-                "    name: Database Migration\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ package ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Flyway: migration'\n" +
-                "        run: echo 'TBD'\n" +
-                "\n" +
-                "  publish:\n" +
-                "    name: Publish\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ tag ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Maven: deploy'\n" +
-                "        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -274,26 +253,27 @@ class PipelineGeneratorMojoMicroserviceTest {
         Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
 
-        sut.stages.put("local", "feature/*");
+        sut.stages.put("dev", "develop");
 
-        pipelineFile = new File(sut.githubWorkflowsDir, "feature-workflow.yaml");
+        pipelineFile = new File(sut.githubWorkflowsDir, "develop-workflow.yaml");
 
         sut.execute();
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [local]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [dev]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
                 "    branches:\n" +
-                "      - feature/*\n" +
+                "      - develop\n" +
                 "  pull_request:\n" +
                 "    branches:\n" +
-                "      - feature/*\n" +
+                "      - develop\n" +
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
@@ -358,7 +338,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: target_artifact\n" +
+                "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -393,6 +373,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
                 "        uses: actions/download-artifact@v2\n" +
+                "        if: false\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
@@ -408,11 +389,12 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
                 "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
+                "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
+                "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: false\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -427,6 +409,24 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
+                "\n" +
+                "  package:\n" +
+                "    name: Package\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ build ]\n" +
+                "    steps:\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "      - name: 'Maven versions:get'\n" +
+                "        run: export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
+                "      - name: 'Docker: login'\n" +
+                "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
+                "      - name: 'Docker: build'\n" +
+                "        run: mvn jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Docker: push'\n" +
+                "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
                 "  db-migration:\n" +
                 "    name: Database Changelog\n" +
@@ -442,19 +442,30 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Liquibase: changelog'\n" +
                 "        run: echo 'TBD'\n" +
                 "\n" +
-                "  publish:\n" +
-                "    name: Publish\n" +
+                "  promote:\n" +
+                "    name: Promote\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ tag ]\n" +
                 "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Maven: deploy'\n" +
-                "        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true -DrepoAddress=$NEXUS_ADDRESS -DrepoUsername=$NEXUS_USERNAME -DrepoPassword=$NEXUS_PASSWORD $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Shell: promote'\n" +
+                "        run: echo 'TBD'\n" +
+                "\n" +
+                "  deployment:\n" +
+                "    name: Deployment\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ promote ]\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: deployment'\n" +
+                "        run: echo 'TBD'\n" +
+                "\n" +
+                "  readiness:\n" +
+                "    name: Readiness Check\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ deployment ]\n" +
+                "    timeout-minutes: 15\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: readiness'\n" +
+                "        run: while [[ \"$(curl -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "\n", answer);
     }
 

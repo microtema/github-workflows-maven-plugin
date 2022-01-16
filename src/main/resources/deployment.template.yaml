@@ -3,5 +3,23 @@ deployment:
   runs-on: [ %RUNS_ON% ]
   needs: [ promote ]
   steps:
+    - name: 'Artifact: download'
+      uses: actions/download-artifact@v2
+      with:
+        name: version-artifact
+    - name: 'Shell: set env'
+      run: export DOCKER_IMAGE_TAG=$(cat version)
     - name: 'Shell: deployment'
-      run: echo 'TBD'
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        script: |
+          await github.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '%BRANCH_NAME%-workflow.yml',
+              ref: context.ref,
+              inputs: {
+                DOCKER_IMAGE_TAG: "$DOCKER_IMAGE_TAG"
+              }
+          });
