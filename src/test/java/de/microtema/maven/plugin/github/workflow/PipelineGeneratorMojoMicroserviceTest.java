@@ -500,6 +500,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
@@ -520,11 +521,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Shell: sed pom.xml'\n" +
                 "        id: pom\n" +
                 "        run: |\n" +
-                "          export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
                 "          export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
                 "          export NEW_VERSION=${POM_VERSION/-SNAPSHOT/-RC}\n" +
-                "          sed \"s/<version>$POM_PARENT_VERSION<\\/version>/<version>$NEW_VERSION<\\/version>/g\" pom.xml > pom.xml.bac\n" +
-                "          mv pom.xml.bac pom.xml\n" +
                 "          echo ::set-output name=VERSION::$NEW_VERSION\n" +
                 "      - name: 'Maven: versions:set'\n" +
                 "        run: |\n" +
@@ -533,12 +531,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact\n" +
-                "          mv pom.xml artifact/pom.xml\n" +
+                "          cp pom.xml artifact/pom.xml\n" +
+                "          echo ${{ steps.pom.outputs.VERSION }} > artifact/version\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: version-artifact\n" +
+                "          path: artifact/version\n" +
                 "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
@@ -598,7 +602,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
-                "          name: target_artifact\n" +
+                "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
                 "\n" +
                 "  it-test:\n" +
@@ -633,6 +637,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
                 "        uses: actions/download-artifact@v2\n" +
+                "        if: false\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
@@ -648,8 +653,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
                 "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
+                "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
+                "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
                 "        if: true\n" +
@@ -661,7 +667,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
-                "          mv target artifact/target\n" +
+                "          cp target/*.jar artifact/target/\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
@@ -687,7 +693,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker build -t docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
                 "  db-migration:\n" +
-                "    name: Database Migration\n" +
+                "    name: Database Changelog\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -697,7 +703,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Flyway: migration'\n" +
+                "      - name: 'Liquibase: changelog'\n" +
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  promote:\n" +
@@ -713,8 +719,26 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
                 "    steps:\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: version-artifact\n" +
+                "      - name: 'Shell: set env'\n" +
+                "        run: export DOCKER_IMAGE_TAG=$(cat version)\n" +
                 "      - name: 'Shell: deployment'\n" +
-                "        run: echo 'TBD'\n" +
+                "        uses: actions/github-script@v4\n" +
+                "        with:\n" +
+                "          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}\n" +
+                "          script: |\n" +
+                "            await github.actions.createWorkflowDispatch({\n" +
+                "                owner: context.repo.owner,\n" +
+                "                repo: context.repo.repo,\n" +
+                "                workflow_id: 'release-workflow.yml',\n" +
+                "                ref: context.ref,\n" +
+                "                inputs: {\n" +
+                "                  DOCKER_IMAGE_TAG: \"$DOCKER_IMAGE_TAG\"\n" +
+                "                }\n" +
+                "            });\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
@@ -724,48 +748,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
-                "\n" +
-                "  regression-test-e2e:\n" +
-                "    name: Regression Test [e2e]\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ readiness ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Maven: regression test'\n" +
-                "        run: mvn integration-test -P e2e -DstageName=stage $MAVEN_CLI_OPTS\n" +
-                "  \n" +
-                "  regression-test-i2e:\n" +
-                "    name: Regression Test [i2e]\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ readiness ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Maven: regression test'\n" +
-                "        run: mvn integration-test -P i2e -DstageName=stage $MAVEN_CLI_OPTS\n" +
-                "  \n" +
-                "  regression-test-s2e:\n" +
-                "    name: Regression Test [s2e]\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ readiness ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Maven: regression test'\n" +
-                "        run: mvn integration-test -P s2e -DstageName=stage $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 

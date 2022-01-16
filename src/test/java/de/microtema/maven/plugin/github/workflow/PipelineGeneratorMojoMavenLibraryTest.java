@@ -80,10 +80,47 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "\n" +
                 "jobs:\n" +
+                "  versioning:\n" +
+                "    name: Versioning\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Shell: sed pom.xml'\n" +
+                "        id: pom\n" +
+                "        run: |\n" +
+                "          export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
+                "          export NEW_VERSION=${POM_VERSION/-SNAPSHOT/-SNAPSHOT}\n" +
+                "          echo ::set-output name=VERSION::$NEW_VERSION\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          cp pom.xml artifact/pom.xml\n" +
+                "          echo ${{ steps.pom.outputs.VERSION }} > artifact/version\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "          path: artifact/pom.xml\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: version-artifact\n" +
+                "          path: artifact/version\n" +
+                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
+                "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -194,7 +231,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -203,7 +240,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
-                "          mv target artifact/target\n" +
+                "          cp target/*.jar artifact/target/\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +

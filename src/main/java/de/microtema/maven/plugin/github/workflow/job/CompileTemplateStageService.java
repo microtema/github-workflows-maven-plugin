@@ -15,15 +15,7 @@ public class CompileTemplateStageService implements TemplateStageService {
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.hasSourceCode(mojo.getProject())) {
-            return null;
-        }
-
         String template = PipelineGeneratorUtil.getTemplate(getName());
-
-        if (!versioningTemplateStageService.access(mojo, metaData)) {
-            return template.replace("[ %NEEDS% ]", "[ ]");
-        }
 
         return template.replace("%NEEDS%", versioningTemplateStageService.getName());
     }

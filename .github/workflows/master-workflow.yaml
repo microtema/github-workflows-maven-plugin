@@ -31,11 +31,8 @@ jobs:
       - name: 'Shell: sed pom.xml'
         id: pom
         run: |
-          export POM_PARENT_VERSION=$(mvn help:evaluate -Dexpression=project.parent.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
           export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)
           export NEW_VERSION=${POM_VERSION/-SNAPSHOT/}
-          sed "s/<version>$POM_PARENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/g" pom.xml > pom.xml.bac
-          mv pom.xml.bac pom.xml
           echo ::set-output name=VERSION::$NEW_VERSION
       - name: 'Maven: versions:set'
         run: |
@@ -44,12 +41,18 @@ jobs:
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact
-          mv pom.xml artifact/pom.xml
+          cp pom.xml artifact/pom.xml
+          echo ${{ steps.pom.outputs.VERSION }} > artifact/version
       - name: 'Artifact: upload'
         uses: actions/upload-artifact@v2
         with:
           name: pom-artifact
           path: artifact/pom.xml
+      - name: 'Artifact: upload'
+        uses: actions/upload-artifact@v2
+        with:
+          name: version-artifact
+          path: artifact/version
 
   compile:
     name: Compile
@@ -174,7 +177,7 @@ jobs:
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact/target
-          mv target artifact/target
+          cp target/*.jar artifact/target/
       - name: 'Artifact: upload'
         uses: actions/upload-artifact@v2
         with:
