@@ -130,12 +130,13 @@
                         <version>${project.version}</version>
                         <configuration>
                             <variables>
-                                <DOCKER_REGISTRY>docker.registry.local</DOCKER_REGISTRY>
+                                <DOCKER_REGISTRY>docker.io</DOCKER_REGISTRY>
                             </variables>
                             <stages>
-                                <local>feature/*</local>
-                                <dev>develop</dev>
-                                <prod>master</prod>
+                                <feature>feature/*</feature>
+                                <develop>develop</develop>
+                                <release>release/*</release>
+                                <master>master</master>
                             </stages>
                         </configuration>
                         <executions>

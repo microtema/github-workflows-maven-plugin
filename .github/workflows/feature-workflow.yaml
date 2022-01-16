@@ -1,4 +1,4 @@
-name: GitHub Workflows Maven-Plugin [local]
+name: GitHub Workflows Maven-Plugin [feature]
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - feature/*
 
 env:
-  DOCKER_REGISTRY: "docker.registry.local"
+  DOCKER_REGISTRY: "docker.io"
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
   JAVA_VERSION: "17"
