@@ -76,6 +76,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         cleanupWorkflows(rootDir, workflows);
 
         defaultVariables.put("GITHUB_TOKEN", "${{ secrets.GITHUB_TOKEN }}");
+        defaultVariables.put("APP_NAME", project.getArtifactId());
+        defaultVariables.put("VERSION", project.getVersion());
 
         if (PipelineGeneratorUtil.hasSonarProperties(project)) {
 
@@ -181,6 +183,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         String rootPath = PipelineGeneratorUtil.getRootPath(project);
 
         File dir = new File(rootPath, githubWorkflowsDir);
+
+        variables.put("STAGE_NAME", metaData.getStageName());
 
         String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 

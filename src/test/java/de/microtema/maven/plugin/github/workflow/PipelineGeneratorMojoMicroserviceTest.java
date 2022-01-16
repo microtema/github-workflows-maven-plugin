@@ -80,6 +80,8 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getBasedir()).thenReturn(basePath);
         when(basePath.getPath()).thenReturn(".");
         when(project.getName()).thenReturn("github-workflows-maven-plugin Maven Mojo");
+        when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
+        when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
         Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
@@ -249,6 +251,8 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getBasedir()).thenReturn(basePath);
         when(basePath.getPath()).thenReturn(".");
         when(project.getName()).thenReturn("github-workflows-maven-plugin Maven Mojo");
+        when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
+        when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
         Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
@@ -476,6 +480,8 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getBasedir()).thenReturn(basePath);
         when(basePath.getPath()).thenReturn(".");
         when(project.getName()).thenReturn("github-workflows-maven-plugin Maven Mojo");
+        when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
+        when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
         Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
@@ -758,6 +764,8 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getBasedir()).thenReturn(basePath);
         when(basePath.getPath()).thenReturn(".");
         when(project.getName()).thenReturn("github-workflows-maven-plugin Maven Mojo");
+        when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
+        when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
         Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());

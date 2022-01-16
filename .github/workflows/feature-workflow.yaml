@@ -11,10 +11,13 @@ on:
 env:
   DOCKER_REGISTRY: "docker.io"
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  APP_NAME: "github-workflows-maven-plugin"
+  VERSION: "2.0.1-SNAPSHOT"
   SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
   JAVA_VERSION: "17"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
     \ -DdeployAtEnd=true"
+  STAGE_NAME: "feature"
 
 jobs:
   versioning:
