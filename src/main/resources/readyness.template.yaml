@@ -1,4 +1,4 @@
-readiness:
+readyness:
   name: Readiness Check
   runs-on: [ %RUNS_ON% ]
   needs: [ deployment ]

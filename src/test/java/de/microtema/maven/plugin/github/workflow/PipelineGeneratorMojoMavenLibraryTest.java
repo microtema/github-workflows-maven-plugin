@@ -163,8 +163,9 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
-                "          mkdir -p artifact\n" +
-                "          mv target artifact/target\n" +
+                "          mkdir -p artifact/target\n" +
+                "          cp -r target/surefire-reports artifact/target\n" +
+                "          cp -r target/jacoco.exec artifact/target\n" +
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
@@ -228,7 +229,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +

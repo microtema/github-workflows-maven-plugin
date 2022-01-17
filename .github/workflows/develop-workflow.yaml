@@ -98,8 +98,9 @@ jobs:
         run: mvn test $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
-          mkdir -p artifact
-          mv target artifact/target
+          mkdir -p artifact/target
+          cp -r target/surefire-reports artifact/target
+          cp -r target/jacoco.exec artifact/target
       - name: 'Test result'
         uses: actions/upload-artifact@v2
         with:
@@ -163,7 +164,7 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: package'
-        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
+        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact/target
