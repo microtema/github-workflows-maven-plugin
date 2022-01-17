@@ -12,19 +12,13 @@ versioning:
     - name: 'Maven: versions:set'
       run: |
         mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
-        mvn versions:set -DnewVersion=${{ env.VERSION }} $MAVEN_CLI_OPTS
+        mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS
     - name: 'Artifact: prepare'
       run: |
         mkdir -p artifact
         cp pom.xml artifact/pom.xml
-        echo ${{ env.VERSION }} > artifact/version
     - name: 'Artifact: upload'
       uses: actions/upload-artifact@v2
       with:
         name: pom-artifact
         path: artifact/pom.xml
-    - name: 'Artifact: upload'
-      uses: actions/upload-artifact@v2
-      with:
-        name: version-artifact
-        path: artifact/version

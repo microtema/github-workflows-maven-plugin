@@ -1,5 +1,5 @@
 regression-test-%PROFILE_NAME%:
-  name: Regression Test [%PROFILE_NAME%]
+  name: System Test [%PROFILE_NAME%]
   runs-on: [ %RUNS_ON% ]
   needs: [ readiness ]
   steps:
@@ -9,5 +9,5 @@ regression-test-%PROFILE_NAME%:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ env.JAVA_VERSION }}
-    - name: 'Maven: regression test'
+    - name: 'Maven: system test'
       run: mvn integration-test -P %PROFILE_NAME% -DstageName=%STAGE_NAME% $MAVEN_CLI_OPTS

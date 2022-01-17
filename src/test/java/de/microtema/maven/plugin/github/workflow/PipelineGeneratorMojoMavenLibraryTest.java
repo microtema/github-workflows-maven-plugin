@@ -99,22 +99,16 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Maven: versions:set'\n" +
                 "        run: |\n" +
                 "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
-                "          mvn versions:set -DnewVersion=${{ env.VERSION }} $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact\n" +
                 "          cp pom.xml artifact/pom.xml\n" +
-                "          echo ${{ env.VERSION }} > artifact/version\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
-                "      - name: 'Artifact: upload'\n" +
-                "        uses: actions/upload-artifact@v2\n" +
-                "        with:\n" +
-                "          name: version-artifact\n" +
-                "          path: artifact/version\n" +
                 "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +

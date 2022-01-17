@@ -19,4 +19,4 @@ helm:
         CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
       run: |
         echo "Using image tag ($ACR_URI/$APP_NAME:$VERSION)."
-        helm upgrade $APP_NAME helm/$APP_NAME --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout $DEPLOY_TIMEOUT --set image.tag=$VERSION
+        helm upgrade $APP_NAME helm --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout $DEPLOY_TIMEOUT --set image.tag=$VERSION
