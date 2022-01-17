@@ -138,7 +138,6 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
         uses: actions/download-artifact@v2
-        if: false
         with:
           name: target-artifact
       - name: 'Maven: sonar'

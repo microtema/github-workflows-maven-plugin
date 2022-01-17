@@ -203,7 +203,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
                 "        uses: actions/download-artifact@v2\n" +
-                "        if: false\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
