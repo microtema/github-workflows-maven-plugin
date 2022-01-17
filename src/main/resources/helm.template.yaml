@@ -1,0 +1,22 @@
+helm:
+  name: 'Deployment: helm'
+  runs-on: [ %RUNS_ON% ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'AKS: Set context'
+      uses: azure/aks-set-context@v1
+      with:
+        creds: ${{ env.ACR_PASSWORD }}
+        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+        resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+    - name: 'Helm: Setup'
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.5.4
+    - name: 'Helm: Deploy'
+      env:
+        CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
+      run: |
+        echo "Using image tag ($ACR_URI/$APP_NAME:$VERSION)."
+        helm upgrade $APP_NAME helm/$APP_NAME --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout $DEPLOY_TIMEOUT --set image.tag=$VERSION

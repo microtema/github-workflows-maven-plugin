@@ -5,48 +5,38 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class PerformanceTemplateStageService implements TemplateStageService {
+
+    @Override
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master")) {
+            return false;
+        }
+
+        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
+            return false;
+        }
+
+        return PipelineGeneratorUtil.existsPerformanceTests(mojo.getProject());
+    }
 
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.existsPerformanceTests(mojo.getProject())) {
+        if (!access(mojo, metaData)) {
             return null;
         }
 
-        String template = getStagesTemplate(mojo);
+        String template = PipelineGeneratorUtil.getTemplate(getName());
 
-        return PipelineGeneratorUtil.trimEmptyLines(template);
-    }
+        String stageName = metaData.getStageName();
 
-    @Override
-    public String getStagesTemplate(PipelineGeneratorMojo mojo) {
+        String needs = "readiness";
 
-        Map<String, String> stages = mojo.getStages();
-
-        return stages.entrySet().stream()
-                .filter(it -> !StringUtils.equalsIgnoreCase(it.getKey(), "prod"))
-                .map(it -> {
-
-                    String name = it.getKey();
-                    List<String> branches = Arrays.asList(StringUtils.split(it.getValue(), ","));
-
-                    return getTemplate(name, branches);
-                }).collect(Collectors.joining("\n"));
-    }
-
-    @Override
-    public String getTemplate(String env, List<String> branches) {
-
-        return PipelineGeneratorUtil.getTemplate(getName())
-                .replace("%STAGE_DISPLAY_NAME%", "Load and Performance:" + env.toUpperCase())
-                .replace("%PROFILE_NAME%", "performance-" + env.toLowerCase())
-                .replace("%STAGE_NAME%", env.toLowerCase())
-                .replace("%REFS%", "[ " + String.join(", ", branches) + " ]");
+        return template
+                .replace("%PROFILE_NAME%", stageName.toLowerCase())
+                .replace("%NEEDS%", needs)
+                .replace("%STAGE_NAME%", stageName.toLowerCase());
     }
 }

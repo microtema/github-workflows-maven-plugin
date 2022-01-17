@@ -131,6 +131,7 @@
                         <configuration>
                             <variables>
                                 <DOCKER_REGISTRY>docker.io</DOCKER_REGISTRY>
+                                <STAGE_NAME>NAME_$STAGE_NAME</STAGE_NAME>
                             </variables>
                             <stages>
                                 <feature>feature/*</feature>

@@ -68,6 +68,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.githubWorkflowsDir = "./target/.github/workflows";
 
         sut.variables.put("DOCKER_REGISTRY", "docker.registry.local");
+        sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
 
         sut.serviceUrl = "http://$STAGE.$CLUSTER.local/supplier/git/info";
 
@@ -94,7 +95,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [local]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [LOCAL]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -106,17 +107,52 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  ENV_STAGE_NAME: \"ENV_LOCAL\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
+                "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
+                "  STAGE_NAME: \"local\"\n" +
                 "\n" +
                 "jobs:\n" +
+                "  versioning:\n" +
+                "    name: Versioning\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=${{ env.VERSION }} $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact\n" +
+                "          cp pom.xml artifact/pom.xml\n" +
+                "          echo ${{ env.VERSION }} > artifact/version\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
+                "          path: artifact/pom.xml\n" +
+                "      - name: 'Artifact: upload'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: version-artifact\n" +
+                "          path: artifact/version\n" +
+                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
+                "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -227,7 +263,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: true\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -236,7 +272,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
-                "          mv target artifact/target\n" +
+                "          cp target/*.jar artifact/target/\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
@@ -507,10 +543,13 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
+                "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
+                "  STAGE_NAME: \"stage\"\n" +
                 "\n" +
                 "jobs:\n" +
                 "  versioning:\n" +

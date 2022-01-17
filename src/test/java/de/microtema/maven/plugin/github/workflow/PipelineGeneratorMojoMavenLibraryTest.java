@@ -64,7 +64,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [local]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [LOCAL]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -96,21 +96,15 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Shell: sed pom.xml'\n" +
-                "        id: pom\n" +
-                "        run: |\n" +
-                "          export POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_CLI_OPTS | tail -n 1)\n" +
-                "          export NEW_VERSION=${POM_VERSION/-SNAPSHOT/-SNAPSHOT}\n" +
-                "          echo ::set-output name=VERSION::$NEW_VERSION\n" +
                 "      - name: 'Maven: versions:set'\n" +
                 "        run: |\n" +
                 "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
-                "          mvn versions:set -DnewVersion=${{ steps.pom.outputs.VERSION }} $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=${{ env.VERSION }} $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact\n" +
                 "          cp pom.xml artifact/pom.xml\n" +
-                "          echo ${{ steps.pom.outputs.VERSION }} > artifact/version\n" +
+                "          echo ${{ env.VERSION }} > artifact/version\n" +
                 "      - name: 'Artifact: upload'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +

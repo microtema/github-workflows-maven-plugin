@@ -44,6 +44,11 @@ public class PipelineGeneratorUtil {
         return new File(getRootPath(project), "Dockerfile").exists();
     }
 
+    public static boolean existsHelmFile(MavenProject project) {
+
+        return new File(getRootPath(project), "helm").exists();
+    }
+
     public static boolean existsMavenSettings(MavenProject project) {
 
         return new File(getRootPath(project), "settings.xml").exists();

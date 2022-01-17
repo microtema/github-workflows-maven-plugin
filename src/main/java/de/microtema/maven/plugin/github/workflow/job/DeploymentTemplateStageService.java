@@ -7,10 +7,24 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DeploymentTemplateStageService implements TemplateStageService {
 
+    private final HelmTemplateStageService helmTemplateStageService;
+
+    public DeploymentTemplateStageService(HelmTemplateStageService helmTemplateStageService) {
+        this.helmTemplateStageService = helmTemplateStageService;
+    }
+
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject()) && !StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature");
+        if (helmTemplateStageService.access(mojo, metaData)) {
+            return false;
+        }
+
+        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
+            return false;
+        }
+
+        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject());
     }
 
     @Override

@@ -9,14 +9,26 @@ public class PromoteTemplateStageService implements TemplateStageService {
 
     private final TagTemplateStageService tagTemplateStageService;
 
-    public PromoteTemplateStageService(TagTemplateStageService tagTemplateStageService) {
+    private final HelmTemplateStageService helmTemplateStageService;
+
+    public PromoteTemplateStageService(TagTemplateStageService tagTemplateStageService,
+                                       HelmTemplateStageService helmTemplateStageService) {
         this.tagTemplateStageService = tagTemplateStageService;
+        this.helmTemplateStageService = helmTemplateStageService;
     }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject()) && !StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature");
+        if (helmTemplateStageService.access(mojo, metaData)) {
+            return false;
+        }
+
+        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
+            return false;
+        }
+
+        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject());
     }
 
     @Override

@@ -1,7 +1,7 @@
 promote:
   name: Promote
   runs-on: [ %RUNS_ON% ]
-  needs: [ tag ]
+  needs: [ %NEEDS% ]
   steps:
     - name: 'Shell: promote'
       run: echo 'TBD'

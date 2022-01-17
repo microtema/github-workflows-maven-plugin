@@ -12,7 +12,7 @@ deployment:
     - name: 'Shell: deployment'
       uses: actions/github-script@v4
       with:
-        github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           await github.actions.createWorkflowDispatch({
               owner: context.repo.owner,
@@ -20,6 +20,6 @@ deployment:
               workflow_id: '%BRANCH_NAME%-workflow.yml',
               ref: context.ref,
               inputs: {
-                DOCKER_IMAGE_TAG: "$DOCKER_IMAGE_TAG"
+                VERSION: "$VERSION"
               }
           });
