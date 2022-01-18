@@ -70,8 +70,6 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.variables.put("DOCKER_REGISTRY", "docker.registry.local");
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
 
-        sut.serviceUrl = "http://$STAGE.$CLUSTER.local/supplier/git/info";
-
         sut.runsOn = "self-hosted,azure-runners";
     }
 

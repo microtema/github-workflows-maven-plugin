@@ -2,6 +2,7 @@ deployment:
   name: 'Deployment'
   runs-on: [ %RUNS_ON% ]
   needs: [ package ]
+  environment: %STAGE_NAME%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
@@ -19,5 +20,6 @@ deployment:
       env:
         CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
       run: |
-        echo "Using image $ACR_URI/$APP_NAME:$VERSION"
-        helm upgrade $APP_NAME helm --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout $DEPLOY_TIMEOUT --set image.tag=$VERSION
+        export DEPLOYMENT_TIME=$(date '+%Y%m%d-%H%M%S')
+        echo "Deploy image $DOCKER_REGISTRY/$APP_NAME:$VERSION at $DEPLOYMENT_TIME"
+        helm upgrade $APP_NAME helm --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout 300s --set image.tag=$VERSION --set deploymentTime=$DEPLOYMENT_TIME

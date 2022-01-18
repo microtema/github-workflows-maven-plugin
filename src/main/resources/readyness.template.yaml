@@ -5,4 +5,4 @@ readyness:
   timeout-minutes: 15
   steps:
     - name: 'Shell: readiness'
-      run: while [[ "$(curl -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
+      run: while [[ "$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done

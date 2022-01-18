@@ -39,12 +39,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "stages")
     LinkedHashMap<String, String> stages = new LinkedHashMap<>();
 
-    @Parameter(property = "clusters")
-    LinkedHashMap<String, String> clusters = new LinkedHashMap<>();
-
-    @Parameter(property = "service-url")
-    String serviceUrl;
-
     @Parameter(property = "runs-on")
     String runsOn;
 
@@ -64,21 +58,22 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return;
         }
 
-        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+        injectTemplateStageServices();
 
-        File rootDir = new File(rootPath, githubWorkflowsDir);
-        if (!rootDir.exists()) {
-            rootDir.mkdirs();
-        }
+        File rootDir = getOrCreateWorkflowsDir();
 
         List<MetaData> workflows = getWorkflowFiles();
 
         cleanupWorkflows(rootDir, workflows);
 
-        defaultVariables.put("GITHUB_TOKEN", "${{ secrets.GITHUB_TOKEN }}");
-        defaultVariables.put("APP_NAME", project.getArtifactId());
-        defaultVariables.put("VERSION", project.getVersion());
+        applyDefaultVariables();
 
+        for (MetaData metaData : workflows) {
+            executeImpl(appName, metaData);
+        }
+    }
+
+    void injectTemplateStageServices() {
         templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
@@ -96,7 +91,12 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(ReadynessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(RegressionTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PerformanceTemplateStageService.class));
+    }
 
+    void applyDefaultVariables() {
+
+        defaultVariables.put("APP_NAME", project.getArtifactId());
+        defaultVariables.put("GITHUB_TOKEN", "${{ secrets.GITHUB_TOKEN }}");
 
         if (PipelineGeneratorUtil.hasSonarProperties(project)) {
 
@@ -119,15 +119,25 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
-
-        defaultVariables.forEach((key, value) -> variables.putIfAbsent(key, value));
-
-        for (MetaData metaData : workflows) {
-            executeImpl(appName, metaData);
-        }
     }
 
-    private void cleanupWorkflows(File rootDir, List<MetaData> workflows) {
+    File getOrCreateWorkflowsDir() {
+
+        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+
+        File rootDir = new File(rootPath, githubWorkflowsDir);
+        if (!rootDir.exists()) {
+
+            boolean mkdirs = rootDir.mkdirs();
+
+            if (mkdirs) {
+                logMessage("Create .github directories");
+            }
+        }
+        return rootDir;
+    }
+
+    void cleanupWorkflows(File rootDir, List<MetaData> workflows) {
 
         File[] files = rootDir.listFiles((dir, name) -> StringUtils.contains(name, workflowFilePostFixName));
 
@@ -142,11 +152,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         Stream.of(files).filter(it -> !fileNames.contains(it.getName())).forEach(this::removeWorkflow);
     }
 
-    private void removeWorkflow(File file) {
+    void removeWorkflow(File file) {
 
-        file.delete();
+        boolean delete = file.delete();
 
-        logMessage("Remove " + file.getName() + " since it is not required anymore!");
+        if (delete) {
+            logMessage("Remove " + file.getName() + " since it is not required anymore!");
+        }
     }
 
     List<MetaData> getWorkflowFiles() {
@@ -200,23 +212,27 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 break;
         }
 
-        variables.put("VERSION", version);
+        LinkedHashMap<String, String> branchVariables = new LinkedHashMap<>(variables);
+
+        defaultVariables.forEach(branchVariables::putIfAbsent);
+
+        branchVariables.put("VERSION", version);
 
         String stageName = metaData.getStageName();
 
-        variables.put("STAGE_NAME", stageName);
-        variables.entrySet().forEach(it -> it.setValue(it.getValue()
+        branchVariables.put("STAGE_NAME", stageName);
+        branchVariables.entrySet().forEach(it -> it.setValue(it.getValue()
                 .replace("$STAGE_NAME", stageName.toUpperCase())
                 .replace("$stage_name", stageName.toLowerCase())));
 
-        variables.entrySet().stream().filter(it -> StringUtils.startsWith(it.getValue(), "secrets.")).forEach(it -> it.setValue("${{ " + it.getValue() + " }}"));
+        branchVariables.entrySet().stream().filter(it -> StringUtils.startsWith(it.getValue(), "secrets.")).forEach(it -> it.setValue("${{ " + it.getValue() + " }}"));
 
         String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 
         pipeline = pipeline
                 .replace("%PIPELINE_NAME%", appName + " [" + stageName.toUpperCase() + "]")
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
-                .replace("  %ENV%", getVariablesTemplate())
+                .replace("  %ENV%", getVariablesTemplate(branchVariables))
                 .replace("  %JOBS%", getStagesTemplate(metaData));
 
         File githubWorkflow = new File(dir, metaData.getBranchName() + workflowFilePostFixName);
@@ -243,13 +259,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     }
 
 
-    String getVariablesTemplate() {
+    String getVariablesTemplate(LinkedHashMap<String, String> branchVariables) {
 
-        variables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
+        branchVariables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
 
         String template = null;
         try {
-            template = objectMapper.writeValueAsString(Collections.singletonMap("env", variables));
+            template = objectMapper.writeValueAsString(Collections.singletonMap("env", branchVariables));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -287,16 +303,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public Map<String, String> getStages() {
 
         return stages;
-    }
-
-    public Map<String, String> getClusters() {
-
-        return clusters;
-    }
-
-    public String getServiceUrl() {
-
-        return serviceUrl;
     }
 
     public MavenProject getProject() {

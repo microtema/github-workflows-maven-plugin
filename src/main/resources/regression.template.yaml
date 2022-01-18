@@ -1,7 +1,7 @@
-regression-test-%PROFILE_NAME%:
-  name: System Test [%PROFILE_NAME%]
+regression-test:
+  name: System Test [%TEST_NAME%]
   runs-on: [ %RUNS_ON% ]
-  needs: [ readiness ]
+  needs: [ readyness ]
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
@@ -10,4 +10,4 @@ regression-test-%PROFILE_NAME%:
       with:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Maven: system test'
-      run: mvn integration-test -P %PROFILE_NAME% -DstageName=%STAGE_NAME% $MAVEN_CLI_OPTS
+      run: mvn integration-test -P s2e -DtestType=%test_name% -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS

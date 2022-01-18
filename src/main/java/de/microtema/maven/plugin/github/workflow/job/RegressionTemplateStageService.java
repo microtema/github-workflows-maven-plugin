@@ -36,13 +36,22 @@ public class RegressionTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return regressionTestTypes.stream().map(f -> getTemplate(f, metaData.getStageName())).collect(Collectors.joining("\n"));
+        return regressionTestTypes.stream().map(f -> getTemplate(f, metaData.getStageName(), regressionTestTypes.size() > 1)).collect(Collectors.joining("\n"));
     }
 
-    private String getTemplate(String testType, String env) {
+    private String getTemplate(String testType, String env, boolean multiple) {
 
-        return PipelineGeneratorUtil.getTemplate(getName())
-                .replace("%PROFILE_NAME%", testType.toLowerCase())
+        String template = PipelineGeneratorUtil.getTemplate(getName());
+
+        if (multiple) {
+            template = template.replace("%TEST_NAME%", testType.toUpperCase());
+        } else {
+            template = template.replace(" [%TEST_NAME%]", StringUtils.EMPTY);
+        }
+
+        return template
+                .replace("%PROFILE_NAME%", testType.toUpperCase())
+                .replace("%test_name%", testType.toLowerCase())
                 .replace("%STAGE_NAME%", env.toLowerCase());
     }
 }

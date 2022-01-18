@@ -49,7 +49,6 @@ public class PerformanceTemplateStageService implements TemplateStageService {
                 .collect(Collectors.joining(", "));
 
         return template
-                .replace("%PROFILE_NAME%", stageName.toLowerCase())
                 .replace("%NEEDS%", needs)
                 .replace("%STAGE_NAME%", stageName.toLowerCase());
     }
