@@ -26,15 +26,14 @@
         <sonar.organization>mtema-bitbucket</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.language>java</sonar.language>
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
         <commons.lang3.version>3.4</commons.lang3.version>
         <validation.api.version>1.1.0.Final</validation.api.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <commons.io.version>2.4</commons.io.version>
-        <commons.utils.version>${project.version}</commons.utils.version>
-        <powermock.version>1.7.1</powermock.version>
+
         <!-- Test -->
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
         <mockito.junit.jupiter.version>2.23.4</mockito.junit.jupiter.version>
@@ -193,7 +192,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin}</version>
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
@@ -333,6 +331,20 @@
     </reporting>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -348,7 +360,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin}</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
@@ -371,7 +382,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin}</version>
                 <configuration>
                     <output>file</output>
                     <append>true</append>
@@ -437,7 +447,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin}</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
