@@ -151,14 +151,18 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: target-artifact
-      - name: 'Maven: sonar'
+      - name: 'Shell: surefire-reports'
         run: |
           cp -r target/surefire-reports/test/* target/surefire-reports/ | true
           cp -r target/surefire-reports/it/* target/surefire-reports/ | true
           tree -d
+          ls target/surefire-reports
+      - name: 'Maven: verify'
+        run: |
           mvn verify -DskipTests=true $MAVEN_CLI_OPTS
-          tree -d
-          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
+          ls target/surefire-reports
+      - name: 'Maven: sonar'
+        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
   build:
     name: Build
