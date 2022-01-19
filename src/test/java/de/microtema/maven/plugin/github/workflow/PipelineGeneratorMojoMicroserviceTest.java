@@ -249,12 +249,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Maven: verify'\n" +
+                "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
-                "        run: |\n" +
-                "          ls .\n" +
-                "          tree -d\n" +
-                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
+                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
@@ -461,12 +459,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Maven: verify'\n" +
+                "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
-                "        run: |\n" +
-                "          ls .\n" +
-                "          tree -d\n" +
-                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
+                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
@@ -753,12 +749,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Maven: verify'\n" +
+                "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
-                "        run: |\n" +
-                "          ls .\n" +
-                "          tree -d\n" +
-                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
+                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
@@ -1045,12 +1039,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Maven: verify'\n" +
+                "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
-                "        run: |\n" +
-                "          ls .\n" +
-                "          tree -d\n" +
-                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
-                "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
+                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +

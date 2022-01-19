@@ -143,7 +143,7 @@
                                 <STAGE_NAME>NAME_$STAGE_NAME</STAGE_NAME>
                             </variables>
                             <stages>
-                                <none>feature/*</none>
+                                <none>feature/*,bugfix/*</none>
                                 <develop>develop</develop>
                                 <release>release/*</release>
                                 <master>master</master>

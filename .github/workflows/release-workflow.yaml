@@ -151,12 +151,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: target-artifact
+      - name: 'Maven: verify'
+        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS
       - name: 'Maven: sonar'
-        run: |
-          ls .
-          tree -d
-          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS
-          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
+        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
   build:
     name: Build

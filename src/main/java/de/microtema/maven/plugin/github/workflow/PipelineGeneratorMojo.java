@@ -69,7 +69,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         applyDefaultVariables();
 
         for (MetaData metaData : workflows) {
-            executeImpl(appName, metaData);
+            executeImpl(appName, metaData, workflows);
         }
     }
 
@@ -152,6 +152,21 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         Stream.of(files).filter(it -> !fileNames.contains(it.getName())).forEach(this::removeWorkflow);
     }
 
+    String getWorkflowFileName(MetaData metaData, List<MetaData> workflows) {
+
+        String branchName = metaData.getBranchName();
+
+        boolean duplicate = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchName(), branchName)).count() > 1;
+
+        String workflowName = branchName + workflowFilePostFixName;
+
+        if (duplicate) {
+            workflowName = branchName + "-" + metaData.getStageName() + workflowFilePostFixName;
+        }
+
+        return workflowName;
+    }
+
     void removeWorkflow(File file) {
 
         boolean delete = file.delete();
@@ -187,7 +202,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return workflows;
     }
 
-    void executeImpl(String appName, MetaData metaData) {
+    void executeImpl(String appName, MetaData metaData, List<MetaData> workflows) {
 
         String rootPath = PipelineGeneratorUtil.getRootPath(project);
 
@@ -235,9 +250,11 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 .replace("  %ENV%", getVariablesTemplate(branchVariables))
                 .replace("  %JOBS%", getStagesTemplate(metaData));
 
-        File githubWorkflow = new File(dir, metaData.getBranchName() + workflowFilePostFixName);
+        String workflowFileName = getWorkflowFileName(metaData, workflows);
 
-        logMessage("Generate Github Workflows Pipeline for " + appName + " -> " + githubWorkflow.getName());
+        File githubWorkflow = new File(dir, workflowFileName);
+
+        logMessage("Generate Github Workflows Pipeline for " + appName + " -> " + workflowFileName);
 
         if (PipelineGeneratorUtil.hasMavenWrapper(project)) {
             pipeline = pipeline.replaceAll("mvn ", "./mvnw ");
