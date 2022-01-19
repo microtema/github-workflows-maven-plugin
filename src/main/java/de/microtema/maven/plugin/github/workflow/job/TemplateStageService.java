@@ -12,9 +12,14 @@ import java.util.stream.Collectors;
 
 public interface TemplateStageService {
 
+    String regex = "([a-z0-9])([A-Z])";
+    String replacement = "$1-$2";
+
     default String getName() {
 
-        return getClass().getSimpleName().replace("TemplateStageService", "").toLowerCase();
+        return getClass().getSimpleName()
+                .replace("TemplateStageService", StringUtils.EMPTY)
+                .replaceAll(regex, replacement).toLowerCase();
     }
 
     default String getJobName() {

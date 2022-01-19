@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PerformanceTemplateStageService implements TemplateStageService {
+public class PerformanceTestTemplateStageService implements TemplateStageService {
 
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
 
-    public PerformanceTemplateStageService(RegressionTemplateStageService regressionTemplateStageService,
-                                           ReadynessTemplateStageService readynessTemplateStageService) {
+    public PerformanceTestTemplateStageService(SystemTestTemplateStageService regressionTemplateStageService,
+                                               ReadynessTemplateStageService readynessTemplateStageService) {
         this.templateStageServices.add(regressionTemplateStageService);
         this.templateStageServices.add(readynessTemplateStageService);
     }

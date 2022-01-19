@@ -160,7 +160,7 @@ public class PipelineGeneratorUtil {
 
             File rootDir = new File(new File(getRootPath(project), it), "src/" + type + "/java");
 
-            return findFile(rootDir.toPath(), "IT.java");
+            return findFile(rootDir.toPath(), "IT.java", "ST.java");
         });
     }
 
@@ -176,17 +176,19 @@ public class PipelineGeneratorUtil {
 
         return Stream.of(files)
                 .filter(it -> it.isDirectory() && !defaultFolders.contains(it.getName().toLowerCase()))
-                .map(File::getName).sorted().collect(Collectors.toList());
+                .map(File::getName)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
-    static boolean findFile(Path targetDir, String fileName) {
+    static boolean findFile(Path targetDir, String... fileNames) {
         try {
             return Files.list(targetDir).anyMatch((p) -> {
                 if (Files.isRegularFile(p)) {
                     String file = p.getFileName().toString();
-                    return file.contains(fileName);
+                    return Stream.of(fileNames).anyMatch(file::endsWith);
                 } else {
-                    return findFile(p, fileName);
+                    return findFile(p, fileNames);
                 }
             });
         } catch (IOException e) {

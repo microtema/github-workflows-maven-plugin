@@ -89,8 +89,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(HelmTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(ReadynessTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(RegressionTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(PerformanceTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(PerformanceTestTemplateStageService.class));
     }
 
     void applyDefaultVariables() {

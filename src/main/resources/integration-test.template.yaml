@@ -15,4 +15,14 @@ it-test:
       with:
         name: pom-artifact
     - name: 'Maven: integration-test'
-      run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS
+      run: mvn integration-test -P it $MAVEN_CLI_OPTS
+    - name: 'Artifact: prepare'
+      run: |
+        mkdir -p artifact/target/surefire-reports/it
+        cp -r target/surefire-reports/* artifact/target/surefire-reports/it/
+        cp -r target/jacoco.exec artifact/target/surefire-reports/it/
+    - name: 'Test result'
+      uses: actions/upload-artifact@v2
+      with:
+        name: target-artifact
+        path: artifact/target

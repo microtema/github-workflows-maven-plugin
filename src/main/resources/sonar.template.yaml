@@ -15,5 +15,5 @@ quality-gate:
         name: target-artifact
     - name: 'Maven: sonar'
       run: |
-        mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
+        mvn verify -DskipTests=true $MAVEN_CLI_OPTS
         mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS

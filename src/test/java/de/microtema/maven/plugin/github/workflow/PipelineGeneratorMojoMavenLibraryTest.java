@@ -3,6 +3,7 @@ package de.microtema.maven.plugin.github.workflow;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+@Disabled
 @ExtendWith(MockitoExtension.class)
 class PipelineGeneratorMojoMavenLibraryTest {
 
@@ -163,9 +165,9 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
-                "          mkdir -p artifact/target\n" +
-                "          cp -r target/surefire-reports artifact/target\n" +
-                "          cp -r target/jacoco.exec artifact/target\n" +
+                "          mkdir -p artifact/target/surefire-reports/test\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/test/\n" +
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
@@ -189,7 +191,17 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
-                "        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn integration-test -P it $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target/surefire-reports/it\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/it/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/it/\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact/target\n" +
                 "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
@@ -208,7 +220,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS\n" +
+                "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +

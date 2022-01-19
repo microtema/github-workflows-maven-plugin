@@ -18,9 +18,9 @@ unit-test:
       run: mvn test $MAVEN_CLI_OPTS
     - name: 'Artifact: prepare'
       run: |
-        mkdir -p artifact/target
-        cp -r target/surefire-reports artifact/target
-        cp -r target/jacoco.exec artifact/target
+        mkdir -p artifact/target/surefire-reports/test
+        cp -r target/surefire-reports/* artifact/target/surefire-reports/test/
+        cp -r target/jacoco.exec artifact/target/surefire-reports/test/
     - name: 'Test result'
       uses: actions/upload-artifact@v2
       with:

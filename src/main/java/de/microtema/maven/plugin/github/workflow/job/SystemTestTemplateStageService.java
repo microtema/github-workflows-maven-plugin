@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RegressionTemplateStageService implements TemplateStageService {
+public class SystemTestTemplateStageService implements TemplateStageService {
 
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {

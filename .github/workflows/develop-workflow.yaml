@@ -11,13 +11,13 @@ on:
 env:
   DOCKER_REGISTRY: "docker.io"
   STAGE_NAME: "develop"
-  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   APP_NAME: "github-workflows-maven-plugin"
-  VERSION: "2.0.1-SNAPSHOT"
+  GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
   JAVA_VERSION: "17"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
     \ -DdeployAtEnd=true"
+  VERSION: "2.0.1-SNAPSHOT"
 
 jobs:
   versioning:
@@ -98,9 +98,9 @@ jobs:
         run: mvn test $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
-          mkdir -p artifact/target
-          cp -r target/surefire-reports artifact/target
-          cp -r target/jacoco.exec artifact/target
+          mkdir -p artifact/target/surefire-reports/test
+          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/
+          cp -r target/jacoco.exec artifact/target/surefire-reports/test/
       - name: 'Test result'
         uses: actions/upload-artifact@v2
         with:
@@ -124,7 +124,17 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: integration-test'
-        run: mvn integration-test -Dsurefire.skip=true $MAVEN_CLI_OPTS
+        run: mvn integration-test -P it $MAVEN_CLI_OPTS
+      - name: 'Artifact: prepare'
+        run: |
+          mkdir -p artifact/target/surefire-reports/it
+          cp -r target/surefire-reports/* artifact/target/surefire-reports/it/
+          cp -r target/jacoco.exec artifact/target/surefire-reports/it/
+      - name: 'Test result'
+        uses: actions/upload-artifact@v2
+        with:
+          name: target-artifact
+          path: artifact/target
 
   quality-gate:
     name: Quality Gate
@@ -143,7 +153,8 @@ jobs:
           name: target-artifact
       - name: 'Maven: sonar'
         run: |
-          mvn verify -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
+          ls target/surefire-reports
+          mvn verify -DskipTests=true $MAVEN_CLI_OPTS
           mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
   build:
