@@ -98,14 +98,14 @@ jobs:
         run: mvn test $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
-          mkdir -p artifact/target/surefire-reports/test
-          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/
-          cp -r target/jacoco.exec artifact/target/surefire-reports/test/
+          mkdir -p artifact/target/surefire-reports
+          cp -r target/surefire-reports/* artifact/target/surefire-reports/
+          cp -r target/jacoco.exec artifact/target/surefire-reports/
       - name: 'Test result'
         uses: actions/upload-artifact@v2
         with:
           name: target-artifact
-          path: artifact/target
+          path: artifact
 
   it-test:
     name: Integration Test
@@ -134,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: target-artifact
-          path: artifact/target
+          path: artifact
 
   quality-gate:
     name: Quality Gate
@@ -153,10 +153,9 @@ jobs:
           name: target-artifact
       - name: 'Maven: sonar'
         run: |
-          cp -r target/surefire-reports/test/* target/surefire-reports/ | true
-          cp -r target/surefire-reports/it/* target/surefire-reports/ | true
-          ls target/surefire-reports
-          mvn verify -DskipTests=true $MAVEN_CLI_OPTS
+          ls .
+          tree -d
+          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS
           mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
   build:
@@ -177,7 +176,7 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: package'
-        run: mvn install -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS
+        run: mvn install -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact/target

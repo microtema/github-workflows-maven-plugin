@@ -196,14 +196,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
-                "          mkdir -p artifact/target/surefire-reports/test\n" +
-                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/\n" +
-                "          cp -r target/jacoco.exec artifact/target/surefire-reports/test/\n" +
+                "          mkdir -p artifact/target/surefire-reports\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/\n" +
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -232,7 +232,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
@@ -251,10 +251,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
-                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
-                "          ls target/surefire-reports\n" +
-                "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "          ls .\n" +
+                "          tree -d\n" +
+                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
@@ -275,7 +274,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -409,14 +408,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
-                "          mkdir -p artifact/target/surefire-reports/test\n" +
-                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/\n" +
-                "          cp -r target/jacoco.exec artifact/target/surefire-reports/test/\n" +
+                "          mkdir -p artifact/target/surefire-reports\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/\n" +
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -445,7 +444,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
@@ -464,10 +463,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
-                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
-                "          ls target/surefire-reports\n" +
-                "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "          ls .\n" +
+                "          tree -d\n" +
+                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
@@ -488,7 +486,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -702,14 +700,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
-                "          mkdir -p artifact/target/surefire-reports/test\n" +
-                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/\n" +
-                "          cp -r target/jacoco.exec artifact/target/surefire-reports/test/\n" +
+                "          mkdir -p artifact/target/surefire-reports\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/\n" +
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -738,7 +736,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
@@ -757,10 +755,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
-                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
-                "          ls target/surefire-reports\n" +
-                "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "          ls .\n" +
+                "          tree -d\n" +
+                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
@@ -781,7 +778,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -995,14 +992,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
-                "          mkdir -p artifact/target/surefire-reports/test\n" +
-                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/test/\n" +
-                "          cp -r target/jacoco.exec artifact/target/surefire-reports/test/\n" +
+                "          mkdir -p artifact/target/surefire-reports\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/\n" +
                 "      - name: 'Test result'\n" +
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
@@ -1031,7 +1028,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
@@ -1050,10 +1047,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
-                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
-                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
-                "          ls target/surefire-reports\n" +
-                "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "          ls .\n" +
+                "          tree -d\n" +
+                "          mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
@@ -1074,7 +1070,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.0 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +

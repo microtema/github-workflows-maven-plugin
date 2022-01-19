@@ -44,7 +44,6 @@
         <maven-surefire-plugin>2.22.2</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
 
-        <failIfNoTests>false</failIfNoTests>
         <code.coverage>0.00</code.coverage>
         <skipTests>false</skipTests>
     </properties>
