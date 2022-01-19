@@ -14,7 +14,7 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <lava.version>17</lava.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source.version>17</maven.compiler.source.version>
         <maven.compiler.target.version>17</maven.compiler.target.version>
@@ -22,12 +22,16 @@
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <maven.javadoc.plugin>2.10.4</maven.javadoc.plugin>
 
-        <sonar.projectKey>mtema_${project.artifactId}</sonar.projectKey>
+        <sonar.projectKey>${project.artifactId}</sonar.projectKey>
+        <sonar.projectVersion>${project.version}</sonar.projectVersion>
         <sonar.organization>mtema-bitbucket</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
 
         <commons.lang3.version>3.4</commons.lang3.version>
         <validation.api.version>1.1.0.Final</validation.api.version>
@@ -38,7 +42,7 @@
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
         <mockito.junit.jupiter.version>2.23.4</mockito.junit.jupiter.version>
         <maven-surefire-plugin>2.22.2</maven-surefire-plugin>
-        <jacoco-maven-plugin>0.8.4</jacoco-maven-plugin>
+        <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
 
         <failIfNoTests>false</failIfNoTests>
         <code.coverage>0.10</code.coverage>
@@ -342,6 +346,11 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco-maven-plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.7.0.1746</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
