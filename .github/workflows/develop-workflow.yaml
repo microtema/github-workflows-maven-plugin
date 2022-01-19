@@ -155,8 +155,9 @@ jobs:
         run: |
           cp -r target/surefire-reports/test/* target/surefire-reports/ | true
           cp -r target/surefire-reports/it/* target/surefire-reports/ | true
-          ls .
+          tree -d
           mvn verify -DskipTests=true $MAVEN_CLI_OPTS
+          tree -d
           mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
   build:
