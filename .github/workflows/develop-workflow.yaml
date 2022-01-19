@@ -105,7 +105,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: target-artifact
-          path: artifact/target
+          path: artifact
 
   it-test:
     name: Integration Test
@@ -134,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: target-artifact
-          path: artifact/target
+          path: artifact
 
   quality-gate:
     name: Quality Gate
@@ -153,7 +153,6 @@ jobs:
           name: target-artifact
       - name: 'Maven: sonar'
         run: |
-          sudo apt-get install tree
           tree -d
           mvn verify -DskipTests=true $MAVEN_CLI_OPTS
           mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
