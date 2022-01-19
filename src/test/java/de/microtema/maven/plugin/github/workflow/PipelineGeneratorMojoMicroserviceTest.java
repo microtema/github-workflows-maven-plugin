@@ -251,6 +251,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
+                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
+                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
+                "          ls target/surefire-reports\n" +
                 "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
@@ -461,6 +464,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
+                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
+                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
+                "          ls target/surefire-reports\n" +
                 "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
@@ -751,6 +757,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
+                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
+                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
+                "          ls target/surefire-reports\n" +
                 "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +
@@ -1041,6 +1050,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: |\n" +
+                "          cp -r target/surefire-reports/test/* target/surefire-reports/ | true\n" +
+                "          cp -r target/surefire-reports/it/* target/surefire-reports/ | true\n" +
+                "          ls target/surefire-reports\n" +
                 "          mvn verify -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "          mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
                 "\n" +

@@ -45,7 +45,7 @@
         <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
 
         <failIfNoTests>false</failIfNoTests>
-        <code.coverage>0.10</code.coverage>
+        <code.coverage>0.00</code.coverage>
         <skipTests>false</skipTests>
     </properties>
 
@@ -144,7 +144,7 @@
                                 <STAGE_NAME>NAME_$STAGE_NAME</STAGE_NAME>
                             </variables>
                             <stages>
-                                <feature>feature/*</feature>
+                                <none>feature/*</none>
                                 <develop>develop</develop>
                                 <release>release/*</release>
                                 <master>master</master>

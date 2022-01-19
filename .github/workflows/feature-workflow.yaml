@@ -1,4 +1,4 @@
-name: GitHub Workflows Maven-Plugin [FEATURE]
+name: GitHub Workflows Maven-Plugin [NONE]
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 env:
   DOCKER_REGISTRY: "docker.io"
-  STAGE_NAME: "feature"
+  STAGE_NAME: "none"
   APP_NAME: "github-workflows-maven-plugin"
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
@@ -153,6 +153,9 @@ jobs:
           name: target-artifact
       - name: 'Maven: sonar'
         run: |
+          cp -r target/surefire-reports/test/* target/surefire-reports/ | true
+          cp -r target/surefire-reports/it/* target/surefire-reports/ | true
+          ls target/surefire-reports
           mvn verify -DskipTests=true $MAVEN_CLI_OPTS
           mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
