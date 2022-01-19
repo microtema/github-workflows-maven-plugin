@@ -153,7 +153,9 @@ jobs:
           name: target-artifact
       - name: 'Maven: sonar'
         run: |
-          tree -d
+          cp -r target/surefire-reports/test/* target/surefire-reports/ | true
+          cp -r target/surefire-reports/it/* target/surefire-reports/ | true
+          ls .
           mvn verify -DskipTests=true $MAVEN_CLI_OPTS
           mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
 
