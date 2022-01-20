@@ -30,6 +30,6 @@ public class HelmTemplateStageService implements TemplateStageService {
 
         String template = PipelineGeneratorUtil.getTemplate(getName());
 
-        return template.replaceFirst("%STAGE_NAME%", metaData.getStageName().toLowerCase());
+        return template.replaceAll("%STAGE_NAME%", metaData.getStageName().toLowerCase());
     }
 }
