@@ -16,29 +16,51 @@ Reducing Boilerplate Code with github workflows maven plugin
 ## How to use
 
 ```
-<plugin>
-    <groupId>de.microtema</groupId>
-    <artifactId>github-workflows-maven-plugin</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
-    <configuration>
-        <variables>
-          <DOCKER_REGISTRY>docker.registry.local</DOCKER_REGISTRY>
-        </variables>
-    </configuration>
-    <executions>
-        <execution>
-            <id>github-workflows</id>
-            <phase>compile</phase>
-            <goals>
-                <goal>generate</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>de.microtema</groupId>
+                        <artifactId>github-workflows-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <configuration>
+                            <variables>
+                                <DOCKER_REGISTRY>docker.io</DOCKER_REGISTRY>
+                                <STAGE_NAME>NAME_$STAGE_NAME</STAGE_NAME>
+                            </variables>
+                            <stages>
+                                <none>feature/*,bugfix/*</none>
+                                <develop>develop</develop>
+                                <release>release/*</release>
+                                <master>master</master>
+                            </stages>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>github-workflows</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 ```
 
-## Output 
-> .github/workflows/master.yml 
+### maven command
+
+```
+mvn validate -P dev
+```
+
+## Output
+
+> .github/workflows/master.yml
 > NOTE: This is an example file.
 
 ```
