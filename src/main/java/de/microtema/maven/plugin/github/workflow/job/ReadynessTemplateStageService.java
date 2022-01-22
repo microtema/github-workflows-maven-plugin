@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ReadynessTemplateStageService implements TemplateStageService {
 
@@ -22,7 +23,15 @@ public class ReadynessTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject()) && !StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature");
+        if (!mojo.hasVariable("SERVICE_URL")) {
+            return false;
+        }
+
+        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+            return false;
+        }
+
+        return Stream.of("feature", "bugfix").noneMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it));
     }
 
     @Override

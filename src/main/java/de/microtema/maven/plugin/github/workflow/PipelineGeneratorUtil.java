@@ -238,4 +238,13 @@ public class PipelineGeneratorUtil {
                 .map(String::valueOf)
                 .findFirst().orElse(defaultValue);
     }
+
+    public static boolean isDeploymentRepo(MavenProject project) {
+
+        if (hasSourceCode(project)) {
+            return false;
+        }
+
+        return existsHelmFile(project);
+    }
 }

@@ -13,7 +13,17 @@ public class CompileTemplateStageService implements TemplateStageService {
     }
 
     @Override
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        return versioningTemplateStageService.access(mojo, metaData);
+    }
+
+    @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        if (!access(mojo, metaData)) {
+            return null;
+        }
 
         String template = PipelineGeneratorUtil.getTemplate(getName());
 

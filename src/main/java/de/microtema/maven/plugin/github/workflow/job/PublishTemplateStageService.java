@@ -8,14 +8,18 @@ public class PublishTemplateStageService implements TemplateStageService {
 
     private final TagTemplateStageService tagTemplateStageService;
 
-    public PublishTemplateStageService(TagTemplateStageService tagTemplateStageService) {
+    private final HelmTemplateStageService helmTemplateStageService;
+
+    public PublishTemplateStageService(TagTemplateStageService tagTemplateStageService,
+                                       HelmTemplateStageService helmTemplateStageService) {
         this.tagTemplateStageService = tagTemplateStageService;
+        this.helmTemplateStageService = helmTemplateStageService;
     }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return !PipelineGeneratorUtil.existsDockerfile(mojo.getProject());
+        return !PipelineGeneratorUtil.existsDockerfile(mojo.getProject()) && !helmTemplateStageService.access(mojo, metaData);
     }
 
     @Override

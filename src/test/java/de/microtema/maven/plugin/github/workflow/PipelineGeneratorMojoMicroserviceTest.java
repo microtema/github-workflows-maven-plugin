@@ -70,6 +70,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.githubWorkflowsDir = "./target/.github/workflows";
 
         sut.variables.put("DOCKER_REGISTRY", "docker.registry.local");
+        sut.variables.put("SERVICE_URL", "http://localhost:8080");
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
 
         sut.runsOn = "self-hosted,azure-runners";
@@ -107,6 +108,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SERVICE_URL: \"http://localhost:8080\"\n" +
                 "  ENV_STAGE_NAME: \"ENV_LOCAL\"\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -317,6 +319,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SERVICE_URL: \"http://localhost:8080\"\n" +
                 "  ENV_STAGE_NAME: \"ENV_DEV\"\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -509,6 +512,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
@@ -607,6 +614,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SERVICE_URL: \"http://localhost:8080\"\n" +
                 "  ENV_STAGE_NAME: \"ENV_STAGE\"\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -799,6 +807,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
@@ -897,6 +909,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
+                "  SERVICE_URL: \"http://localhost:8080\"\n" +
                 "  ENV_STAGE_NAME: \"ENV_PROD\"\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -1089,6 +1102,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Artifact: download'\n" +
+                "        uses: actions/download-artifact@v2\n" +
+                "        with:\n" +
+                "          name: pom-artifact\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +

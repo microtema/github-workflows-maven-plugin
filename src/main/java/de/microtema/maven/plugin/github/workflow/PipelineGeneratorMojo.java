@@ -96,6 +96,11 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     void applyDefaultVariables() {
 
         defaultVariables.put("APP_NAME", project.getArtifactId());
+
+        if (PipelineGeneratorUtil.isDeploymentRepo(project)) {
+            return;
+        }
+
         defaultVariables.put("GITHUB_TOKEN", "${{ secrets.GITHUB_TOKEN }}");
 
         if (PipelineGeneratorUtil.hasSonarProperties(project)) {
@@ -145,11 +150,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return;
         }
 
-        logMessage("Found (" + files.length + ") workflow(s) in -> " + rootDir.getPath());
-
-        Set<String> fileNames = workflows.stream().map(it -> it.getBranchName() + workflowFilePostFixName).collect(Collectors.toSet());
-
-        Stream.of(files).filter(it -> !fileNames.contains(it.getName())).forEach(this::removeWorkflow);
+        Stream.of(files).forEach(it -> logMessage("Delete " + it.getName() + " workflow -> " + it.delete()));
     }
 
     String getWorkflowFileName(MetaData metaData, List<MetaData> workflows) {
@@ -165,15 +166,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
 
         return workflowName;
-    }
-
-    void removeWorkflow(File file) {
-
-        boolean delete = file.delete();
-
-        if (delete) {
-            logMessage("Remove " + file.getName() + " since it is not required anymore!");
-        }
     }
 
     List<MetaData> getWorkflowFiles() {
@@ -325,5 +317,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public MavenProject getProject() {
 
         return project;
+    }
+
+    public boolean hasVariable(String variableName) {
+
+        return variables.containsKey(variableName);
     }
 }

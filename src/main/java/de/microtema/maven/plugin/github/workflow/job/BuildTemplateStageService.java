@@ -9,20 +9,34 @@ import java.util.List;
 
 public class BuildTemplateStageService implements TemplateStageService {
 
+    private final VersioningTemplateStageService versioningTemplateStageService;
     private final SonarTemplateStageService sonarTemplateStageService;
     private final UnitTestTemplateStageService unitTestTemplateStageService;
     private final IntegrationTestTemplateStageService itTestTemplateStageService;
 
-    public BuildTemplateStageService(SonarTemplateStageService sonarTemplateStageService,
-                                     UnitTestTemplateStageService unitTestTemplateStageService,
-                                     IntegrationTestTemplateStageService itTestTemplateStageService) {
+    public BuildTemplateStageService(
+            VersioningTemplateStageService versioningTemplateStageService,
+            SonarTemplateStageService sonarTemplateStageService,
+            UnitTestTemplateStageService unitTestTemplateStageService,
+            IntegrationTestTemplateStageService itTestTemplateStageService) {
+        this.versioningTemplateStageService = versioningTemplateStageService;
         this.sonarTemplateStageService = sonarTemplateStageService;
         this.unitTestTemplateStageService = unitTestTemplateStageService;
         this.itTestTemplateStageService = itTestTemplateStageService;
     }
 
     @Override
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        return versioningTemplateStageService.access(mojo, metaData);
+    }
+
+    @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        if (!access(mojo, metaData)) {
+            return null;
+        }
 
         String template = PipelineGeneratorUtil.getTemplate(getName());
 

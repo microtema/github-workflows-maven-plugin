@@ -10,4 +10,4 @@ system-test:
       with:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Maven: system test'
-      run: mvn integration-test -P it -DtestType=%test_name% -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS
+      run: mvn integration-test -P %test_name% -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS
