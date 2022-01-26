@@ -19,6 +19,12 @@ public class SecurityTemplateStageService implements TemplateStageService {
     }
 
     @Override
+    public String getJobName() {
+
+        return "security-check";
+    }
+
+    @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         return Stream.of(blackDuckScanTemplateStageService, dependencyCheckTemplateStageService).anyMatch(it -> it.access(mojo, metaData));

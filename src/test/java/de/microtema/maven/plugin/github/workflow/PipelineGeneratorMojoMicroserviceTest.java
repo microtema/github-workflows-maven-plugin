@@ -259,7 +259,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate, security ]\n" +
+                "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -470,7 +470,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate, security ]\n" +
+                "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -779,7 +779,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate, security ]\n" +
+                "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -1088,7 +1088,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate, security ]\n" +
+                "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +

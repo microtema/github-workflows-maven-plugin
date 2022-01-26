@@ -7,6 +7,11 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 public class DependencyCheckTemplateStageService implements TemplateStageService {
 
     @Override
+    public String getJobName() {
+        return "security-check";
+    }
+
+    @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         return PipelineGeneratorUtil.hasSourceCode(mojo.getProject());

@@ -9,6 +9,11 @@ import org.apache.maven.project.MavenProject;
 public class BlackDuckScanTemplateStageService implements TemplateStageService {
 
     @Override
+    public String getJobName() {
+        return "security-check";
+    }
+
+    @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         if (!PipelineGeneratorUtil.hasSourceCode(mojo.getProject())) {
