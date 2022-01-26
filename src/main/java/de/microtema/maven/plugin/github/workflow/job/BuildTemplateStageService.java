@@ -13,16 +13,22 @@ public class BuildTemplateStageService implements TemplateStageService {
     private final SonarTemplateStageService sonarTemplateStageService;
     private final UnitTestTemplateStageService unitTestTemplateStageService;
     private final IntegrationTestTemplateStageService itTestTemplateStageService;
+    private final SecurityTemplateStageService securityTemplateStageService;
+    private final CompileTemplateStageService compileTemplateStageService;
 
     public BuildTemplateStageService(
             VersioningTemplateStageService versioningTemplateStageService,
             SonarTemplateStageService sonarTemplateStageService,
             UnitTestTemplateStageService unitTestTemplateStageService,
-            IntegrationTestTemplateStageService itTestTemplateStageService) {
+            IntegrationTestTemplateStageService itTestTemplateStageService,
+            SecurityTemplateStageService securityTemplateStageService,
+            CompileTemplateStageService compileTemplateStageService) {
         this.versioningTemplateStageService = versioningTemplateStageService;
         this.sonarTemplateStageService = sonarTemplateStageService;
         this.unitTestTemplateStageService = unitTestTemplateStageService;
         this.itTestTemplateStageService = itTestTemplateStageService;
+        this.securityTemplateStageService = securityTemplateStageService;
+        this.compileTemplateStageService = compileTemplateStageService;
     }
 
     @Override
@@ -44,21 +50,25 @@ public class BuildTemplateStageService implements TemplateStageService {
 
         if (sonarTemplateStageService.access(mojo, metaData)) {
 
-            needs.add("quality-gate");
+            needs.add(sonarTemplateStageService.getJobName());
+
+            if (securityTemplateStageService.access(mojo, metaData)) {
+                needs.add(securityTemplateStageService.getJobName());
+            }
         } else {
 
             if (unitTestTemplateStageService.access(mojo, metaData)) {
-                needs.add("unit-test");
+                needs.add(unitTestTemplateStageService.getJobName());
             }
 
             if (itTestTemplateStageService.access(mojo, metaData)) {
-                needs.add("it-test");
+                needs.add(itTestTemplateStageService.getJobName());
             }
         }
 
         if (needs.isEmpty()) {
 
-            needs.add("compile");
+            needs.add(compileTemplateStageService.getJobName());
         }
 
         if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {

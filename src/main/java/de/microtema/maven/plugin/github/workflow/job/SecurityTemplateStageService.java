@@ -3,6 +3,8 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
+import java.util.stream.Stream;
+
 public class SecurityTemplateStageService implements TemplateStageService {
 
     private final BlackDuckScanTemplateStageService blackDuckScanTemplateStageService;
@@ -14,6 +16,12 @@ public class SecurityTemplateStageService implements TemplateStageService {
         this.blackDuckScanTemplateStageService = blackDuckScanTemplateStageService;
 
         this.dependencyCheckTemplateStageService = dependencyCheckTemplateStageService;
+    }
+
+    @Override
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        return Stream.of(blackDuckScanTemplateStageService, dependencyCheckTemplateStageService).anyMatch(it -> it.access(mojo, metaData));
     }
 
     @Override

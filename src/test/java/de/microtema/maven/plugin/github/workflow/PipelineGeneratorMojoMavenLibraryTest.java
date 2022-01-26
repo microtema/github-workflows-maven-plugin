@@ -133,7 +133,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
-                "  security_check:\n" +
+                "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
@@ -228,7 +228,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate ]\n" +
+                "    needs: [ quality-gate, security ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +

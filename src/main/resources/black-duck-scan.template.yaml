@@ -1,4 +1,4 @@
-security_check:
+security-check:
   name: Security Check
   runs-on: [ %RUNS_ON% ]
   needs: [ compile ]

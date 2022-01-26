@@ -164,7 +164,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
-                "  security_check:\n" +
+                "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
@@ -259,7 +259,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate ]\n" +
+                "    needs: [ quality-gate, security ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -375,7 +375,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
-                "  security_check:\n" +
+                "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
@@ -470,7 +470,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate ]\n" +
+                "    needs: [ quality-gate, security ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -579,6 +579,20 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
+                "\n" +
+                "  system-test:\n" +
+                "    name: System Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ readyness ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: system test'\n" +
+                "        run: mvn integration-test -P s2e -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -670,7 +684,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
-                "  security_check:\n" +
+                "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
@@ -765,7 +779,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate ]\n" +
+                "    needs: [ quality-gate, security ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -874,6 +888,20 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
+                "\n" +
+                "  system-test:\n" +
+                "    name: System Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ readyness ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: system test'\n" +
+                "        run: mvn integration-test -P s2e -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 
@@ -965,7 +993,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "\n" +
-                "  security_check:\n" +
+                "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ compile ]\n" +
@@ -1060,7 +1088,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate ]\n" +
+                "    needs: [ quality-gate, security ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -1192,6 +1220,20 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
+                "\n" +
+                "  system-test:\n" +
+                "    name: System Test\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ readyness ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Maven: system test'\n" +
+                "        run: mvn integration-test -P s2e -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 }

@@ -64,7 +64,7 @@ jobs:
       - name: 'Maven: compile'
         run: mvn compile $MAVEN_CLI_OPTS
 
-  security_check:
+  security-check:
     name: Security Check
     runs-on: [ ubuntu-latest ]
     needs: [ compile ]
@@ -159,7 +159,7 @@ jobs:
   build:
     name: Build
     runs-on: [ ubuntu-latest ]
-    needs: [ quality-gate ]
+    needs: [ quality-gate, security ]
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2

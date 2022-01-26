@@ -11,6 +11,11 @@ import java.util.List;
 public class SonarTemplateStageService implements TemplateStageService {
 
     @Override
+    public String getJobName() {
+        return "quality-gate";
+    }
+
+    @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         if (!PipelineGeneratorUtil.hasSourceCode(mojo.getProject())) {
