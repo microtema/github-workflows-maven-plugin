@@ -160,7 +160,7 @@
         <profile>
             <id>it</id>
             <properties>
-                <testType>it</testType>
+                <testType>IT</testType>
             </properties>
             <build>
                 <plugins>
@@ -212,8 +212,7 @@
                                 <configuration>
                                     <skipTests>false</skipTests>
                                     <includes>
-                                        <include>**/*IT.java</include>
-                                        <include>**/*ST.java</include>
+                                        <include>**/*${testType}.java</include>
                                     </includes>
                                 </configuration>
                             </execution>

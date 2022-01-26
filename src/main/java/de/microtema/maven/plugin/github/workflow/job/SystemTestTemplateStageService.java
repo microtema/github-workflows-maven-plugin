@@ -50,8 +50,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
         }
 
         return template
-                .replace("%PROFILE_NAME%", testType.toUpperCase())
-                .replace("%test_name%", testType.toLowerCase())
+                .replace("%TEST_TYPE%", testType.toUpperCase())
                 .replace("%STAGE_NAME%", env.toLowerCase());
     }
 }
