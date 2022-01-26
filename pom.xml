@@ -36,7 +36,7 @@
         <!-- Test -->
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
         <mockito.junit.jupiter.version>2.23.4</mockito.junit.jupiter.version>
-        <maven-surefire-plugin>2.22.2</maven-surefire-plugin>
+        <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
 
         <code.coverage>0.50</code.coverage>
@@ -160,7 +160,6 @@
         <profile>
             <id>it</id>
             <properties>
-                <jacoco-skip>true</jacoco-skip>
                 <testType>it</testType>
             </properties>
             <build>
@@ -213,8 +212,8 @@
                                 <configuration>
                                     <skipTests>false</skipTests>
                                     <includes>
-                                        <include>**/*IT.*</include>
-                                        <include>**/*ST.*</include>
+                                        <include>**/*IT.java</include>
+                                        <include>**/*ST.java</include>
                                     </includes>
                                 </configuration>
                             </execution>

@@ -247,4 +247,9 @@ public class PipelineGeneratorUtil {
 
         return existsHelmFile(project);
     }
+
+    public static boolean isMicroserviceRepo(MavenProject project) {
+
+        return existsHelmFile(project) || existsDockerfile(project);
+    }
 }

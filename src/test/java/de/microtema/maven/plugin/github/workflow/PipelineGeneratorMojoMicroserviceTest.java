@@ -88,7 +88,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
 
-        sut.stages.put("local", "feature/*");
+        sut.stages.put("none", "feature/*");
 
         pipelineFile = new File(sut.githubWorkflowsDir, "feature-workflow.yaml");
 
@@ -109,7 +109,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
                 "  SERVICE_URL: \"http://localhost:8080\"\n" +
-                "  ENV_STAGE_NAME: \"ENV_LOCAL\"\n" +
+                "  ENV_STAGE_NAME: \"ENV_NONE\"\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
@@ -117,7 +117,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
-                "  STAGE_NAME: \"local\"\n" +
+                "  STAGE_NAME: \"none\"\n" +
                 "\n" +
                 "jobs:\n" +
                 "  versioning:\n" +
@@ -307,7 +307,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [DEV]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -616,7 +616,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -925,7 +925,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo [PROD]\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +

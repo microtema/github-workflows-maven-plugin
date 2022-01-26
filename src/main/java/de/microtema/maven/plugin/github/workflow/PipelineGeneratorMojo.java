@@ -273,7 +273,12 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         String stageName = StringUtils.trimToEmpty(metaData.getStageName());
 
-        if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none") || !PipelineGeneratorUtil.isDeploymentRepo(project)) {
+        if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none")) {
+
+            return appName;
+        }
+
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(project)) {
 
             return appName;
         }
