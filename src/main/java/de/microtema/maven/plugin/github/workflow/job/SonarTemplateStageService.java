@@ -3,6 +3,7 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,13 @@ public class SonarTemplateStageService implements TemplateStageService {
 
         if (PipelineGeneratorUtil.existsIntegrationTests(mojo.getProject())) {
             needs.add("it-test");
+        }
+
+        String branchNameSupport = PipelineGeneratorUtil.getProperty(mojo.getProject(), "sonar.branch.name.support", "false");
+
+        if (StringUtils.equalsIgnoreCase(branchNameSupport, "true")) {
+
+            template = template.replace("$SONAR_TOKEN", "$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/}");
         }
 
         template = template.replaceFirst("%NEEDS%", String.join(", ", needs));

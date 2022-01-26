@@ -1,6 +1,5 @@
-package de.microtema.maven.plugin.gitlabci;
+package de.microtema.maven.plugin.github.workflow;
 
-import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PipelineGeneratorUtilIT {
+class PipelineGeneratorIT {
 
     PipelineGeneratorUtil sut;
 

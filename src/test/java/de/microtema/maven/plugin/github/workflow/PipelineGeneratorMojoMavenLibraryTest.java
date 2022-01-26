@@ -3,7 +3,6 @@ package de.microtema.maven.plugin.github.workflow;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,13 +11,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@Disabled
 @ExtendWith(MockitoExtension.class)
 class PipelineGeneratorMojoMavenLibraryTest {
 
@@ -55,7 +54,10 @@ class PipelineGeneratorMojoMavenLibraryTest {
         when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
         when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
-        Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
+
+        Map<Object, Object> stringStringMap = new HashMap<>(Collections.singletonMap("sonar.url", "http://localhost:9000"));
+        stringStringMap.put("sonar.branch.name.support", "true");
+
         when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
 
         sut.stages.put("local", "feature/*");
@@ -221,7 +223,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - name: 'Maven: verify'\n" +
                 "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
-                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
+                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  build:\n" +
                 "    name: Build\n" +

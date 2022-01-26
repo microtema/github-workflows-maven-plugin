@@ -154,7 +154,7 @@ jobs:
       - name: 'Maven: verify'
         run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS
       - name: 'Maven: sonar'
-        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS
+        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS
 
   build:
     name: Build

@@ -16,8 +16,6 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source.version>17</maven.compiler.source.version>
-        <maven.compiler.target.version>17</maven.compiler.target.version>
         <maven.source.plugin>2.2.1</maven.source.plugin>
         <maven.compiler.plugin>3.8.1</maven.compiler.plugin>
         <maven.javadoc.plugin>2.10.4</maven.javadoc.plugin>
@@ -26,12 +24,9 @@
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
         <sonar.organization>mtema-bitbucket</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-
         <sonar.language>java</sonar.language>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
+        <sonar.qualitygate.wait>false</sonar.qualitygate.wait>
+        <sonar.branch.name.support>true</sonar.branch.name.support>
 
         <commons.lang3.version>3.4</commons.lang3.version>
         <validation.api.version>1.1.0.Final</validation.api.version>
@@ -44,7 +39,7 @@
         <maven-surefire-plugin>2.22.2</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
 
-        <code.coverage>0.00</code.coverage>
+        <code.coverage>0.50</code.coverage>
         <skipTests>false</skipTests>
     </properties>
 
@@ -219,6 +214,7 @@
                                     <skipTests>false</skipTests>
                                     <includes>
                                         <include>**/*IT.*</include>
+                                        <include>**/*ST.*</include>
                                     </includes>
                                 </configuration>
                             </execution>
@@ -377,10 +373,33 @@
                 <version>${maven.compiler.plugin}</version>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>${maven.compiler.source.version}</source>
-                    <target>${maven.compiler.target.version}</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>add-test-source</goal>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/it/java</source>
+                            </sources>
+                            <resources>
+                                <resource>
+                                    <directory>src/it/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -424,7 +443,7 @@
                         <configuration>
                             <fileSets>
                                 <fileSet>
-                                    <directory>${project.build.directory}/surefire-reports</directory>
+                                    <directory>${project.build.directory}</directory>
                                     <includes>
                                         <include>**/*.exec</include>
                                     </includes>
