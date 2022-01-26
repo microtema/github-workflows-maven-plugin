@@ -68,7 +68,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [LOCAL]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +

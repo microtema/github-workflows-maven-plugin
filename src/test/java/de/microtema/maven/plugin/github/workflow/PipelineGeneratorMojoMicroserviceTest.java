@@ -96,7 +96,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [LOCAL]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -307,7 +307,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [DEV]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -616,7 +616,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -925,7 +925,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [PROD]\n" +
+        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +

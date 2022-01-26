@@ -1,4 +1,4 @@
-name: GitHub Workflows Maven-Plugin [DEVELOP]
+name: GitHub Workflows Maven-Plugin
 
 on:
   push:

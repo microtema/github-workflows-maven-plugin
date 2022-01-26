@@ -42,13 +42,15 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "runs-on")
     String runsOn;
 
+    private String appName;
+
     List<TemplateStageService> templateStageServices = new ArrayList<>();
 
     LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
 
     public void execute() {
 
-        String appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
+        appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
 
         // Skip maven sub modules
         if (!PipelineGeneratorUtil.isGitRepo(project)) {
@@ -69,7 +71,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         applyDefaultVariables();
 
         for (MetaData metaData : workflows) {
-            executeImpl(appName, metaData, workflows);
+            executeImpl(metaData, workflows);
         }
     }
 
@@ -194,7 +196,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return workflows;
     }
 
-    void executeImpl(String appName, MetaData metaData, List<MetaData> workflows) {
+    void executeImpl(MetaData metaData, List<MetaData> workflows) {
 
         String rootPath = PipelineGeneratorUtil.getRootPath(project);
 
@@ -237,7 +239,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 
         pipeline = pipeline
-                .replace("%PIPELINE_NAME%", appName + " [" + stageName.toUpperCase() + "]")
+                .replace("%PIPELINE_NAME%", getPipelineName(metaData))
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
                 .replace("  %ENV%", getVariablesTemplate(branchVariables))
                 .replace("  %JOBS%", getStagesTemplate(metaData));
@@ -265,6 +267,18 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private String getPipelineName(MetaData metaData) {
+
+        String stageName = StringUtils.trimToEmpty(metaData.getStageName());
+
+        if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none") || !PipelineGeneratorUtil.isDeploymentRepo(project)) {
+
+            return appName;
+        }
+
+        return appName + " [" + stageName.toUpperCase() + "]";
     }
 
 
