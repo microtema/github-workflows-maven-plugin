@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.File;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
@@ -58,5 +59,21 @@ class PipelineGeneratorUtilIT {
         boolean answer = PipelineGeneratorUtil.existsRegressionTests(project, "s2e");
 
         assertFalse(answer);
+    }
+
+    @Test
+    void parseTestTypeWithDashes() {
+
+        String answer = PipelineGeneratorUtil.parseTestType("system-test");
+
+        assertEquals("ST", answer);
+    }
+
+    @Test
+    void parseTestType() {
+
+        String answer = PipelineGeneratorUtil.parseTestType("s2e");
+
+        assertEquals("S2E", answer);
     }
 }

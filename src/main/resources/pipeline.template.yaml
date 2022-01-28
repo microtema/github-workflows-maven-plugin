@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - %BRANCH_NAME%
-  pull_request:
-    branches:
-      - %BRANCH_NAME%
 
   %ENV%
 

@@ -74,9 +74,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "  push:\n" +
                 "    branches:\n" +
                 "      - feature/*\n" +
-                "  pull_request:\n" +
-                "    branches:\n" +
-                "      - feature/*\n" +
                 "\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
@@ -243,7 +240,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn install -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn install -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +

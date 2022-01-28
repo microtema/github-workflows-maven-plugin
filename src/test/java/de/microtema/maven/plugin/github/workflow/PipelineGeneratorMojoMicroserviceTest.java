@@ -101,9 +101,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  push:\n" +
                 "    branches:\n" +
                 "      - feature/*\n" +
-                "  pull_request:\n" +
-                "    branches:\n" +
-                "      - feature/*\n" +
                 "\n" +
                 "env:\n" +
                 "  DOCKER_REGISTRY: \"docker.registry.local\"\n" +
@@ -273,7 +270,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -308,9 +305,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
-                "    branches:\n" +
-                "      - develop\n" +
-                "  pull_request:\n" +
                 "    branches:\n" +
                 "      - develop\n" +
                 "\n" +
@@ -483,7 +477,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -602,9 +596,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
-                "    branches:\n" +
-                "      - release/*\n" +
-                "  pull_request:\n" +
                 "    branches:\n" +
                 "      - release/*\n" +
                 "\n" +
@@ -776,7 +767,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +
@@ -895,9 +886,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
-                "    branches:\n" +
-                "      - master\n" +
-                "  pull_request:\n" +
                 "    branches:\n" +
                 "      - master\n" +
                 "\n" +
@@ -1069,7 +1057,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true -DskipUTs=true -DskipITs=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +

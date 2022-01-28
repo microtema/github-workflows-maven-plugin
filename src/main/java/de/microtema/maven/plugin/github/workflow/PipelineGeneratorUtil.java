@@ -121,35 +121,21 @@ public class PipelineGeneratorUtil {
 
     public static boolean existsIntegrationTests(MavenProject project) {
 
-        String rootPath = getRootPath(project);
-
-        if (CollectionUtils.isEmpty(project.getModules())) {
-
-            File rootDir = new File(rootPath, "src/it/java");
-
-            return findFile(rootDir.toPath(), "IT.java");
-        }
-
-        List<String> modules = new ArrayList<>(project.getModules());
-
-        return modules.stream().anyMatch(it -> {
-
-            File rootDir = new File(new File(getRootPath(project), it), "/src/main/java");
-
-            return findFile(rootDir.toPath(), "IT.java");
-        });
+        return existsRegressionTests(project, "it");
     }
 
     public static boolean existsRegressionTests(MavenProject project, String type) {
 
+        String testType = parseTestType(type) + ".java";
+
         String rootPath = getRootPath(project);
-        String sourceDir = "src/" + type + "/java".toLowerCase();
+        String sourceDir = "src/test/" + type + "/java".toLowerCase();
 
         if (CollectionUtils.isEmpty(project.getModules())) {
 
             File rootDir = new File(rootPath, sourceDir);
 
-            return findFile(rootDir.toPath(), "IT.java", "ST.java");
+            return findFile(rootDir.toPath(), testType);
         }
 
         List<String> modules = new ArrayList<>(project.getModules());
@@ -158,7 +144,7 @@ public class PipelineGeneratorUtil {
 
             File rootDir = new File(new File(getRootPath(project), it), sourceDir);
 
-            return findFile(rootDir.toPath(), "IT.java", "ST.java");
+            return findFile(rootDir.toPath(), testType);
         });
     }
 
@@ -166,14 +152,15 @@ public class PipelineGeneratorUtil {
 
         String rootPath = getRootPath(project);
 
-        List<String> defaultFolders = Arrays.asList("main", "test", "it");
+        List<String> defaultFolders = Arrays.asList("java", "it");
 
-        File rootDir = new File(rootPath, "src");
+        File rootDir = new File(rootPath, "src/test");
 
         File[] files = rootDir.listFiles();
 
         return Stream.of(files)
                 .filter(it -> it.isDirectory() && !defaultFolders.contains(it.getName().toLowerCase()))
+                .filter(it -> new File(it, "java").exists())
                 .map(File::getName)
                 .sorted()
                 .collect(Collectors.toList());
@@ -270,5 +257,26 @@ public class PipelineGeneratorUtil {
         }
 
         return properties;
+    }
+
+    /**
+     * convert integration-test ->  IT
+     *
+     * @param testType may not be null
+     * @return String
+     */
+    public static String parseTestType(String testType) {
+
+        String[] tokens = StringUtils.split(testType, "-");
+
+        if (tokens.length == 1) {
+            return testType.toUpperCase();
+        }
+
+        return Stream.of(tokens)
+                .map(it -> it.charAt(0))
+                .map(String::valueOf)
+                .map(String::toUpperCase)
+                .collect(Collectors.joining());
     }
 }

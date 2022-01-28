@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil.parseTestType;
+
 public class SystemTestTemplateStageService implements TemplateStageService {
 
     @Override
@@ -59,8 +61,8 @@ public class SystemTestTemplateStageService implements TemplateStageService {
         }
 
         return template
-                .replace("%TEST_TYPE%", testType.toUpperCase())
-                .replace("%SOURCE_TYPE%", testType.toLowerCase())
+                .replace("%TEST_TYPE%", parseTestType(testType))
+                .replace("%SOURCE_TYPE%", testType)
                 .replace("%STAGE_NAME%", env.toLowerCase());
     }
 }

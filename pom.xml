@@ -161,6 +161,7 @@
             <id>it</id>
             <properties>
                 <testType>IT</testType>
+                <sourceType>it</sourceType>
             </properties>
             <build>
                 <plugins>
@@ -175,11 +176,11 @@
                                 </goals>
                                 <configuration>
                                     <sources>
-                                        <source>src/${testType}/java</source>
+                                        <source>src/test/${sourceType}/java</source>
                                     </sources>
                                     <resources>
                                         <resource>
-                                            <directory>src/${testType}/resources</directory>
+                                            <directory>src/test/${sourceType}/resources</directory>
                                         </resource>
                                     </resources>
                                 </configuration>
@@ -189,6 +190,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M5</version>
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
@@ -402,6 +404,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
@@ -416,6 +419,19 @@
                             <skipTests>${skipTests}</skipTests>
                             <includes>
                                 <include>**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <includes>
+                                <include>**/*IT.java</include>
                             </includes>
                         </configuration>
                     </execution>
