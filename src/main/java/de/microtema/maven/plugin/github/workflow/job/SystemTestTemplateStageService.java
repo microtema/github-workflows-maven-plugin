@@ -7,17 +7,24 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SystemTestTemplateStageService implements TemplateStageService {
 
     @Override
-    public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+    public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
-            return null;
+            return false;
         }
 
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
+        return Stream.of("feature", "bugfix").noneMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it));
+    }
+
+    @Override
+    public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        if (!access(mojo, metaData)) {
             return null;
         }
 
@@ -36,7 +43,9 @@ public class SystemTestTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return regressionTestTypes.stream().map(f -> getTemplate(f, metaData.getStageName(), regressionTestTypes.size() > 1)).collect(Collectors.joining("\n"));
+        return regressionTestTypes.stream()
+                .map(f -> getTemplate(f, metaData.getStageName(), regressionTestTypes.size() > 1))
+                .collect(Collectors.joining("\n"));
     }
 
     private String getTemplate(String testType, String env, boolean multiple) {
@@ -51,6 +60,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
 
         return template
                 .replace("%TEST_TYPE%", testType.toUpperCase())
+                .replace("%SOURCE_TYPE%", testType.toLowerCase())
                 .replace("%STAGE_NAME%", env.toLowerCase());
     }
 }

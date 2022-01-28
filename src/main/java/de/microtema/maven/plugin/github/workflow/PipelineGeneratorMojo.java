@@ -42,11 +42,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "runs-on")
     String runsOn;
 
+    private final Map<String, Map<String, String>> stageVariables = new HashMap<>();
+
     private String appName;
-
-    List<TemplateStageService> templateStageServices = new ArrayList<>();
-
-    LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
+    private final List<TemplateStageService> templateStageServices = new ArrayList<>();
+    private final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
+    @Parameter(property = "env-folder")
+    String envFolder = ".github/env";
 
     public void execute() {
 
@@ -66,7 +68,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         List<MetaData> workflows = getWorkflowFiles();
 
-        cleanupWorkflows(rootDir, workflows);
+        cleanupWorkflows(rootDir);
 
         applyDefaultVariables();
 
@@ -144,7 +146,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return rootDir;
     }
 
-    void cleanupWorkflows(File rootDir, List<MetaData> workflows) {
+    void cleanupWorkflows(File rootDir) {
 
         File[] files = rootDir.listFiles((dir, name) -> StringUtils.contains(name, workflowFilePostFixName));
 
@@ -221,7 +223,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 break;
         }
 
-        LinkedHashMap<String, String> branchVariables = new LinkedHashMap<>(variables);
+        LinkedHashMap<String, String> branchVariables = new LinkedHashMap<>();
+
+        variables.forEach(branchVariables::putIfAbsent);
 
         defaultVariables.forEach(branchVariables::putIfAbsent);
 
@@ -235,6 +239,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 .replace("$stage_name", stageName.toLowerCase())));
 
         branchVariables.entrySet().stream().filter(it -> StringUtils.startsWith(it.getValue(), "secrets.")).forEach(it -> it.setValue("${{ " + it.getValue() + " }}"));
+
+        applyStageVariables(stageName, branchVariables);
+
+        stageVariables.put(stageName, branchVariables);
 
         String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 
@@ -267,6 +275,17 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private void applyStageVariables(String stageName, LinkedHashMap<String, String> branchVariables) {
+
+        Properties properties = PipelineGeneratorUtil.findProperties(stageName, envFolder);
+
+        if (Objects.isNull(properties)) {
+            return;
+        }
+
+        properties.forEach((k, v) -> branchVariables.put(String.valueOf(k), String.valueOf(v)));
     }
 
     private String getPipelineName(MetaData metaData) {
@@ -338,8 +357,14 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return project;
     }
 
-    public boolean hasVariable(String variableName) {
+    public boolean hasVariable(String variableName, String stageName) {
 
-        return variables.containsKey(variableName);
+        Map<String, String> stringStringMap = stageVariables.get(stageName);
+
+        if (Objects.isNull(stringStringMap)) {
+            return false;
+        }
+
+        return stringStringMap.containsKey(variableName);
     }
 }

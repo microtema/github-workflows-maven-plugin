@@ -9,10 +9,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -146,19 +143,20 @@ public class PipelineGeneratorUtil {
     public static boolean existsRegressionTests(MavenProject project, String type) {
 
         String rootPath = getRootPath(project);
+        String sourceDir = "src/" + type + "/java".toLowerCase();
 
         if (CollectionUtils.isEmpty(project.getModules())) {
 
-            File rootDir = new File(rootPath, "src/" + type + "/java");
+            File rootDir = new File(rootPath, sourceDir);
 
-            return findFile(rootDir.toPath(), "IT.java");
+            return findFile(rootDir.toPath(), "IT.java", "ST.java");
         }
 
         List<String> modules = new ArrayList<>(project.getModules());
 
         return modules.stream().anyMatch(it -> {
 
-            File rootDir = new File(new File(getRootPath(project), it), "src/" + type + "/java");
+            File rootDir = new File(new File(getRootPath(project), it), sourceDir);
 
             return findFile(rootDir.toPath(), "IT.java", "ST.java");
         });
@@ -251,5 +249,26 @@ public class PipelineGeneratorUtil {
     public static boolean isMicroserviceRepo(MavenProject project) {
 
         return existsHelmFile(project) || existsDockerfile(project);
+    }
+
+    public static Properties findProperties(String stageName, String envFolder) {
+
+        String fileName = ("." + stageName).toLowerCase();
+
+        File file = new File(envFolder, fileName);
+
+        if (!file.exists()) {
+            return null;
+        }
+
+        Properties properties = new Properties();
+
+        try (InputStream inputStream = new FileInputStream(file)) {
+            properties.load(inputStream);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        return properties;
     }
 }

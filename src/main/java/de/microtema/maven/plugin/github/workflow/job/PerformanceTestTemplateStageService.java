@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PerformanceTestTemplateStageService implements TemplateStageService {
 
@@ -22,11 +23,7 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master")) {
-            return false;
-        }
-
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
+        if (Stream.of("feature", "bugfix", "master").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
             return false;
         }
 

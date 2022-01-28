@@ -193,7 +193,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
-                "        run: mvn integration-test -P it $MAVEN_CLI_OPTS\n" +
+                "        run: mvn integration-test -P it -DtestType=IT -DsourceType=it $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target/surefire-reports/it\n" +
@@ -253,23 +253,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact/target\n" +
-                "\n" +
-                "  publish:\n" +
-                "    name: Publish\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ build ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v2\n" +
-                "        with:\n" +
-                "          distribution: 'adopt'\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Maven: deploy'\n" +
-                "        env:\n" +
-                "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "\n", answer);
     }
 

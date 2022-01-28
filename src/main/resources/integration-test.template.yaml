@@ -15,7 +15,7 @@ it-test:
       with:
         name: pom-artifact
     - name: 'Maven: integration-test'
-      run: mvn integration-test -P it $MAVEN_CLI_OPTS
+      run: mvn integration-test -P it -DtestType=IT -DsourceType=it $MAVEN_CLI_OPTS
     - name: 'Artifact: prepare'
       run: |
         mkdir -p artifact/target/surefire-reports/it

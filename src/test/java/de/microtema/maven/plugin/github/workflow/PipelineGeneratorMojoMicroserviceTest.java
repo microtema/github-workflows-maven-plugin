@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,8 +34,7 @@ class PipelineGeneratorMojoMicroserviceTest {
     @Mock
     File basePath;
 
-    @Mock
-    Properties properties;
+    Properties properties = new Properties();
 
     File pipelineFile;
 
@@ -74,6 +71,8 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
 
         sut.runsOn = "self-hosted,azure-runners";
+
+        properties.put("sonar.url", "http://localhost:9000");
     }
 
     @Test
@@ -85,8 +84,8 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
         when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
-        Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
-        when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
+
+        properties.put("sonar.url", "http://localhost:9000");
 
         sut.stages.put("none", "feature/*");
 
@@ -224,7 +223,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
-                "        run: mvn integration-test -P it $MAVEN_CLI_OPTS\n" +
+                "        run: mvn integration-test -P it -DtestType=IT -DsourceType=it $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target/surefire-reports/it\n" +
@@ -296,8 +295,6 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
         when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
-        Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
-        when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
 
         sut.stages.put("dev", "develop");
 
@@ -329,6 +326,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
                 "  STAGE_NAME: \"dev\"\n" +
+                "  FOO: \"BAR\"\n" +
                 "\n" +
                 "jobs:\n" +
                 "  versioning:\n" +
@@ -435,7 +433,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
-                "        run: mvn integration-test -P it $MAVEN_CLI_OPTS\n" +
+                "        run: mvn integration-test -P it -DtestType=IT -DsourceType=it $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target/surefire-reports/it\n" +
@@ -591,8 +589,6 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
         when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
-        Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
-        when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
 
         sut.stages.put("stage", "release/*");
 
@@ -730,7 +726,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
-                "        run: mvn integration-test -P it $MAVEN_CLI_OPTS\n" +
+                "        run: mvn integration-test -P it -DtestType=IT -DsourceType=it $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target/surefire-reports/it\n" +
@@ -886,8 +882,6 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getArtifactId()).thenReturn("github-workflows-maven-plugin");
         when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
-        Map<Object, Object> stringStringMap = Collections.singletonMap("sonar.url", "http://localhost:9000");
-        when(properties.entrySet()).thenReturn(stringStringMap.entrySet());
 
         sut.stages.put("prod", "master");
 
@@ -1025,7 +1019,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: integration-test'\n" +
-                "        run: mvn integration-test -P it $MAVEN_CLI_OPTS\n" +
+                "        run: mvn integration-test -P it -DtestType=IT -DsourceType=it $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target/surefire-reports/it\n" +

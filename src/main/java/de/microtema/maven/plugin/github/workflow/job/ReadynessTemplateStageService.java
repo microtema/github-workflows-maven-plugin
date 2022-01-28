@@ -23,7 +23,7 @@ public class ReadynessTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!mojo.hasVariable("SERVICE_URL")) {
+        if (!mojo.hasVariable("SERVICE_URL", metaData.getStageName())) {
             return false;
         }
 

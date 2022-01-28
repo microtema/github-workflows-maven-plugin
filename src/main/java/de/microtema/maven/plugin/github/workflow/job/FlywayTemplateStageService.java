@@ -5,6 +5,8 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.stream.Stream;
+
 public class FlywayTemplateStageService implements TemplateStageService {
 
     @Override
@@ -15,7 +17,11 @@ public class FlywayTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return PipelineGeneratorUtil.existsFlyway(mojo.getProject()) && !StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature");
+        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+            return false;
+        }
+
+        return PipelineGeneratorUtil.existsFlyway(mojo.getProject());
     }
 
     @Override
