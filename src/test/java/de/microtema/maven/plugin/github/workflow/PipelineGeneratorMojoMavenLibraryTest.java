@@ -249,7 +249,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n", answer);
     }
 

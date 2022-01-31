@@ -16,7 +16,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
             return false;
         }
 

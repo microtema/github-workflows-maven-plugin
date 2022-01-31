@@ -26,7 +26,7 @@ public class PublishTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        return !PipelineGeneratorUtil.existsDockerfile(mojo.getProject()) && !helmTemplateStageService.access(mojo, metaData);
+        return !PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject()) && !helmTemplateStageService.access(mojo, metaData);
     }
 
     @Override

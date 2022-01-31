@@ -12,7 +12,7 @@ public class PackageTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
             return false;
         }
 
@@ -26,13 +26,17 @@ public class PackageTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate("docker-package");
+
+        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+            template = PipelineGeneratorUtil.getTemplate("jib-package"); // fallback to maven plugin
+        }
 
         if (!StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master")) {
 
             template = template.replace("$VERSION.$GITHUB_SHA", "$VERSION");
         }
 
-        return template.replace("%POM_ARTIFACT%", "true");
+        return template;
     }
 }

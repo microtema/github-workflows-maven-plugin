@@ -27,7 +27,7 @@ public class ReadynessTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
             return false;
         }
 

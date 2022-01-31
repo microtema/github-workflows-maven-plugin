@@ -279,7 +279,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n", answer);
     }
 
@@ -486,7 +486,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  package:\n" +
                 "    name: Package\n" +
@@ -504,14 +504,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
-                "        run: mvn compile jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
+                "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
@@ -776,7 +772,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  package:\n" +
                 "    name: Package\n" +
@@ -794,14 +790,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
-                "        run: mvn compile jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS\n" +
+                "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
@@ -1066,7 +1058,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact/target\n" +
+                "          path: artifact\n" +
                 "\n" +
                 "  package:\n" +
                 "    name: Package\n" +
@@ -1084,14 +1076,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
-                "        run: mvn compile jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION.$GITHUB_SHA $MAVEN_CLI_OPTS\n" +
+                "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA\n" +
                 "\n" +

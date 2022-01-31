@@ -26,7 +26,7 @@ public class DeploymentTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject());
+        return PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject());
     }
 
     @Override

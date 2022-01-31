@@ -25,4 +25,4 @@ build:
       uses: actions/upload-artifact@v2
       with:
         name: target-artifact
-        path: artifact/target
+        path: artifact
