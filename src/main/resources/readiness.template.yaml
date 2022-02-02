@@ -1,8 +1,11 @@
-readyness:
-  name: Readiness Check
+readiness:
+  name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
-  needs: [ deployment ]
+  needs: [ %NEEDS% ]
   timeout-minutes: 15
+  env:
+    API_KEY: %API_KEY%
+    SERVICE_URL: %SERVICE_URL%
   steps:
     - name: 'Shell: readiness'
       run: while [[ "$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done

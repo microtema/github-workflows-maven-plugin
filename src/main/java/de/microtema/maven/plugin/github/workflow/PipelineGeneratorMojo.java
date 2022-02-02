@@ -7,6 +7,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import de.microtema.maven.plugin.github.workflow.job.*;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import de.microtema.model.converter.util.ClassUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
@@ -42,11 +43,14 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "runs-on")
     String runsOn;
 
-    private final Map<String, Map<String, String>> stageVariables = new HashMap<>();
+    // private final Map<String, Map<String, String>> stageVariables = new HashMap<>();
 
     private String appName;
+
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
+
     private final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
+
     @Parameter(property = "env-folder")
     String envFolder = ".github/env";
 
@@ -92,7 +96,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(PromoteTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(HelmTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(ReadynessTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(ReadinessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PerformanceTestTemplateStageService.class));
     }
@@ -185,13 +189,23 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
                 String branchName = branchPattern.replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
 
+                Optional<MetaData> optionalMetaData = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchName(), branchName)).findFirst();
+
                 MetaData metaData = new MetaData();
+
+                if (optionalMetaData.isPresent()) {
+                    metaData = optionalMetaData.get();
+                } else {
+                    workflows.add(metaData);
+                }
+
+                List<String> stageNames = metaData.getStageNames();
+
+                stageNames.add(stageName);
 
                 metaData.setStageName(stageName);
                 metaData.setBranchName(branchName);
                 metaData.setBranchPattern(branchPattern);
-
-                workflows.add(metaData);
             }
         }
 
@@ -223,33 +237,14 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 break;
         }
 
-        LinkedHashMap<String, String> branchVariables = new LinkedHashMap<>();
-
-        variables.forEach(branchVariables::putIfAbsent);
-
-        defaultVariables.forEach(branchVariables::putIfAbsent);
-
-        branchVariables.put("VERSION", version);
-
-        String stageName = metaData.getStageName();
-
-        branchVariables.put("STAGE_NAME", stageName);
-        branchVariables.entrySet().forEach(it -> it.setValue(it.getValue()
-                .replace("$STAGE_NAME", stageName.toUpperCase())
-                .replace("$stage_name", stageName.toLowerCase())));
-
-        branchVariables.entrySet().stream().filter(it -> StringUtils.startsWith(it.getValue(), "secrets.")).forEach(it -> it.setValue("${{ " + it.getValue() + " }}"));
-
-        applyStageVariables(stageName, branchVariables);
-
-        stageVariables.put(stageName, branchVariables);
+        defaultVariables.put("VERSION", version);
 
         String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 
         pipeline = pipeline
                 .replace("%PIPELINE_NAME%", getPipelineName(metaData))
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
-                .replace("  %ENV%", getVariablesTemplate(branchVariables))
+                .replace("  %ENV%", getVariablesTemplate(defaultVariables))
                 .replace("  %JOBS%", getStagesTemplate(metaData));
 
         String workflowFileName = getWorkflowFileName(metaData, workflows);
@@ -277,17 +272,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private void applyStageVariables(String stageName, LinkedHashMap<String, String> branchVariables) {
-
-        Properties properties = PipelineGeneratorUtil.findProperties(stageName, envFolder);
-
-        if (Objects.isNull(properties)) {
-            return;
-        }
-
-        properties.forEach((k, v) -> branchVariables.put(String.valueOf(k), String.valueOf(v)));
-    }
-
     private String getPipelineName(MetaData metaData) {
 
         String stageName = StringUtils.trimToEmpty(metaData.getStageName());
@@ -302,11 +286,16 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return appName;
         }
 
+        if (CollectionUtils.size(metaData.getStageNames()) == 1) {
+
+            return appName;
+        }
+
         return appName + " [" + stageName.toUpperCase() + "]";
     }
 
 
-    String getVariablesTemplate(LinkedHashMap<String, String> branchVariables) {
+    public String getVariablesTemplate(Map<String, String> branchVariables) {
 
         branchVariables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
 
@@ -347,24 +336,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         log.info("+----------------------------------+");
     }
 
-    public Map<String, String> getStages() {
-
-        return stages;
-    }
-
     public MavenProject getProject() {
 
         return project;
-    }
-
-    public boolean hasVariable(String variableName, String stageName) {
-
-        Map<String, String> stringStringMap = stageVariables.get(stageName);
-
-        if (Objects.isNull(stringStringMap)) {
-            return false;
-        }
-
-        return stringStringMap.containsKey(variableName);
     }
 }

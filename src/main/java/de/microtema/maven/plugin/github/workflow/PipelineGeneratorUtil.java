@@ -158,12 +158,16 @@ public class PipelineGeneratorUtil {
 
         File[] files = rootDir.listFiles();
 
-        return Stream.of(files)
+        List<String> list = Stream.of(files)
                 .filter(it -> it.isDirectory() && !defaultFolders.contains(it.getName().toLowerCase()))
                 .filter(it -> new File(it, "java").exists())
                 .map(File::getName)
                 .sorted()
                 .collect(Collectors.toList());
+
+        list.removeIf(it -> !PipelineGeneratorUtil.existsRegressionTests(project, it));
+
+        return list;
     }
 
     static boolean findFile(Path targetDir, String... fileNames) {
@@ -238,9 +242,11 @@ public class PipelineGeneratorUtil {
         return existsHelmFile(project) || existsDockerfile(project);
     }
 
-    public static Properties findProperties(String stageName, String envFolder) {
+    public static Properties findProperties(String stageName) {
 
         String fileName = ("." + stageName).toLowerCase();
+
+        String envFolder = ".github/env";
 
         File file = new File(envFolder, fileName);
 
@@ -278,5 +284,22 @@ public class PipelineGeneratorUtil {
                 .map(String::valueOf)
                 .map(String::toUpperCase)
                 .collect(Collectors.joining());
+    }
+
+    public static String applyProperties(String template, String stageName) {
+
+        Properties properties = PipelineGeneratorUtil.findProperties(stageName);
+
+        if (Objects.isNull(properties)) {
+            return template;
+        }
+
+        properties.putIfAbsent("STAGE_NAME", stageName);
+
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            template = template.replace("%" + entry.getKey() + "%", String.valueOf(entry.getValue()));
+        }
+
+        return template;
     }
 }

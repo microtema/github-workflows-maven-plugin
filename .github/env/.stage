@@ -1,0 +1,7 @@
+BAR=FOO
+AKS_NAMESPACE=stage-namespace
+AKS_CLUSTER_NAME=stage-cluster
+AKS_RESOURCE_GROUP=stage-rg
+AKS_CREDENTIALS=${{ secrets.STAGE_AKS_CREDENTIALS }}
+SERVICE_URL=http://stage:8080/git/info
+API_KEY=stage.key

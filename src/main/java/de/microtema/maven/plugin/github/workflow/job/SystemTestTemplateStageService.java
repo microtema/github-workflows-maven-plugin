@@ -13,6 +13,12 @@ import static de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil.pa
 
 public class SystemTestTemplateStageService implements TemplateStageService {
 
+    private final ReadinessTemplateStageService readinessTemplateStageService;
+
+    public SystemTestTemplateStageService(ReadinessTemplateStageService readinessTemplateStageService) {
+        this.readinessTemplateStageService = readinessTemplateStageService;
+    }
+
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
@@ -20,7 +26,13 @@ public class SystemTestTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        return Stream.of("feature", "bugfix").noneMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it));
+        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+            return false;
+        }
+
+        List<String> regressionTestTypes = PipelineGeneratorUtil.getRegressionTestTypes(mojo.getProject());
+
+        return !regressionTestTypes.isEmpty();
     }
 
     @Override
@@ -37,32 +49,49 @@ public class SystemTestTemplateStageService implements TemplateStageService {
 
     private String getStagesTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        List<String> stageNames = metaData.getStageNames();
+
         List<String> regressionTestTypes = PipelineGeneratorUtil.getRegressionTestTypes(mojo.getProject());
 
-        regressionTestTypes.removeIf(it -> !PipelineGeneratorUtil.existsRegressionTests(mojo.getProject(), it));
+        boolean multipleStages = stageNames.size() > 1;
 
-        if (regressionTestTypes.isEmpty()) {
-            return null;
-        }
+        return stageNames.stream().map(it -> {
 
-        return regressionTestTypes.stream()
-                .map(f -> getTemplate(f, metaData.getStageName(), regressionTestTypes.size() > 1))
-                .collect(Collectors.joining("\n"));
+            String defaultTemplate = regressionTestTypes.stream()
+                    .map(f -> getTemplate(f, it, regressionTestTypes.size() > 1, multipleStages))
+                    .collect(Collectors.joining("\n"));
+
+            String needs = readinessTemplateStageService.getJobNames(metaData, it);
+
+            return defaultTemplate.replace("%NEEDS%", needs);
+
+        }).collect(Collectors.joining("\n"));
     }
 
-    private String getTemplate(String testType, String env, boolean multiple) {
+    private String getTemplate(String testType, String stageName, boolean multipleTests, boolean multipleStages) {
 
         String template = PipelineGeneratorUtil.getTemplate(getName());
 
-        if (multiple) {
-            template = template.replace("%TEST_NAME%", testType.toUpperCase());
-        } else {
-            template = template.replace(" [%TEST_NAME%]", StringUtils.EMPTY);
+        template = PipelineGeneratorUtil.applyProperties(template, stageName);
+
+        String jobId = "system-test";
+        String jobName = "System Test";
+
+        if (multipleStages) {
+            jobId += "-" + stageName.toLowerCase();
+            jobName += " [" + stageName.toUpperCase() + "]";
+        }
+
+        if (multipleTests) {
+            jobId += "-" + testType.toLowerCase();
+            jobName += "(" + testType.toUpperCase() + ")";
         }
 
         return template
+                .replace("system-test:", jobId + ":")
+                .replace("%JOB_NAME%", jobName)
                 .replace("%TEST_TYPE%", parseTestType(testType))
                 .replace("%SOURCE_TYPE%", testType)
-                .replace("%STAGE_NAME%", env.toLowerCase());
+                .replace("%STAGE_NAME%", stageName.toLowerCase());
     }
 }

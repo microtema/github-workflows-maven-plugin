@@ -1,1 +1,7 @@
 FOO=BAR
+AKS_NAMESPACE=dev-namespace
+AKS_CLUSTER_NAME=dev-cluster
+AKS_RESOURCE_GROUP=dev-rg
+AKS_CREDENTIALS=${{ secrets.DEV_AKS_CREDENTIALS }}
+SERVICE_URL=http://dev:8080/git/info
+API_KEY=dev.key

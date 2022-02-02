@@ -5,6 +5,9 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class HelmTemplateStageService implements TemplateStageService {
 
     private final VersioningTemplateStageService versioningTemplateStageService;
@@ -14,6 +17,11 @@ public class HelmTemplateStageService implements TemplateStageService {
                                     PackageTemplateStageService packageTemplateStageService) {
         this.versioningTemplateStageService = versioningTemplateStageService;
         this.packageTemplateStageService = packageTemplateStageService;
+    }
+
+    @Override
+    public String getJobName() {
+        return "deployment";
     }
 
     @Override
@@ -37,7 +45,22 @@ public class HelmTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        List<String> stageNames = metaData.getStageNames();
+
+        boolean multipleStages = stageNames.size() > 1;
+
+        String template = stageNames.stream().map(it -> {
+
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getName());
+
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
+
+            return defaultTemplate
+                    .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
+                    .replace("%JOB_NAME%", multipleStages ? "Deployment [" + it.toUpperCase() + "]" : "Deployment")
+                    .replace("%STAGE_NAME%", it);
+
+        }).collect(Collectors.joining("\n"));
 
         if (versioningTemplateStageService.access(mojo, metaData)) {
 
@@ -47,6 +70,6 @@ public class HelmTemplateStageService implements TemplateStageService {
             template = template.replaceAll("\\[ %NEEDS% \\]", "[ ]");
         }
 
-        return template.replaceAll("%STAGE_NAME%", metaData.getStageName().toLowerCase());
+        return template;
     }
 }

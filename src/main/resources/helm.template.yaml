@@ -1,24 +1,28 @@
 deployment:
-  name: 'Deployment'
+  name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
   environment: %STAGE_NAME%
+  env:
+    CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
+    AKS_NAMESPACE: %AKS_NAMESPACE%
+    AKS_CREDENTIALS: %AKS_CREDENTIALS%
+    AKS_CLUSTER_NAME: %AKS_CLUSTER_NAME%
+    AKS_RESOURCE_GROUP: %AKS_RESOURCE_GROUP%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
     - name: 'AKS: Set context'
       uses: azure/aks-set-context@v1
       with:
-        creds: ${{ env.AKS_PASSWORD }}
-        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
-        resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+        creds: $AKS_CREDENTIALS
+        cluster-name: $AKS_CLUSTER_NAME
+        resource-group: $AKS_RESOURCE_GROUP
     - name: 'Helm: Setup'
       uses: azure/setup-helm@v1
       with:
         version: v3.5.4
     - name: 'Helm: Deploy'
-      env:
-        CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
       run: |
         export DEPLOYMENT_TIME=$(date '+%Y%m%d-%H%M%S')
         helm upgrade $APP_NAME helm --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout 300s --set image.tag=$VERSION --set deploymentTime=$DEPLOYMENT_TIME

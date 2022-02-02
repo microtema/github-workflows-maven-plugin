@@ -6,8 +6,6 @@ on:
       - release/*
 
 env:
-  DOCKER_REGISTRY: "docker.io"
-  STAGE_NAME: "release"
   APP_NAME: "github-workflows-maven-plugin"
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
@@ -171,7 +169,7 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: package'
-        run: mvn install -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS
+        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact/target
@@ -182,8 +180,8 @@ jobs:
           name: target-artifact
           path: artifact
 
-  publish:
-    name: Publish
+  package:
+    name: Package
     runs-on: [ ubuntu-latest ]
     needs: [ build ]
     steps:
@@ -194,8 +192,47 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ env.JAVA_VERSION }}
-      - name: 'Maven: deploy'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
+      - name: 'Artifact: download'
+        uses: actions/download-artifact@v2
+        with:
+          name: target-artifact
+      - name: 'Artifact: download'
+        uses: actions/download-artifact@v2
+        with:
+          name: pom-artifact
+      - name: 'Docker: login'
+        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
+      - name: 'Docker: build'
+        run: mvn compile jib:dockerBuild -Dimage=$DOCKER_REGISTRY/$APP_NAME -Djib.to.tags=$VERSION $MAVEN_CLI_OPTS
+      - name: 'Docker: push'
+        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION
+
+  deployment:
+    name: 'Deployment[release]'
+    runs-on: [ ubuntu-latest ]
+    needs: [ package ]
+    environment: release
+    env:
+      CONFIG_FILE: ./helm/env_release/values.yaml
+      AKS_NAMESPACE: %AKS_NAMESPACE%
+      AKS_CLUSTER_NAME: %AKS_CLUSTER_NAME%
+      AKS_PASSWORD: %AKS_PASSWORD%
+      AKS_RESOURCE_GROUP: %AKS_RESOURCE_GROUP%
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+      - name: 'AKS: Set context'
+        uses: azure/aks-set-context@v1
+        with:
+          creds: $AKS_PASSWORD
+          cluster-name: $AKS_CLUSTER_NAME
+          resource-group: $AKS_RESOURCE_GROUP
+      - name: 'Helm: Setup'
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.4
+      - name: 'Helm: Deploy'
+        run: |
+          export DEPLOYMENT_TIME=$(date '+%Y%m%d-%H%M%S')
+          helm upgrade $APP_NAME helm --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout 300s --set image.tag=$VERSION --set deploymentTime=$DEPLOYMENT_TIME
 

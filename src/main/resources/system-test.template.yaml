@@ -1,7 +1,10 @@
 system-test:
-  name: System Test [%TEST_NAME%]
+  name: %JOB_NAME%
   runs-on: [ %RUNS_ON% ]
-  needs: [ readyness ]
+  needs: [ %NEEDS% ]
+  env:
+    API_KEY: %API_KEY%
+    STAGE_NAME: %STAGE_NAME%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

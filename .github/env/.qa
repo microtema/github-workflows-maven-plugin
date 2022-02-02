@@ -1,0 +1,7 @@
+FOO=BAR
+AKS_NAMESPACE=qa-namespace
+AKS_CLUSTER_NAME=qa-cluster
+AKS_RESOURCE_GROUP=qa-rg
+AKS_CREDENTIALS=${{ secrets.QA_AKS_CREDENTIALS }}
+SERVICE_URL=http://qa:8080/git/info
+API_KEY=qa.key

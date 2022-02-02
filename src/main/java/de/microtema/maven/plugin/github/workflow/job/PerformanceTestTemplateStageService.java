@@ -15,9 +15,9 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
 
     public PerformanceTestTemplateStageService(SystemTestTemplateStageService regressionTemplateStageService,
-                                               ReadynessTemplateStageService readynessTemplateStageService) {
+                                               ReadinessTemplateStageService readinessTemplateStageService) {
         this.templateStageServices.add(regressionTemplateStageService);
-        this.templateStageServices.add(readynessTemplateStageService);
+        this.templateStageServices.add(readinessTemplateStageService);
     }
 
     @Override

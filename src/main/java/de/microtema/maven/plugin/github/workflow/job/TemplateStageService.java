@@ -3,11 +3,10 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface TemplateStageService {
@@ -27,6 +26,22 @@ public interface TemplateStageService {
         return getName();
     }
 
+    default String getJobNames(MetaData metaData, String stageName) {
+
+        List<String> stageNames = metaData.getStageNames();
+
+        String jobName = getJobName();
+
+        if (CollectionUtils.size(stageNames) == 1) {
+            return jobName;
+        }
+
+        return stageNames.stream()
+                .filter(it -> StringUtils.equalsIgnoreCase(it, stageName))
+                .map(it -> jobName + "-" + it)
+                .collect(Collectors.joining(" "));
+    }
+
     default String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         return PipelineGeneratorUtil.getTemplate(getName());
@@ -35,22 +50,5 @@ public interface TemplateStageService {
     default boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         return false;
-    }
-
-    default String getTemplate(String template, List<String> stages) {
-        return template;
-    }
-
-    default String getStagesTemplate(PipelineGeneratorMojo mojo) {
-
-        Map<String, String> stages = mojo.getStages();
-
-        return stages.entrySet().stream().map(it -> {
-
-            String name = it.getKey();
-            List<String> branches = Arrays.asList(StringUtils.split(it.getValue(), ","));
-
-            return getTemplate(name, branches);
-        }).collect(Collectors.joining("\n"));
     }
 }
