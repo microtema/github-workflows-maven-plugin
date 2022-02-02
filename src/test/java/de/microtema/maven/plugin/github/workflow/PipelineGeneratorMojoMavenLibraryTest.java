@@ -83,7 +83,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
-                "  STAGE_NAME: \"local\"\n" +
                 "\n" +
                 "jobs:\n" +
                 "  versioning:\n" +
@@ -240,7 +239,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: package'\n" +
-                "        run: mvn install -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
+                "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
                 "        run: |\n" +
                 "          mkdir -p artifact/target\n" +

@@ -27,6 +27,10 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
             return false;
         }
 
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
+            return false;
+        }
+
         return PipelineGeneratorUtil.existsPerformanceTests(mojo.getProject());
     }
 
@@ -37,16 +41,25 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        List<String> stageNames = metaData.getStageNames();
 
-        String stageName = metaData.getStageName();
+        boolean multipleStages = stageNames.size() > 1;
 
-        String needs = templateStageServices.stream().filter(it -> it.access(mojo, metaData))
-                .map(TemplateStageService::getJobName)
-                .collect(Collectors.joining(", "));
+        return stageNames.stream().map(it -> {
 
-        return template
-                .replace("%NEEDS%", needs)
-                .replace("%STAGE_NAME%", stageName.toLowerCase());
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getName());
+
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
+
+            String needs = templateStageServices.stream().filter(e -> e.access(mojo, metaData))
+                    .map(e -> e.getJobNames(metaData, it))
+                    .collect(Collectors.joining(", "));
+
+            return defaultTemplate
+                    .replace("performance-test:", multipleStages ? "performance-test-" + it.toLowerCase() + ":" : "performance-test:")
+                    .replace("%JOB_NAME%", multipleStages ? "Performance Test [" + it.toUpperCase() + "]" : "Performance Test")
+                    .replace("%NEEDS%", needs);
+
+        }).collect(Collectors.joining("\n"));
     }
 }

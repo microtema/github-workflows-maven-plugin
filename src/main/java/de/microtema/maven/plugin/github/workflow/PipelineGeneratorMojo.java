@@ -7,7 +7,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import de.microtema.maven.plugin.github.workflow.job.*;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import de.microtema.model.converter.util.ClassUtil;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
@@ -274,8 +273,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     private String getPipelineName(MetaData metaData) {
 
-        String stageName = StringUtils.trimToEmpty(metaData.getStageName());
-
         if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none")) {
 
             return appName;
@@ -286,12 +283,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return appName;
         }
 
-        if (CollectionUtils.size(metaData.getStageNames()) == 1) {
-
-            return appName;
-        }
-
-        return appName + " [" + stageName.toUpperCase() + "]";
+        return appName + (" [" + String.join(", ", metaData.getStageNames()) + "]").toUpperCase();
     }
 
 

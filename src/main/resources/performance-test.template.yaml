@@ -1,7 +1,10 @@
 performance-test:
-  name: Performance Test
+  name: %JOB_NAME%
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
+  env:
+    API_KEY: %API_KEY%
+    STAGE_NAME: %STAGE_NAME%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

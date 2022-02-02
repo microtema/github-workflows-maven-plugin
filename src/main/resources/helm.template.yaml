@@ -6,18 +6,15 @@ deployment:
   env:
     CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
     AKS_NAMESPACE: %AKS_NAMESPACE%
-    AKS_CREDENTIALS: %AKS_CREDENTIALS%
-    AKS_CLUSTER_NAME: %AKS_CLUSTER_NAME%
-    AKS_RESOURCE_GROUP: %AKS_RESOURCE_GROUP%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
     - name: 'AKS: Set context'
       uses: azure/aks-set-context@v1
       with:
-        creds: $AKS_CREDENTIALS
-        cluster-name: $AKS_CLUSTER_NAME
-        resource-group: $AKS_RESOURCE_GROUP
+        creds: %AKS_CREDENTIALS%
+        cluster-name: %AKS_CLUSTER_NAME%
+        resource-group: %AKS_RESOURCE_GROUP%
     - name: 'Helm: Setup'
       uses: azure/setup-helm@v1
       with:

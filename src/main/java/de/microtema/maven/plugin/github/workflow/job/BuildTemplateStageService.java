@@ -71,11 +71,6 @@ public class BuildTemplateStageService implements TemplateStageService {
             needs.add(compileTemplateStageService.getJobName());
         }
 
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
-
-            template = template.replace("mvn package", "mvn install");
-        }
-
         return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)))
                 .replace("%POM_ARTIFACT%", "true");
     }
