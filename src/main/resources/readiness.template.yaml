@@ -1,5 +1,5 @@
 readiness:
-  name: '%JOB_NAME%'
+  name: %JOB_NAME%
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
   timeout-minutes: 15

@@ -1,7 +1,7 @@
 db-migration:
-  name: Database Changelog
+  name: %JOB_NAME%
   runs-on: [ %RUNS_ON% ]
-  needs: [ package ]
+  needs: [ %NEEDS% ]
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

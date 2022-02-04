@@ -169,7 +169,7 @@ jobs:
         with:
           name: pom-artifact
       - name: 'Maven: package'
-        run: mvn install -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS
+        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS
       - name: 'Artifact: prepare'
         run: |
           mkdir -p artifact/target

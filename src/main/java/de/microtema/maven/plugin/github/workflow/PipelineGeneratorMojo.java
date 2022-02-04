@@ -39,10 +39,11 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "stages")
     LinkedHashMap<String, String> stages = new LinkedHashMap<>();
 
+    @Parameter(property = "down-streams")
+    LinkedHashMap<String, String> downStreams = new LinkedHashMap<>();
+
     @Parameter(property = "runs-on")
     String runsOn;
-
-    // private final Map<String, Map<String, String>> stageVariables = new HashMap<>();
 
     private String appName;
 
@@ -98,6 +99,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(ReadinessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PerformanceTestTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(DownstreamTemplateStageService.class));
     }
 
     void applyDefaultVariables() {
@@ -331,5 +333,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public MavenProject getProject() {
 
         return project;
+    }
+
+    public Map<String, String> getDownStreams() {
+
+        return downStreams;
     }
 }

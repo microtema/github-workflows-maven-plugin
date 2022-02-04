@@ -290,6 +290,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getProperties()).thenReturn(properties);
 
         sut.stages.put("dev", "develop");
+        sut.downStreams.put("dev", "E2E Test:e2e-develop-workflow.yaml");
 
         pipelineFile = new File(sut.githubWorkflowsDir, "develop-workflow.yaml");
 
@@ -555,7 +556,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "            });\n" +
                 "\n" +
                 "  readiness:\n" +
-                "    name: 'Readiness Check'\n" +
+                "    name: Readiness Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -599,6 +600,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  downstream:\n" +
+                "    name: 'E2E Test'\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ system-test, performance-test ]\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: script'\n" +
+                "        run: echo \"e2e-develop-workflow.yaml\"\n" +
                 "\n", answer);
     }
 
@@ -878,7 +887,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "            });\n" +
                 "\n" +
                 "  readiness:\n" +
-                "    name: 'Readiness Check'\n" +
+                "    name: Readiness Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -937,6 +946,8 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         sut.stages.put("stage", "release/*");
         sut.stages.put("qa", "release/*");
+
+        sut.downStreams.put("qa", "E2E Test:qa-e2e-workflow.yaml");
 
         pipelineFile = new File(sut.githubWorkflowsDir, "release-workflow.yaml");
 
@@ -1153,8 +1164,22 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
-                "  db-migration:\n" +
-                "    name: Database Changelog\n" +
+                "  db-migration-stage:\n" +
+                "    name: Database Changelog [STAGE]\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "      - name: 'Java: Setup'\n" +
+                "        uses: actions/setup-java@v1\n" +
+                "        with:\n" +
+                "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'Liquibase: changelog'\n" +
+                "        run: echo 'TBD'\n" +
+                "  \n" +
+                "  db-migration-qa:\n" +
+                "    name: Database Changelog [QA]\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1202,7 +1227,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "            });\n" +
                 "\n" +
                 "  readiness-stage:\n" +
-                "    name: 'Readiness Check [STAGE]'\n" +
+                "    name: Readiness Check [STAGE]\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment-stage ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -1214,7 +1239,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  \n" +
                 "  readiness-qa:\n" +
-                "    name: 'Readiness Check [QA]'\n" +
+                "    name: Readiness Check [QA]\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment-qa ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -1292,6 +1317,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
+                "\n" +
+                "  downstream-qa-e2e-test:\n" +
+                "    name: 'E2E Test [QA]'\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ system-test-qa, performance-test-qa ]\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: script'\n" +
+                "        run: echo \"qa-e2e-workflow.yaml\"\n" +
                 "\n", answer);
     }
 }

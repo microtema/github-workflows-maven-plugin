@@ -1,0 +1,7 @@
+downstream:
+  name: '%JOB_NAME%'
+  runs-on: [ %RUNS_ON% ]
+  needs: [ %NEEDS% ]
+  steps:
+    - name: 'Shell: script'
+      run: echo "%DOWNSTREAM%"

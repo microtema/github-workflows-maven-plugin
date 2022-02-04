@@ -156,7 +156,7 @@ public class PipelineGeneratorUtil {
 
         File rootDir = new File(rootPath, "src/test");
 
-        File[] files = rootDir.listFiles();
+        File[] files = Optional.ofNullable(rootDir.listFiles()).orElseGet(() -> new File[0]);
 
         List<String> list = Stream.of(files)
                 .filter(it -> it.isDirectory() && !defaultFolders.contains(it.getName().toLowerCase()))
@@ -239,7 +239,7 @@ public class PipelineGeneratorUtil {
 
     public static boolean isMicroserviceRepo(MavenProject project) {
 
-        return existsHelmFile(project) || existsDockerfile(project);
+        return (existsHelmFile(project) || existsDockerfile(project)) && hasSourceCode(project);
     }
 
     public static Properties findProperties(String stageName) {
