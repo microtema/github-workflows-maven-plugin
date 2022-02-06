@@ -19,6 +19,6 @@ public class IntegrationTestTemplateStageService implements TemplateStageService
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName());
+        return PipelineGeneratorUtil.getTemplate(getTemplateName());
     }
 }

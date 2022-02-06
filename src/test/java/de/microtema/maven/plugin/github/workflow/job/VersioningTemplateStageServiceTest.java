@@ -22,7 +22,7 @@ class VersioningTemplateStageServiceTest {
     @Test
     void getName() {
 
-        String answer = sut.getName();
+        String answer = sut.getTemplateName();
 
         assertEquals("versioning", answer);
     }

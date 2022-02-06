@@ -21,7 +21,7 @@ public class VersioningTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName()).replace("[ %NEEDS% ]", "[ ]");
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName()).replace("[ %NEEDS% ]", "[ ]");
 
         if (StringUtils.equals(metaData.getBranchName(), "develop") || StringUtils.equals(metaData.getBranchName(), "feature")) {
 

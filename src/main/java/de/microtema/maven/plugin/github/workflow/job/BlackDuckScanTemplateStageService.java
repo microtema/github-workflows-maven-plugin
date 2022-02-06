@@ -9,7 +9,7 @@ import org.apache.maven.project.MavenProject;
 public class BlackDuckScanTemplateStageService implements TemplateStageService {
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
         return "security-check";
     }
 
@@ -34,7 +34,7 @@ public class BlackDuckScanTemplateStageService implements TemplateStageService {
 
         MavenProject project = mojo.getProject();
 
-        return PipelineGeneratorUtil.getTemplate(getName())
+        return PipelineGeneratorUtil.getTemplate(getTemplateName())
                 .replace("%blackduck.url%", PipelineGeneratorUtil.getProperty(project, "blackduck.url", "${{ secrets.BLACK_DUCK_URL }}"))
                 .replace("%detect.project.name%", PipelineGeneratorUtil.getProperty(project, "detect.project.name", project.getArtifactId()))
                 .replace("%detect.project.version.name%", PipelineGeneratorUtil.getProperty(project, "detect.project.version.name", project.getVersion()));

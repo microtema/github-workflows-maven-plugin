@@ -35,12 +35,12 @@ public class TagTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
         String needs = templateStageServices.stream()
                 .filter(it -> it.access(mojo, metaData))
                 .findFirst()
-                .map(TemplateStageService::getJobName)
+                .map(TemplateStageService::getJobId)
                 .orElse("compile");
 
         return template.replace("%NEEDS%", needs);

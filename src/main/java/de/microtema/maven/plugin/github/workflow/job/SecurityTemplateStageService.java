@@ -19,7 +19,7 @@ public class SecurityTemplateStageService implements TemplateStageService {
     }
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
 
         return "security-check";
     }

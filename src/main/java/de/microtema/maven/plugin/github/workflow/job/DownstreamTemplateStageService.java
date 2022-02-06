@@ -67,7 +67,7 @@ public class DownstreamTemplateStageService implements TemplateStageService {
 
         return stageNames.stream().filter(downStreams::containsKey).map(it -> {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getName());
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
 
@@ -105,11 +105,11 @@ public class DownstreamTemplateStageService implements TemplateStageService {
 
             needs = multipleStageTemplateStageServices.stream()
                     .filter(t -> t.access(mojo, metaData))
-                    .map(t -> t.getJobNames(metaData, stageName))
+                    .map(t -> t.getJobIds(metaData, stageName))
                     .collect(Collectors.joining(", "));
 
             if (StringUtils.isEmpty(needs)) {
-                needs = deploymentTemplateStageService.getJobNames(metaData, stageName);
+                needs = deploymentTemplateStageService.getJobIds(metaData, stageName);
             }
 
             return needs;

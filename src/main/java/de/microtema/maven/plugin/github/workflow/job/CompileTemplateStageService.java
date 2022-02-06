@@ -25,8 +25,8 @@ public class CompileTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
-        return template.replace("%NEEDS%", versioningTemplateStageService.getName());
+        return template.replace("%NEEDS%", versioningTemplateStageService.getTemplateName());
     }
 }

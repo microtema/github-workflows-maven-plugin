@@ -61,7 +61,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
                     .map(f -> getTemplate(f, it, regressionTestTypes.size() > 1, multipleStages))
                     .collect(Collectors.joining("\n"));
 
-            String needs = readinessTemplateStageService.getJobNames(metaData, it);
+            String needs = readinessTemplateStageService.getJobIds(metaData, it);
 
             return defaultTemplate.replace("%NEEDS%", needs);
 
@@ -70,7 +70,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
 
     private String getTemplate(String testType, String stageName, boolean multipleTests, boolean multipleStages) {
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
         template = PipelineGeneratorUtil.applyProperties(template, stageName);
 

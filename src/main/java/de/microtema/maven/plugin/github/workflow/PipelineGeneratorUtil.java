@@ -1,5 +1,8 @@
 package de.microtema.maven.plugin.github.workflow;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +17,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PipelineGeneratorUtil {
+
+    private final static MustacheFactory MUSTACHE_FACTORY = new DefaultMustacheFactory();
+
+    public static String compileTemplate(String templateName, Object context) {
+
+        Mustache mustache = MUSTACHE_FACTORY.compile(templateName + ".template.yaml");
+
+        StringWriter stringWriter = new StringWriter();
+
+        Writer execute = mustache.execute(stringWriter, context);
+
+        try {
+            execute.flush();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return stringWriter.toString();
+    }
 
     public static String getTemplate(String templateName) {
 

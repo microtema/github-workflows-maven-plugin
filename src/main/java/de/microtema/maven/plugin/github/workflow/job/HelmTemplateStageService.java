@@ -20,7 +20,7 @@ public class HelmTemplateStageService implements TemplateStageService {
     }
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
         return "deployment";
     }
 
@@ -51,7 +51,7 @@ public class HelmTemplateStageService implements TemplateStageService {
 
         String template = stageNames.stream().map(it -> {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getName());
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
 
@@ -64,7 +64,7 @@ public class HelmTemplateStageService implements TemplateStageService {
 
         if (versioningTemplateStageService.access(mojo, metaData)) {
 
-            template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobName());
+            template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobId());
         } else {
 
             template = template.replaceAll("\\[ %NEEDS% \\]", "[ ]");

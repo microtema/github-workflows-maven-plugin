@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public class FlywayTemplateStageService implements TemplateStageService {
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
         return "db-migration";
     }
 
@@ -31,6 +31,6 @@ public class FlywayTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName());
+        return PipelineGeneratorUtil.getTemplate(getTemplateName());
     }
 }

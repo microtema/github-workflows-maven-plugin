@@ -44,31 +44,31 @@ public class BuildTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
         List<String> needs = new ArrayList<>();
 
         if (sonarTemplateStageService.access(mojo, metaData)) {
 
-            needs.add(sonarTemplateStageService.getJobName());
+            needs.add(sonarTemplateStageService.getJobId());
 
             if (securityTemplateStageService.access(mojo, metaData)) {
-                needs.add(securityTemplateStageService.getJobName());
+                needs.add(securityTemplateStageService.getJobId());
             }
         } else {
 
             if (unitTestTemplateStageService.access(mojo, metaData)) {
-                needs.add(unitTestTemplateStageService.getJobName());
+                needs.add(unitTestTemplateStageService.getJobId());
             }
 
             if (itTestTemplateStageService.access(mojo, metaData)) {
-                needs.add(itTestTemplateStageService.getJobName());
+                needs.add(itTestTemplateStageService.getJobId());
             }
         }
 
         if (needs.isEmpty()) {
 
-            needs.add(compileTemplateStageService.getJobName());
+            needs.add(compileTemplateStageService.getJobId());
         }
 
         return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)))

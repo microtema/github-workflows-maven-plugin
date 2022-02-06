@@ -40,12 +40,12 @@ public class PromoteTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
         String needs = "package";
 
         if (tagTemplateStageService.access(mojo, metaData)) {
-            needs = tagTemplateStageService.getJobName();
+            needs = tagTemplateStageService.getJobId();
         }
 
         return template.replace("%NEEDS%", needs);

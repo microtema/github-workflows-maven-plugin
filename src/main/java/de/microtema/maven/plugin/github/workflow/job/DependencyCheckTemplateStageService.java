@@ -7,7 +7,7 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 public class DependencyCheckTemplateStageService implements TemplateStageService {
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
         return "security-check";
     }
 
@@ -24,6 +24,6 @@ public class DependencyCheckTemplateStageService implements TemplateStageService
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName());
+        return PipelineGeneratorUtil.getTemplate(getTemplateName());
     }
 }

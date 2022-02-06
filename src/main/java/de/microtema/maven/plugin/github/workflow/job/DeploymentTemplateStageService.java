@@ -36,6 +36,6 @@ public class DeploymentTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName()).replace("%BRANCH_NAME%", metaData.getBranchName());
+        return PipelineGeneratorUtil.getTemplate(getTemplateName()).replace("%BRANCH_NAME%", metaData.getBranchName());
     }
 }

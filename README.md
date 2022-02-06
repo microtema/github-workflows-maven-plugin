@@ -151,6 +151,7 @@ jobs:
     * Commons-BeanUtils (Apache License)
     * Commons-IO (Apache License)
     * Commons-Lang3 (Apache License)
+    * Mustache (MIT License)
     * Junit (EPL 1.0 License)
 * Code-Analyses
     * Sonar

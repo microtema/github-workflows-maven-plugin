@@ -260,10 +260,12 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
 
+        runsOn = Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.joining(", "));
+
         boolean supportVersionJob = Stream.of("develop", "feature").noneMatch(it -> StringUtils.equalsIgnoreCase(it, metaData.getBranchName()));
 
         pipeline = pipeline
-                .replaceAll("%RUNS_ON%", String.join(", ", runsOn.split(",")))
+                .replaceAll("%RUNS_ON%", String.join(", ", runsOn))
                 .replaceAll("%POM_ARTIFACT%", String.valueOf(supportVersionJob));
 
         try (PrintWriter out = new PrintWriter(githubWorkflow)) {
@@ -338,5 +340,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public Map<String, String> getDownStreams() {
 
         return downStreams;
+    }
+
+    public List<String> getRunsOn() {
+
+        return Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.toList());
     }
 }

@@ -70,7 +70,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.variables.put("SERVICE_URL", "http://localhost:8080");
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
 
-        sut.runsOn = "self-hosted,azure-runners";
+        sut.runsOn = "self-hosted, azure-runners";
 
         properties.put("sonar.url", "http://localhost:9000");
     }

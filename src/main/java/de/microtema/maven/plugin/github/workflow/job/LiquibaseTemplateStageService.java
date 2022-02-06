@@ -18,7 +18,7 @@ public class LiquibaseTemplateStageService implements TemplateStageService {
     }
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
         return "db-migration";
     }
 
@@ -45,11 +45,11 @@ public class LiquibaseTemplateStageService implements TemplateStageService {
 
         return stageNames.stream().map(it -> {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getName());
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
 
-            String needs = packageTemplateStageService.getJobName();
+            String needs = packageTemplateStageService.getJobId();
 
             return defaultTemplate
                     .replace("db-migration:", multipleStages ? "db-migration-" + it.toLowerCase() + ":" : "db-migration:")

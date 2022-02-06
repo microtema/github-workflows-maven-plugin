@@ -51,12 +51,12 @@ public class ReadinessTemplateStageService implements TemplateStageService {
 
         return stageNames.stream().map(it -> {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getName());
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
 
             String needs = templateStageServices.stream().filter(e -> e.access(mojo, metaData))
-                    .map(e -> e.getJobNames(metaData, it))
+                    .map(e -> e.getJobIds(metaData, it))
                     .collect(Collectors.joining(", "));
 
             return defaultTemplate

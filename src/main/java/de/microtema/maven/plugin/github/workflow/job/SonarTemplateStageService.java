@@ -11,7 +11,7 @@ import java.util.List;
 public class SonarTemplateStageService implements TemplateStageService {
 
     @Override
-    public String getJobName() {
+    public String getJobId() {
         return "quality-gate";
     }
 
@@ -32,7 +32,7 @@ public class SonarTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getName());
+        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
         List<String> sonarExcludes = PipelineGeneratorUtil.getSonarExcludes(mojo.getProject());
 

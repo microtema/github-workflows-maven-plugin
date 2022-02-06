@@ -13,6 +13,6 @@ public class ChangeLogTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        return PipelineGeneratorUtil.getTemplate(getName());
+        return PipelineGeneratorUtil.getTemplate(getTemplateName());
     }
 }
