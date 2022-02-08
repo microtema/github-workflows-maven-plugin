@@ -34,13 +34,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     MavenProject project;
 
     @Parameter(property = "variables")
-    LinkedHashMap<String, String> variables = new LinkedHashMap<>();
+    Map<String, String> variables = new LinkedHashMap<>();
 
     @Parameter(property = "stages")
-    LinkedHashMap<String, String> stages = new LinkedHashMap<>();
+    Map<String, String> stages = new LinkedHashMap<>();
 
     @Parameter(property = "down-streams")
-    LinkedHashMap<String, String> downStreams = new LinkedHashMap<>();
+    Map<String, String> downStreams = new LinkedHashMap<>();
 
     @Parameter(property = "runs-on")
     String runsOn;
@@ -126,6 +126,21 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             defaultVariables.put("JAVA_VERSION", javaVersion);
         }
 
+        if (PipelineGeneratorUtil.isMicroserviceRepo(project) || !downStreams.isEmpty()) {
+
+            String variableValue = variables.getOrDefault("REPO_ACCESS_TOKEN", "${{ secrets.REPO_ACCESS_TOKEN }}");
+
+            variableValue = wrapSecretVariable(variableValue);
+
+            variables.put("REPO_ACCESS_TOKEN", variableValue);
+
+            variableValue = variables.getOrDefault("DEPLOYMENT_REPOSITORY", "${{ github.repository }}-deployments");
+
+            variableValue = wrapSecretVariable(variableValue);
+
+            variables.put("DEPLOYMENT_REPOSITORY", variableValue);
+        }
+
         String mavenCliOptions = "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true";
 
         if (PipelineGeneratorUtil.existsMavenSettings(project)) {
@@ -133,6 +148,16 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
+    }
+
+    private String wrapSecretVariable(String variableValue) {
+
+        if (variableValue.startsWith("secrets.")) {
+
+            return "${{ " + variableValue + " }}";
+        }
+
+        return variableValue;
     }
 
     File getOrCreateWorkflowsDir() {
@@ -275,7 +300,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private String getPipelineName(MetaData metaData) {
+    protected String getPipelineName(MetaData metaData) {
 
         if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none")) {
 
@@ -287,7 +312,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return appName;
         }
 
-        return appName + (" [" + String.join(", ", metaData.getStageNames()) + "]").toUpperCase();
+        return ("[" + String.join(", ", metaData.getStageNames()) + "] ").toUpperCase() + appName;
     }
 
 
@@ -345,5 +370,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public List<String> getRunsOn() {
 
         return Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.toList());
+    }
+
+    public Map<String, Object> getVariables() {
+
+        return new LinkedHashMap<>(variables);
     }
 }

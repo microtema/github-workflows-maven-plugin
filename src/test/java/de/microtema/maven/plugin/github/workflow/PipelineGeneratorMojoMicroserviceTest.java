@@ -69,6 +69,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.variables.put("DOCKER_REGISTRY", "docker.registry.local");
         sut.variables.put("SERVICE_URL", "http://localhost:8080");
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
+        sut.variables.put("REPO_ACCESS_TOKEN", "${{ secrets.REPO_ACCESS_TOKEN }}");
 
         sut.runsOn = "self-hosted, azure-runners";
 
@@ -95,7 +96,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo\n" +
+        assertEquals("name: 'github-workflows-maven-plugin Maven Mojo'\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -298,7 +299,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [DEV]\n" +
+        assertEquals("name: '[DEV] github-workflows-maven-plugin Maven Mojo'\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -533,27 +534,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: Deployment\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
+                "    env:\n" +
+                "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
+                "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
                 "    steps:\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
+                "      - name: Trigger deployment workflow\n" +
+                "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          name: version-artifact\n" +
-                "      - name: 'Shell: set env'\n" +
-                "        run: export DOCKER_IMAGE_TAG=$(cat version)\n" +
-                "      - name: 'Shell: deployment'\n" +
-                "        uses: actions/github-script@v4\n" +
-                "        with:\n" +
-                "          github-token: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "          script: |\n" +
-                "            await github.actions.createWorkflowDispatch({\n" +
-                "                owner: context.repo.owner,\n" +
-                "                repo: context.repo.repo,\n" +
-                "                workflow_id: 'develop-workflow.yml',\n" +
-                "                ref: context.ref,\n" +
-                "                inputs: {\n" +
-                "                  VERSION: \"$VERSION\"\n" +
-                "                }\n" +
-                "            });\n" +
+                "          workflow: github-workflows-maven-plugin Maven Mojo [DEV]\n" +
+                "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
+                "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
+                "          ref: master\n" +
+                "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
@@ -629,7 +621,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
+        assertEquals("name: '[STAGE] github-workflows-maven-plugin Maven Mojo'\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -864,27 +856,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: Deployment\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
+                "    env:\n" +
+                "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
+                "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
                 "    steps:\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
+                "      - name: Trigger deployment workflow\n" +
+                "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          name: version-artifact\n" +
-                "      - name: 'Shell: set env'\n" +
-                "        run: export DOCKER_IMAGE_TAG=$(cat version)\n" +
-                "      - name: 'Shell: deployment'\n" +
-                "        uses: actions/github-script@v4\n" +
-                "        with:\n" +
-                "          github-token: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "          script: |\n" +
-                "            await github.actions.createWorkflowDispatch({\n" +
-                "                owner: context.repo.owner,\n" +
-                "                repo: context.repo.repo,\n" +
-                "                workflow_id: 'release-workflow.yml',\n" +
-                "                ref: context.ref,\n" +
-                "                inputs: {\n" +
-                "                  VERSION: \"$VERSION\"\n" +
-                "                }\n" +
-                "            });\n" +
+                "          workflow: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
+                "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
+                "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
+                "          ref: master\n" +
+                "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "\n" +
                 "  readiness:\n" +
                 "    name: Readiness Check\n" +
@@ -955,7 +938,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: github-workflows-maven-plugin Maven Mojo [STAGE, QA]\n" +
+        assertEquals("name: '[STAGE, QA] github-workflows-maven-plugin Maven Mojo'\n" +
                 "\n" +
                 "on:\n" +
                 "  push:\n" +
@@ -1192,39 +1175,55 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Liquibase: changelog'\n" +
                 "        run: echo 'TBD'\n" +
                 "\n" +
-                "  promote:\n" +
-                "    name: Promote\n" +
+                "  promote-stage:\n" +
+                "    name: Promote [STAGE]\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ package ]\n" +
+                "    steps:\n" +
+                "      - name: 'Shell: promote'\n" +
+                "        run: echo 'TBD'\n" +
+                "  \n" +
+                "  promote-qa:\n" +
+                "    name: Promote [QA]\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
                 "\n" +
-                "  deployment:\n" +
-                "    name: Deployment\n" +
+                "  deployment-stage:\n" +
+                "    name: Deployment [STAGE]\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ promote ]\n" +
+                "    needs: [ promote-stage ]\n" +
+                "    env:\n" +
+                "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
+                "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
                 "    steps:\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
+                "      - name: Trigger deployment workflow\n" +
+                "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          name: version-artifact\n" +
-                "      - name: 'Shell: set env'\n" +
-                "        run: export DOCKER_IMAGE_TAG=$(cat version)\n" +
-                "      - name: 'Shell: deployment'\n" +
-                "        uses: actions/github-script@v4\n" +
+                "          workflow: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
+                "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
+                "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
+                "          ref: master\n" +
+                "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
+                "  \n" +
+                "  deployment-qa:\n" +
+                "    name: Deployment [QA]\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ promote-qa ]\n" +
+                "    env:\n" +
+                "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
+                "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
+                "    steps:\n" +
+                "      - name: Trigger deployment workflow\n" +
+                "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          github-token: ${{ secrets.GITHUB_TOKEN }}\n" +
-                "          script: |\n" +
-                "            await github.actions.createWorkflowDispatch({\n" +
-                "                owner: context.repo.owner,\n" +
-                "                repo: context.repo.repo,\n" +
-                "                workflow_id: 'release-workflow.yml',\n" +
-                "                ref: context.ref,\n" +
-                "                inputs: {\n" +
-                "                  VERSION: \"$VERSION\"\n" +
-                "                }\n" +
-                "            });\n" +
+                "          workflow: github-workflows-maven-plugin Maven Mojo [QA]\n" +
+                "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
+                "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
+                "          ref: master\n" +
+                "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "\n" +
                 "  readiness-stage:\n" +
                 "    name: Readiness Check [STAGE]\n" +

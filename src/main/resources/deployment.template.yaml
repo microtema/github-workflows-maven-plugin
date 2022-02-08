@@ -1,25 +1,16 @@
 deployment:
-  name: Deployment
+  name: %JOB_NAME%
   runs-on: [ %RUNS_ON% ]
-  needs: [ promote ]
+  needs: [ %NEEDS% ]
+  env:
+    DEPLOYMENT_REPOSITORY: %DEPLOYMENT_REPOSITORY%
+    REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
-    - name: 'Artifact: download'
-      uses: actions/download-artifact@v2
+    - name: Trigger deployment workflow
+      uses: benc-uk/workflow-dispatch@v1
       with:
-        name: version-artifact
-    - name: 'Shell: set env'
-      run: export DOCKER_IMAGE_TAG=$(cat version)
-    - name: 'Shell: deployment'
-      uses: actions/github-script@v4
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          await github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: '%BRANCH_NAME%-workflow.yml',
-              ref: context.ref,
-              inputs: {
-                VERSION: "$VERSION"
-              }
-          });
+        workflow: %WORKFLOW%
+        repo: ${{ env.DEPLOYMENT_REPOSITORY }}
+        token: ${{ env.REPO_ACCESS_TOKEN }}
+        ref: master
+        inputs: '{ "version": "${{ env.VERSION }}" }'

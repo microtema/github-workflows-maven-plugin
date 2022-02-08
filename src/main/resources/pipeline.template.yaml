@@ -1,4 +1,4 @@
-name: %PIPELINE_NAME%
+name: '%PIPELINE_NAME%'
 
 on:
   push:

@@ -1,5 +1,5 @@
 promote:
-  name: Promote
+  name: %JOB_NAME%
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
   steps:

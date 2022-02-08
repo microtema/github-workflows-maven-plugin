@@ -5,6 +5,8 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PromoteTemplateStageService implements TemplateStageService {
@@ -13,10 +15,14 @@ public class PromoteTemplateStageService implements TemplateStageService {
 
     private final HelmTemplateStageService helmTemplateStageService;
 
+    private final PackageTemplateStageService packageTemplateStageService;
+
     public PromoteTemplateStageService(TagTemplateStageService tagTemplateStageService,
-                                       HelmTemplateStageService helmTemplateStageService) {
+                                       HelmTemplateStageService helmTemplateStageService,
+                                       PackageTemplateStageService packageTemplateStageService) {
         this.tagTemplateStageService = tagTemplateStageService;
         this.helmTemplateStageService = helmTemplateStageService;
+        this.packageTemplateStageService = packageTemplateStageService;
     }
 
     @Override
@@ -40,15 +46,28 @@ public class PromoteTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
+        List<String> stageNames = metaData.getStageNames();
 
-        String needs = "package";
+        boolean multipleStages = stageNames.size() > 1;
 
-        if (tagTemplateStageService.access(mojo, metaData)) {
-            needs = tagTemplateStageService.getJobId();
-        }
+        return stageNames.stream().map(it -> {
 
-        return template.replace("%NEEDS%", needs);
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
+
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
+
+            String needs = packageTemplateStageService.getJobId();
+
+            if (tagTemplateStageService.access(mojo, metaData)) {
+                needs = tagTemplateStageService.getJobId();
+            }
+
+            return defaultTemplate
+                    .replace("promote:", multipleStages ? "promote-" + it.toLowerCase() + ":" : "promote:")
+                    .replace("%JOB_NAME%", multipleStages ? "Promote [" + it.toUpperCase() + "]" : "Promote")
+                    .replace("%NEEDS%", needs);
+
+        }).collect(Collectors.joining("\n"));
     }
 
 }

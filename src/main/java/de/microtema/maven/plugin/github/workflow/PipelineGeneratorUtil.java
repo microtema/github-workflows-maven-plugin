@@ -310,6 +310,11 @@ public class PipelineGeneratorUtil {
 
     public static String applyProperties(String template, String stageName) {
 
+        return applyProperties(template, stageName, Collections.emptyMap());
+    }
+
+    public static String applyProperties(String template, String stageName, Map<String, Object> globalVariables) {
+
         Properties properties = PipelineGeneratorUtil.findProperties(stageName);
 
         if (Objects.isNull(properties)) {
@@ -317,6 +322,8 @@ public class PipelineGeneratorUtil {
         }
 
         properties.putIfAbsent("STAGE_NAME", stageName);
+
+        globalVariables.entrySet().stream().filter(it -> !properties.containsKey(it.getKey())).forEach(it -> properties.put(it.getKey(), it.getValue()));
 
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             template = template.replace("%" + entry.getKey() + "%", String.valueOf(entry.getValue()));
