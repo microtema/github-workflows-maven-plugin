@@ -61,7 +61,7 @@ public class ReadinessTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("readiness:", multipleStages ? "readiness-" + it.toLowerCase() + ":" : "readiness:")
-                    .replace("%JOB_NAME%", multipleStages ? "Readiness Check [" + it.toUpperCase() + "]" : "Readiness Check")
+                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Readiness Check")
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));

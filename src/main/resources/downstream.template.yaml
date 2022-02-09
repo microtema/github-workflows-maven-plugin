@@ -2,6 +2,14 @@ downstream:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
+  env:
+    DOWNSTREAM_REPOSITORY: %DOWNSTREAM_REPOSITORY%
+    REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
-    - name: 'Shell: script'
-      run: echo "%DOWNSTREAM%"
+    - name: Trigger downstream workflow
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: '%WORKFLOW%'
+        repo: ${{ env.DOWNSTREAM_REPOSITORY }}
+        token: ${{ env.REPO_ACCESS_TOKEN }}
+        ref: master

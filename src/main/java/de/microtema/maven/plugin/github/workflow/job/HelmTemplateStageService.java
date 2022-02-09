@@ -57,7 +57,7 @@ public class HelmTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
-                    .replace("%JOB_NAME%", multipleStages ? "Deployment [" + it.toUpperCase() + "]" : "Deployment")
+                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
                     .replace("%STAGE_NAME%", it);
 
         }).collect(Collectors.joining("\n"));

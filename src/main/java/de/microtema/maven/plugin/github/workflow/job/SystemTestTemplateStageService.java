@@ -75,17 +75,18 @@ public class SystemTestTemplateStageService implements TemplateStageService {
         template = PipelineGeneratorUtil.applyProperties(template, stageName);
 
         String jobId = "system-test";
-        String jobName = "System Test";
+        String jobName = "[" + stageName.toUpperCase() + "]";
 
         if (multipleStages) {
             jobId += "-" + stageName.toLowerCase();
-            jobName += " [" + stageName.toUpperCase() + "]";
         }
 
         if (multipleTests) {
             jobId += "-" + testType.toLowerCase();
-            jobName += "(" + testType.toUpperCase() + ")";
+            jobName += " (" + testType.toUpperCase() + ")";
         }
+
+        jobName += " System Test";
 
         return template
                 .replace("system-test:", jobId + ":")

@@ -50,11 +50,11 @@ public class DeploymentTemplateStageService implements TemplateStageService {
 
             String needs = promoteTemplateStageService.getJobIds(metaData, it);
 
-            String workflow = mojo.getProject().getName() + (" [" + it + "]").toUpperCase();
+            String workflow = ("[" + it + "] ").toUpperCase() + mojo.getProject().getName();
 
             return defaultTemplate
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
-                    .replace("%JOB_NAME%", multipleStages ? "Deployment [" + it.toUpperCase() + "]" : "Deployment")
+                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
                     .replace("%NEEDS%", needs)
                     .replace("%WORKFLOW%", workflow);
 

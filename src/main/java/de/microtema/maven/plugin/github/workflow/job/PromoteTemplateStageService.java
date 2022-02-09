@@ -64,7 +64,7 @@ public class PromoteTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("promote:", multipleStages ? "promote-" + it.toLowerCase() + ":" : "promote:")
-                    .replace("%JOB_NAME%", multipleStages ? "Promote [" + it.toUpperCase() + "]" : "Promote")
+                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Promote")
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));

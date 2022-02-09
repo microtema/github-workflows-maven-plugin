@@ -291,7 +291,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getProperties()).thenReturn(properties);
 
         sut.stages.put("dev", "develop");
-        sut.downStreams.put("dev", "E2E Test:e2e-develop-workflow.yaml");
+        sut.downStreams.put("dev", "E2E Test:microtema/github-workflows-maven-plugin");
 
         pipelineFile = new File(sut.githubWorkflowsDir, "develop-workflow.yaml");
 
@@ -509,7 +509,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
                 "  db-migration:\n" +
-                "    name: Database Changelog\n" +
+                "    name: '[DEV] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -523,7 +523,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  promote:\n" +
-                "    name: Promote\n" +
+                "    name: '[DEV] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -531,7 +531,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment:\n" +
-                "    name: Deployment\n" +
+                "    name: '[DEV] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
                 "    env:\n" +
@@ -541,14 +541,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: Trigger deployment workflow\n" +
                 "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          workflow: github-workflows-maven-plugin Maven Mojo [DEV]\n" +
+                "          workflow: '[DEV] github-workflows-maven-plugin Maven Mojo'\n" +
                 "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "\n" +
                 "  readiness:\n" +
-                "    name: Readiness Check\n" +
+                "    name: '[DEV] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -560,7 +560,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "\n" +
                 "  system-test:\n" +
-                "    name: System Test\n" +
+                "    name: '[DEV] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
                 "    env:\n" +
@@ -577,7 +577,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  performance-test:\n" +
-                "    name: Performance Test\n" +
+                "    name: '[DEV] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
                 "    env:\n" +
@@ -597,9 +597,17 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, performance-test ]\n" +
+                "    env:\n" +
+                "      DOWNSTREAM_REPOSITORY: microtema/github-workflows-maven-plugin\n" +
+                "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
                 "    steps:\n" +
-                "      - name: 'Shell: script'\n" +
-                "        run: echo \"e2e-develop-workflow.yaml\"\n" +
+                "      - name: Trigger downstream workflow\n" +
+                "        uses: benc-uk/workflow-dispatch@v1\n" +
+                "        with:\n" +
+                "          workflow: 'E2E Test'\n" +
+                "          repo: ${{ env.DOWNSTREAM_REPOSITORY }}\n" +
+                "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
+                "          ref: master\n" +
                 "\n", answer);
     }
 
@@ -831,7 +839,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
                 "  db-migration:\n" +
-                "    name: Database Changelog\n" +
+                "    name: '[STAGE] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -845,7 +853,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  promote:\n" +
-                "    name: Promote\n" +
+                "    name: '[STAGE] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -853,7 +861,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment:\n" +
-                "    name: Deployment\n" +
+                "    name: '[STAGE] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
                 "    env:\n" +
@@ -863,14 +871,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: Trigger deployment workflow\n" +
                 "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          workflow: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
+                "          workflow: '[STAGE] github-workflows-maven-plugin Maven Mojo'\n" +
                 "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "\n" +
                 "  readiness:\n" +
-                "    name: Readiness Check\n" +
+                "    name: '[STAGE] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -882,7 +890,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "\n" +
                 "  system-test:\n" +
-                "    name: System Test\n" +
+                "    name: '[STAGE] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
                 "    env:\n" +
@@ -899,7 +907,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  performance-test:\n" +
-                "    name: Performance Test\n" +
+                "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
                 "    env:\n" +
@@ -1148,7 +1156,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "\n" +
                 "  db-migration-stage:\n" +
-                "    name: Database Changelog [STAGE]\n" +
+                "    name: '[STAGE] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1162,7 +1170,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "  \n" +
                 "  db-migration-qa:\n" +
-                "    name: Database Changelog [QA]\n" +
+                "    name: '[QA] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1176,7 +1184,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  promote-stage:\n" +
-                "    name: Promote [STAGE]\n" +
+                "    name: '[STAGE] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1184,7 +1192,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "  \n" +
                 "  promote-qa:\n" +
-                "    name: Promote [QA]\n" +
+                "    name: '[QA] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1192,7 +1200,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: echo 'TBD'\n" +
                 "\n" +
                 "  deployment-stage:\n" +
-                "    name: Deployment [STAGE]\n" +
+                "    name: '[STAGE] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote-stage ]\n" +
                 "    env:\n" +
@@ -1202,14 +1210,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: Trigger deployment workflow\n" +
                 "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          workflow: github-workflows-maven-plugin Maven Mojo [STAGE]\n" +
+                "          workflow: '[STAGE] github-workflows-maven-plugin Maven Mojo'\n" +
                 "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "  \n" +
                 "  deployment-qa:\n" +
-                "    name: Deployment [QA]\n" +
+                "    name: '[QA] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote-qa ]\n" +
                 "    env:\n" +
@@ -1219,14 +1227,14 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: Trigger deployment workflow\n" +
                 "        uses: benc-uk/workflow-dispatch@v1\n" +
                 "        with:\n" +
-                "          workflow: github-workflows-maven-plugin Maven Mojo [QA]\n" +
+                "          workflow: '[QA] github-workflows-maven-plugin Maven Mojo'\n" +
                 "          repo: ${{ env.DEPLOYMENT_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "\n" +
                 "  readiness-stage:\n" +
-                "    name: Readiness Check [STAGE]\n" +
+                "    name: '[STAGE] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment-stage ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -1238,7 +1246,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  \n" +
                 "  readiness-qa:\n" +
-                "    name: Readiness Check [QA]\n" +
+                "    name: '[QA] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment-qa ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -1250,7 +1258,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "\n" +
                 "  system-test-stage:\n" +
-                "    name: System Test [STAGE]\n" +
+                "    name: '[STAGE] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness-stage ]\n" +
                 "    env:\n" +
@@ -1267,7 +1275,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "  \n" +
                 "  system-test-qa:\n" +
-                "    name: System Test [QA]\n" +
+                "    name: '[QA] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness-qa ]\n" +
                 "    env:\n" +
@@ -1284,7 +1292,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  performance-test-stage:\n" +
-                "    name: Performance Test [STAGE]\n" +
+                "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test-stage, readiness-stage ]\n" +
                 "    env:\n" +
@@ -1301,7 +1309,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "  \n" +
                 "  performance-test-qa:\n" +
-                "    name: Performance Test [QA]\n" +
+                "    name: '[QA] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test-qa, readiness-qa ]\n" +
                 "    env:\n" +
@@ -1318,12 +1326,20 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "\n" +
                 "  downstream-qa-e2e-test:\n" +
-                "    name: 'E2E Test [QA]'\n" +
+                "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test-qa, performance-test-qa ]\n" +
+                "    env:\n" +
+                "      DOWNSTREAM_REPOSITORY: qa-e2e-workflow.yaml\n" +
+                "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
                 "    steps:\n" +
-                "      - name: 'Shell: script'\n" +
-                "        run: echo \"qa-e2e-workflow.yaml\"\n" +
+                "      - name: Trigger downstream workflow\n" +
+                "        uses: benc-uk/workflow-dispatch@v1\n" +
+                "        with:\n" +
+                "          workflow: 'E2E Test'\n" +
+                "          repo: ${{ env.DOWNSTREAM_REPOSITORY }}\n" +
+                "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
+                "          ref: master\n" +
                 "\n", answer);
     }
 }

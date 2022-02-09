@@ -6,11 +6,9 @@ import de.microtema.maven.plugin.github.workflow.model.JobData;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DownstreamTemplateStageService implements TemplateStageService {
 
@@ -69,16 +67,17 @@ public class DownstreamTemplateStageService implements TemplateStageService {
 
             String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
-            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
-
             String needs = getJobNames(mojo, metaData, it);
 
             String downStream = downStreams.get(it);
 
             String[] parts = downStream.split(":");
 
+            String workflowName = parts[0];
+            String downstreamRepository = "${{ github.repository }}";
+
             if (parts.length > 1) {
-                downStream = parts[1];
+                downstreamRepository = parts[1];
             }
 
             JobData jobData = getJobData(parts, it);
@@ -86,10 +85,15 @@ public class DownstreamTemplateStageService implements TemplateStageService {
             String jobId = jobData.getId();
             String jobName = jobData.getName();
 
+            HashMap<String, Object> globalVariables = new HashMap<>(mojo.getVariables());
+            globalVariables.put("DOWNSTREAM_REPOSITORY", downstreamRepository);
+
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it, globalVariables);
+
             return defaultTemplate
                     .replace("downstream:", multipleStages ? "downstream-" + jobId.toLowerCase() + ":" : "downstream:")
-                    .replace("%JOB_NAME%", multipleStages ? jobName + " [" + it.toUpperCase() + "]" : jobName)
-                    .replace("%DOWNSTREAM%", downStream)
+                    .replace("%JOB_NAME%", jobName)
+                    .replace("%WORKFLOW%", workflowName)
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));
@@ -130,6 +134,8 @@ public class DownstreamTemplateStageService implements TemplateStageService {
             jobId += "-" + parts[0].replaceAll("[^a-zA-Z0-9]", "-");
             jobName = parts[0];
         }
+
+        jobId = Stream.of(jobId.split("-")).map(StringUtils::trimToNull).filter(Objects::nonNull).collect(Collectors.joining("-"));
 
         JobData jobData = new JobData();
 

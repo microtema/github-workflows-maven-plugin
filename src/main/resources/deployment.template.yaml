@@ -1,5 +1,5 @@
 deployment:
-  name: %JOB_NAME%
+  name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
   env:
@@ -9,7 +9,7 @@ deployment:
     - name: Trigger deployment workflow
       uses: benc-uk/workflow-dispatch@v1
       with:
-        workflow: %WORKFLOW%
+        workflow: '%WORKFLOW%'
         repo: ${{ env.DEPLOYMENT_REPOSITORY }}
         token: ${{ env.REPO_ACCESS_TOKEN }}
         ref: master

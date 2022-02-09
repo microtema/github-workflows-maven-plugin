@@ -57,7 +57,7 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
 
             return defaultTemplate
                     .replace("performance-test:", multipleStages ? "performance-test-" + it.toLowerCase() + ":" : "performance-test:")
-                    .replace("%JOB_NAME%", multipleStages ? "Performance Test [" + it.toUpperCase() + "]" : "Performance Test")
+                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Performance Test")
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));

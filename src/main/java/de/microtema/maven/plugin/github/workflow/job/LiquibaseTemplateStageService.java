@@ -53,7 +53,7 @@ public class LiquibaseTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("db-migration:", multipleStages ? "db-migration-" + it.toLowerCase() + ":" : "db-migration:")
-                    .replace("%JOB_NAME%", multipleStages ? "Database Changelog [" + it.toUpperCase() + "]" : "Database Changelog")
+                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Database Changelog")
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));
