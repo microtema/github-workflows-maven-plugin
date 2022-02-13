@@ -45,6 +45,19 @@ class PipelineGeneratorMojoMavenLibraryTest {
         sut.runsOn = "self-hosted,azure-runners";
     }
 
+    public static void assertLinesEquals(String expected, String current) {
+
+        assertEquals(PipelineGeneratorUtil.removeEmptyLines(expected), PipelineGeneratorUtil.removeEmptyLines(current));
+    }
+
+    @Test
+    void unMask() {
+
+        String answer = sut.unMask("\"${KUBERNETES_VERSION:-1.11}\"");
+
+        assertEquals("${KUBERNETES_VERSION:-1.11}", answer);
+    }
+
     @Test
     void generateDevelopWorkflowFile() throws Exception {
 
@@ -68,13 +81,15 @@ class PipelineGeneratorMojoMavenLibraryTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: 'github-workflows-maven-plugin Maven Mojo'\n" +
-                "\n" +
+        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+                "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
+                "# Files under .github/workflows folder are generated and should not be edited. #\n" +
+                "################################################################################\n" +
+                "name: 'github-workflows-maven-plugin Maven Mojo'\n" +
                 "on:\n" +
                 "  push:\n" +
                 "    branches:\n" +
                 "      - feature/*\n" +
-                "\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -84,7 +99,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  CODE_PATHS: \".github/** src/** pom.xml\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
-                "\n" +
                 "jobs:\n" +
                 "  initialize:\n" +
                 "    name: Initialize\n" +
@@ -100,7 +114,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        id: code-changed\n" +
                 "        with:\n" +
                 "          paths: ${{ env.CODE_PATHS }}\n" +
-                "\n" +
                 "  versioning:\n" +
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -126,7 +139,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
-                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -145,7 +157,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -159,7 +170,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  unit-test:\n" +
                 "    name: Unit Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -188,7 +198,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -217,7 +226,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -237,7 +245,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -265,15 +272,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact\n" +
-                "\n", answer);
-    }
-
-    @Test
-    void unMask() {
-
-        String answer = sut.unMask("\"${KUBERNETES_VERSION:-1.11}\"");
-
-        assertEquals("${KUBERNETES_VERSION:-1.11}", answer);
+                "          path: artifact", answer);
     }
 }

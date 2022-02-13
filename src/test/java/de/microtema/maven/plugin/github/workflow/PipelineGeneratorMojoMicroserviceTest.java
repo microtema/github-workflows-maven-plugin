@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.File;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojoMavenLibraryTest.assertLinesEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,13 +96,15 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: 'github-workflows-maven-plugin Maven Mojo'\n" +
-                "\n" +
+        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+                "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
+                "# Files under .github/workflows folder are generated and should not be edited. #\n" +
+                "################################################################################\n" +
+                "name: 'github-workflows-maven-plugin Maven Mojo'\n" +
                 "on:\n" +
                 "  push:\n" +
                 "    branches:\n" +
                 "      - feature/*\n" +
-                "\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -112,7 +114,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  CODE_PATHS: \".github/** src/** pom.xml Dockerfile\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
-                "\n" +
                 "jobs:\n" +
                 "  initialize:\n" +
                 "    name: Initialize\n" +
@@ -128,7 +129,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        id: code-changed\n" +
                 "        with:\n" +
                 "          paths: ${{ env.CODE_PATHS }}\n" +
-                "\n" +
                 "  versioning:\n" +
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -154,7 +154,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
-                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -173,7 +172,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -187,7 +185,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  unit-test:\n" +
                 "    name: Unit Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -216,7 +213,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -245,7 +241,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -265,7 +260,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -293,8 +287,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact\n" +
-                "\n", answer);
+                "          path: artifact", answer);
     }
 
     @Test
@@ -316,13 +309,15 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: '[DEV] github-workflows-maven-plugin Maven Mojo'\n" +
-                "\n" +
+        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+                "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
+                "# Files under .github/workflows folder are generated and should not be edited. #\n" +
+                "################################################################################\n" +
+                "name: '[DEV] github-workflows-maven-plugin Maven Mojo'\n" +
                 "on:\n" +
                 "  push:\n" +
                 "    branches:\n" +
                 "      - develop\n" +
-                "\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -332,7 +327,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  CODE_PATHS: \".github/** src/** pom.xml Dockerfile\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
-                "\n" +
                 "jobs:\n" +
                 "  initialize:\n" +
                 "    name: Initialize\n" +
@@ -348,7 +342,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        id: code-changed\n" +
                 "        with:\n" +
                 "          paths: ${{ env.CODE_PATHS }}\n" +
-                "\n" +
                 "  versioning:\n" +
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -374,7 +367,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
-                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -393,7 +385,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -407,7 +398,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  unit-test:\n" +
                 "    name: Unit Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -436,7 +426,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -465,7 +454,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -485,7 +473,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -514,7 +501,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  package:\n" +
                 "    name: Package\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -541,7 +527,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
-                "\n" +
                 "  db-migration:\n" +
                 "    name: '[DEV] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -555,7 +540,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Liquibase: changelog'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
                 "  promote:\n" +
                 "    name: '[DEV] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -564,7 +548,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
                 "  deployment:\n" +
                 "    name: '[DEV] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -582,7 +565,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
-                "\n" +
                 "  readiness:\n" +
                 "    name: '[DEV] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -595,7 +577,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
-                "\n" +
                 "  system-test:\n" +
                 "    name: '[DEV] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -613,7 +594,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  performance-test:\n" +
                 "    name: '[DEV] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -631,7 +611,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  downstream:\n" +
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -647,8 +626,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          workflow: 'E2E Test'\n" +
                 "          repo: ${{ env.DOWNSTREAM_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
-                "          ref: master\n" +
-                "\n", answer);
+                "          ref: master", answer);
     }
 
     @Test
@@ -669,13 +647,15 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: '[STAGE] github-workflows-maven-plugin Maven Mojo'\n" +
-                "\n" +
+        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+                "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
+                "# Files under .github/workflows folder are generated and should not be edited. #\n" +
+                "################################################################################\n" +
+                "name: '[STAGE] github-workflows-maven-plugin Maven Mojo'\n" +
                 "on:\n" +
                 "  push:\n" +
                 "    branches:\n" +
                 "      - release/*\n" +
-                "\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -685,7 +665,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  CODE_PATHS: \".github/** src/** pom.xml Dockerfile\"\n" +
                 "  VERSION: \"1.1.0-RC\"\n" +
-                "\n" +
                 "jobs:\n" +
                 "  initialize:\n" +
                 "    name: Initialize\n" +
@@ -701,7 +680,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        id: code-changed\n" +
                 "        with:\n" +
                 "          paths: ${{ env.CODE_PATHS }}\n" +
-                "\n" +
                 "  versioning:\n" +
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -727,7 +705,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
-                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -746,7 +723,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -760,7 +736,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  unit-test:\n" +
                 "    name: Unit Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -789,7 +764,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -818,7 +792,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -838,7 +811,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -867,7 +839,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  package:\n" +
                 "    name: Package\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -894,7 +865,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
-                "\n" +
                 "  db-migration:\n" +
                 "    name: '[STAGE] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -908,7 +878,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Liquibase: changelog'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
                 "  promote:\n" +
                 "    name: '[STAGE] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -917,7 +886,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
                 "  deployment:\n" +
                 "    name: '[STAGE] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -935,7 +903,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
-                "\n" +
                 "  readiness:\n" +
                 "    name: '[STAGE] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -948,7 +915,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
-                "\n" +
                 "  system-test:\n" +
                 "    name: '[STAGE] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -966,7 +932,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  performance-test:\n" +
                 "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -983,8 +948,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: jmeter'\n" +
-                "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
-                "\n", answer);
+                "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS", answer);
     }
 
     @Test
@@ -1008,13 +972,15 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("name: '[STAGE, QA] github-workflows-maven-plugin Maven Mojo'\n" +
-                "\n" +
+        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+                "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
+                "# Files under .github/workflows folder are generated and should not be edited. #\n" +
+                "################################################################################\n" +
+                "name: '[STAGE, QA] github-workflows-maven-plugin Maven Mojo'\n" +
                 "on:\n" +
                 "  push:\n" +
                 "    branches:\n" +
                 "      - release/*\n" +
-                "\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
@@ -1024,7 +990,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    \\ -DdeployAtEnd=true\"\n" +
                 "  CODE_PATHS: \".github/** src/** pom.xml Dockerfile\"\n" +
                 "  VERSION: \"1.1.0-RC\"\n" +
-                "\n" +
                 "jobs:\n" +
                 "  initialize:\n" +
                 "    name: Initialize\n" +
@@ -1040,7 +1005,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        id: code-changed\n" +
                 "        with:\n" +
                 "          paths: ${{ env.CODE_PATHS }}\n" +
-                "\n" +
                 "  versioning:\n" +
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1066,7 +1030,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: pom-artifact\n" +
                 "          path: artifact/pom.xml\n" +
-                "\n" +
                 "  compile:\n" +
                 "    name: Compile\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1085,7 +1048,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: pom-artifact\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  security-check:\n" +
                 "    name: Security Check\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1099,7 +1061,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: dependency-check'\n" +
                 "        run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  unit-test:\n" +
                 "    name: Unit Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1128,7 +1089,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  it-test:\n" +
                 "    name: Integration Test\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1157,7 +1117,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  quality-gate:\n" +
                 "    name: Quality Gate\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1177,7 +1136,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: sonar'\n" +
                 "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1206,7 +1164,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "\n" +
                 "  package:\n" +
                 "    name: Package\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1233,7 +1190,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
-                "\n" +
                 "  db-migration-stage:\n" +
                 "    name: '[STAGE] Database Changelog'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1261,7 +1217,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Liquibase: changelog'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
                 "  promote-stage:\n" +
                 "    name: '[STAGE] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1279,7 +1234,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
-                "\n" +
                 "  deployment-stage:\n" +
                 "    name: '[STAGE] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1315,7 +1269,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
-                "\n" +
                 "  readiness-stage:\n" +
                 "    name: '[STAGE] Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1341,7 +1294,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    steps:\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
-                "\n" +
                 "  system-test-stage:\n" +
                 "    name: '[STAGE] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1377,7 +1329,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  performance-test-stage:\n" +
                 "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1413,7 +1364,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
-                "\n" +
                 "  downstream-qa-e2e-test:\n" +
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1429,7 +1379,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          workflow: 'E2E Test'\n" +
                 "          repo: ${{ env.DOWNSTREAM_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
-                "          ref: master\n" +
-                "\n", answer);
+                "          ref: master", answer);
     }
 }

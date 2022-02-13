@@ -241,6 +241,19 @@ public class PipelineGeneratorUtil {
         return stringBuilder.toString();
     }
 
+    public static String removeEmptyLines(String text) {
+        final String[] strings = text.split("\n");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0, stringsLength = strings.length; i < stringsLength; i++) {
+            String str = strings[i];
+            if (str.isEmpty()) continue;
+            result.append(str);
+            if (i + 1 == stringsLength) continue;
+            result.append("\n");
+        }
+        return result.toString();
+    }
+
     public static String getProperty(MavenProject project, String propertyName, String defaultValue) {
 
         return project.getProperties().entrySet()
