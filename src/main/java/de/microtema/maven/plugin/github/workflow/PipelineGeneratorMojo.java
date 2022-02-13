@@ -45,6 +45,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "runs-on")
     String runsOn;
 
+    @Parameter(property = "code-paths")
+    String codePaths;
+
     private String appName;
 
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
@@ -82,6 +85,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     }
 
     void injectTemplateStageServices() {
+        templateStageServices.add(ClassUtil.createInstance(InitializeTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
@@ -148,6 +152,16 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
+
+        String codePaths = ".github/** src/** pom.xml";
+
+        if (PipelineGeneratorUtil.existsDockerfile(project)) {
+            codePaths += " Dockerfile";
+        }
+
+        codePaths = variables.getOrDefault("CODE_PATHS", codePaths);
+
+        defaultVariables.put("CODE_PATHS", codePaths);
     }
 
     private String wrapSecretVariable(String variableValue) {

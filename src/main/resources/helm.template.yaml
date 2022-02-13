@@ -3,6 +3,7 @@ deployment:
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
   environment: %STAGE_NAME%
+  if: ${{ always() }}
   env:
     CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
     AKS_NAMESPACE: %AKS_NAMESPACE%

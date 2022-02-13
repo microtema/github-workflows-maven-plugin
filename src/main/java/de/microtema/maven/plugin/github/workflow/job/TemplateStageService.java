@@ -61,6 +61,10 @@ public interface TemplateStageService {
 
     default String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (!access(mojo, metaData)) {
+            return null;
+        }
+
         return PipelineGeneratorUtil.getTemplate(getTemplateName());
     }
 

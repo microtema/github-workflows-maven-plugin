@@ -3,6 +3,7 @@ readiness:
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
   timeout-minutes: 15
+  if: ${{ needs.initialize.outputs.code-changed == 'true' }}
   env:
     API_KEY: %API_KEY%
     SERVICE_URL: %SERVICE_URL%

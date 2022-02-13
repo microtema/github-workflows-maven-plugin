@@ -1,0 +1,15 @@
+initialize:
+  name: Initialize
+  runs-on: [ %RUNS_ON% ]
+  needs: [ ]
+  outputs:
+    code-changed: ${{ steps.code-changed.outputs.changed }}
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
+    - uses: marceloprado/has-changed-path@v1
+      id: code-changed
+      with:
+        paths: ${{ env.CODE_PATHS }}

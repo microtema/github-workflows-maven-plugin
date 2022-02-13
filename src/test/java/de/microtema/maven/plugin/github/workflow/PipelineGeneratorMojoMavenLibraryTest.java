@@ -82,13 +82,31 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
+                "  CODE_PATHS: \".github/** src/** pom.xml\"\n" +
                 "  VERSION: \"1.1.0-SNAPSHOT\"\n" +
                 "\n" +
                 "jobs:\n" +
+                "  initialize:\n" +
+                "    name: Initialize\n" +
+                "    runs-on: [ self-hosted, azure-runners ]\n" +
+                "    needs: [ ]\n" +
+                "    outputs:\n" +
+                "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
+                "    steps:\n" +
+                "      - name: 'Checkout'\n" +
+                "        uses: actions/checkout@v2\n" +
+                "        with:\n" +
+                "          fetch-depth: 100\n" +
+                "      - uses: marceloprado/has-changed-path@v1\n" +
+                "        id: code-changed\n" +
+                "        with:\n" +
+                "          paths: ${{ env.CODE_PATHS }}\n" +
+                "\n" +
                 "  versioning:\n" +
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
+                "    needs: [ initialize ]\n" +
+                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +

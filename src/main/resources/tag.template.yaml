@@ -2,6 +2,7 @@ tag:
   name: Tag Release
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
+  if: ${{ always() }}
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
