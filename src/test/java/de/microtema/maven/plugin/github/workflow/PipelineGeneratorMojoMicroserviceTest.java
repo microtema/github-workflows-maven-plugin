@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.File;
 import java.util.Properties;
 
-import static de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojoMavenLibraryTest.assertLinesEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,7 +96,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -287,7 +287,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact", answer);
+                "          path: artifact\n", answer);
     }
 
     @Test
@@ -309,7 +309,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -626,7 +626,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          workflow: 'E2E Test'\n" +
                 "          repo: ${{ env.DOWNSTREAM_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
-                "          ref: master", answer);
+                "          ref: master\n", answer);
     }
 
     @Test
@@ -647,7 +647,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -948,7 +948,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: jmeter'\n" +
-                "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS", answer);
+                "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n", answer);
     }
 
     @Test
@@ -972,7 +972,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -1379,6 +1379,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          workflow: 'E2E Test'\n" +
                 "          repo: ${{ env.DOWNSTREAM_REPOSITORY }}\n" +
                 "          token: ${{ env.REPO_ACCESS_TOKEN }}\n" +
-                "          ref: master", answer);
+                "          ref: master\n", answer);
     }
 }

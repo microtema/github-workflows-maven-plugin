@@ -45,11 +45,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
         sut.runsOn = "self-hosted,azure-runners";
     }
 
-    public static void assertLinesEquals(String expected, String current) {
-
-        assertEquals(PipelineGeneratorUtil.removeEmptyLines(expected), PipelineGeneratorUtil.removeEmptyLines(current));
-    }
-
     @Test
     void unMask() {
 
@@ -81,7 +76,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertLinesEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -272,6 +267,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        uses: actions/upload-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
-                "          path: artifact", answer);
+                "          path: artifact\n", answer);
     }
 }

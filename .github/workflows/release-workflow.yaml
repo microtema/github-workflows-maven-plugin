@@ -2,14 +2,11 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 # Files under .github/workflows folder are generated and should not be edited. #
 ################################################################################
-
 name: 'GitHub Workflows Maven-Plugin'
-
 on:
   push:
     branches:
       - release/*
-
 env:
   APP_NAME: "github-workflows-maven-plugin"
   GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
@@ -19,7 +16,6 @@ env:
     \ -DdeployAtEnd=true"
   CODE_PATHS: ".github/** src/** pom.xml"
   VERSION: "2.0.1-RC"
-
 jobs:
   initialize:
     name: Initialize
@@ -35,7 +31,6 @@ jobs:
         id: code-changed
         with:
           paths: ${{ env.CODE_PATHS }}
-
   versioning:
     name: Versioning
     runs-on: [ ubuntu-latest ]
@@ -61,7 +56,6 @@ jobs:
         with:
           name: pom-artifact
           path: artifact/pom.xml
-
   compile:
     name: Compile
     runs-on: [ ubuntu-latest ]
@@ -80,7 +74,6 @@ jobs:
           name: pom-artifact
       - name: 'Maven: compile'
         run: mvn compile $MAVEN_CLI_OPTS
-
   security-check:
     name: Security Check
     runs-on: [ ubuntu-latest ]
@@ -94,7 +87,6 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Maven: dependency-check'
         run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS
-
   unit-test:
     name: Unit Test
     runs-on: [ ubuntu-latest ]
@@ -123,7 +115,6 @@ jobs:
         with:
           name: target-artifact
           path: artifact
-
   it-test:
     name: Integration Test
     runs-on: [ ubuntu-latest ]
@@ -152,7 +143,6 @@ jobs:
         with:
           name: target-artifact
           path: artifact
-
   quality-gate:
     name: Quality Gate
     runs-on: [ ubuntu-latest ]
@@ -172,7 +162,6 @@ jobs:
         run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS
       - name: 'Maven: sonar'
         run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS
-
   build:
     name: Build
     runs-on: [ ubuntu-latest ]
@@ -201,7 +190,6 @@ jobs:
         with:
           name: target-artifact
           path: artifact
-
   publish:
     name: Publish
     runs-on: [ ubuntu-latest ]
@@ -218,4 +206,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS
-
