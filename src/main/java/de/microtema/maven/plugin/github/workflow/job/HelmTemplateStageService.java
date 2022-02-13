@@ -49,27 +49,25 @@ public class HelmTemplateStageService implements TemplateStageService {
 
         boolean multipleStages = stageNames.size() > 1;
 
-        String template = stageNames.stream().map(it -> {
+        return stageNames.stream().map(it -> {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
+            String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
-            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
+            template = PipelineGeneratorUtil.applyProperties(template, it);
 
-            return defaultTemplate
+            if (versioningTemplateStageService.access(mojo, metaData)) {
+
+                template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobId());
+            } else {
+
+                template = template.replaceAll("\\[ %NEEDS% \\]", "[ ]");
+            }
+
+            return template
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
                     .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
                     .replace("%STAGE_NAME%", it);
 
-        }).collect(Collectors.joining("\n"));
-
-        if (versioningTemplateStageService.access(mojo, metaData)) {
-
-            template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobId());
-        } else {
-
-            template = template.replaceAll("\\[ %NEEDS% \\]", "[ ]");
-        }
-
-        return template;
+        }).collect(Collectors.joining());
     }
 }

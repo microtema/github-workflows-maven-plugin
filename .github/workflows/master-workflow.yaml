@@ -12,13 +12,30 @@ env:
   JAVA_VERSION: "17"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
     \ -DdeployAtEnd=true"
+  CODE_PATHS: ".github/** src/** pom.xml"
   VERSION: "2.0.1"
 
 jobs:
+  initialize:
+    name: Initialize
+    runs-on: [ ubuntu-latest ]
+    outputs:
+      code-changed: ${{ steps.code-changed.outputs.changed }}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
+      - uses: marceloprado/has-changed-path@v1
+        id: code-changed
+        with:
+          paths: ${{ env.CODE_PATHS }}
+
   versioning:
     name: Versioning
     runs-on: [ ubuntu-latest ]
-    needs: [ ]
+    needs: [ initialize ]
+    if: ${{ needs.initialize.outputs.code-changed == 'true' }}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
@@ -52,7 +69,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
-        if: true
+        if: 'true'
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
@@ -85,7 +102,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
-        if: true
+        if: 'true'
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
@@ -114,7 +131,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
-        if: true
+        if: 'true'
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
@@ -164,7 +181,7 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ env.JAVA_VERSION }}
       - name: 'Artifact: download'
-        if: true
+        if: 'true'
         uses: actions/download-artifact@v2
         with:
           name: pom-artifact
@@ -184,6 +201,7 @@ jobs:
     name: Tag Release
     runs-on: [ ubuntu-latest ]
     needs: [ build ]
+    if: ${{ always() }}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2

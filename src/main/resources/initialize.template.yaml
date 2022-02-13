@@ -1,7 +1,6 @@
 initialize:
   name: Initialize
   runs-on: [ %RUNS_ON% ]
-  needs: [ ]
   outputs:
     code-changed: ${{ steps.code-changed.outputs.changed }}
   steps:

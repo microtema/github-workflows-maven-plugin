@@ -305,7 +305,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         pipeline = pipeline
                 .replaceAll("%RUNS_ON%", String.join(", ", runsOn))
-                .replaceAll("%POM_ARTIFACT%", String.valueOf(supportVersionJob));
+                .replaceAll("%POM_ARTIFACT%", "'" + supportVersionJob + "'");
 
         try (PrintWriter out = new PrintWriter(githubWorkflow)) {
             out.println(pipeline);

@@ -60,6 +60,6 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
                     .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Performance Test")
                     .replace("%NEEDS%", needs);
 
-        }).collect(Collectors.joining("\n"));
+        }).collect(Collectors.joining(System.lineSeparator()));
     }
 }

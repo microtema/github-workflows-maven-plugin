@@ -117,7 +117,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  initialize:\n" +
                 "    name: Initialize\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
                 "    outputs:\n" +
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
@@ -168,7 +167,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: 'false'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -201,7 +200,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: 'false'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -230,7 +229,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: 'false'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -280,7 +279,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -338,7 +337,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  initialize:\n" +
                 "    name: Initialize\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
                 "    outputs:\n" +
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
@@ -389,7 +387,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: 'false'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -422,7 +420,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: 'false'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -451,7 +449,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: false\n" +
+                "        if: 'false'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -501,7 +499,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -692,7 +690,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  initialize:\n" +
                 "    name: Initialize\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
                 "    outputs:\n" +
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
@@ -743,7 +740,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -776,7 +773,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -805,7 +802,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -855,7 +852,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -1032,7 +1029,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  initialize:\n" +
                 "    name: Initialize\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ ]\n" +
                 "    outputs:\n" +
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
@@ -1083,7 +1079,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -1116,7 +1112,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -1145,7 +1141,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
@@ -1195,7 +1191,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Artifact: download'\n" +
-                "        if: true\n" +
+                "        if: 'true'\n" +
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
