@@ -9,12 +9,16 @@ import java.util.stream.Stream;
 
 public class PublishTemplateStageService implements TemplateStageService {
 
+    private final BuildTemplateStageService buildTemplateStageService;
+
     private final TagTemplateStageService tagTemplateStageService;
 
     private final HelmTemplateStageService helmTemplateStageService;
 
-    public PublishTemplateStageService(TagTemplateStageService tagTemplateStageService,
+    public PublishTemplateStageService(BuildTemplateStageService buildTemplateStageService,
+                                       TagTemplateStageService tagTemplateStageService,
                                        HelmTemplateStageService helmTemplateStageService) {
+        this.buildTemplateStageService = buildTemplateStageService;
         this.tagTemplateStageService = tagTemplateStageService;
         this.helmTemplateStageService = helmTemplateStageService;
     }
@@ -26,7 +30,7 @@ public class PublishTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        return !PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject()) && !helmTemplateStageService.access(mojo, metaData);
+        return PipelineGeneratorUtil.isMavenArtifactRepo(mojo.getProject());
     }
 
     @Override
@@ -37,8 +41,9 @@ public class PublishTemplateStageService implements TemplateStageService {
         }
 
         String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
+        template = PipelineGeneratorUtil.applyProperties(template, mojo.getVariables());
 
-        String needs = "build";
+        String needs = buildTemplateStageService.getJobId();
 
         if (tagTemplateStageService.access(mojo, metaData)) {
 

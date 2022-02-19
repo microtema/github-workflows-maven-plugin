@@ -148,7 +148,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         String mavenCliOptions = "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true";
 
         if (PipelineGeneratorUtil.existsMavenSettings(project)) {
-            mavenCliOptions = "-s settings.xml " + mavenCliOptions;
+            mavenCliOptions = "-DrepoUsername=${{ secrets.MAVEN_REPO_USER }} -DrepoPassword=${{ secrets.MAVEN_REPO_PASSWORD }} -s settings.xml " + mavenCliOptions;
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
@@ -159,9 +159,15 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             codePaths += " Dockerfile";
         }
 
-        codePaths = variables.getOrDefault("CODE_PATHS", codePaths);
+        if (PipelineGeneratorUtil.isMicroserviceRepo(project)) {
 
-        defaultVariables.put("CODE_PATHS", codePaths);
+            defaultVariables.putIfAbsent("CODE_PATHS", codePaths);
+        }
+
+        if (PipelineGeneratorUtil.isMavenArtifactRepo(project)) {
+
+            defaultVariables.putIfAbsent("CODE_PATHS", "*");
+        }
     }
 
     private String wrapSecretVariable(String variableValue) {

@@ -14,5 +14,9 @@ compile:
       uses: actions/download-artifact@v2
       with:
         name: pom-artifact
+    - name: 'Maven: versions:set'
+      run: |
+        mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
+        mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS
     - name: 'Maven: compile'
       run: mvn compile $MAVEN_CLI_OPTS

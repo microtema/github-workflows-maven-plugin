@@ -10,17 +10,16 @@ build:
       with:
         distribution: 'adopt'
         java-version: ${{ env.JAVA_VERSION }}
-    - name: 'Artifact: download'
-      if: %POM_ARTIFACT%
-      uses: actions/download-artifact@v2
-      with:
-        name: pom-artifact
+    - name: 'Maven: versions:set'
+      run: |
+        mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
+        mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS
     - name: 'Maven: package'
       run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS
     - name: 'Artifact: prepare'
       run: |
-        mkdir -p artifact/target
-        cp target/*.jar artifact/target/
+        %MKDIR_COMMAND%
+        %COPY_COMMAND%
     - name: 'Artifact: upload'
       uses: actions/upload-artifact@v2
       with:

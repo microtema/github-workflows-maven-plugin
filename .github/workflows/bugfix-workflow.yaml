@@ -1,4 +1,4 @@
-########################## Copyright (c) 2020 Microtema ########################
+############## Created by de.microtema:github-workflow-maven-plugin ############
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 # Files under .github/workflows folder are generated and should not be edited. #
 ################################################################################
@@ -14,7 +14,7 @@ env:
   JAVA_VERSION: "17"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\
     \ -DdeployAtEnd=true"
-  CODE_PATHS: ".github/** src/** pom.xml"
+  CODE_PATHS: "*"
   VERSION: "2.0.1-SNAPSHOT"
 jobs:
   initialize:

@@ -10,7 +10,9 @@ publish:
       with:
         distribution: 'adopt'
         java-version: ${{ env.JAVA_VERSION }}
+    - name: 'Maven: versions:set'
+      run: |
+        mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS
+        mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS
     - name: 'Maven: deploy'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: mvn deploy -Dcode.coverage=0.0 -DskipTests=true $MAVEN_CLI_OPTS

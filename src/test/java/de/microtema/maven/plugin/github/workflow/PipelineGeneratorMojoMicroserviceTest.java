@@ -96,7 +96,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("############## Created by de.microtema:github-workflow-maven-plugin ############\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -170,6 +170,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "  security-check:\n" +
@@ -201,6 +205,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -272,11 +280,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        if: 'true'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -309,7 +316,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("############## Created by de.microtema:github-workflow-maven-plugin ############\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -383,6 +390,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "  security-check:\n" +
@@ -414,6 +425,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -485,11 +500,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        if: 'true'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -647,7 +661,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("############## Created by de.microtema:github-workflow-maven-plugin ############\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -721,6 +735,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "  security-check:\n" +
@@ -752,6 +770,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -823,11 +845,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        if: 'true'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -972,7 +993,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         String answer = FileUtils.readFileToString(pipelineFile, "UTF-8");
 
-        assertEquals("########################## Copyright (c) 2020 Microtema ########################\n" +
+        assertEquals("############## Created by de.microtema:github-workflow-maven-plugin ############\n" +
                 "#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#\n" +
                 "# Files under .github/workflows folder are generated and should not be edited. #\n" +
                 "################################################################################\n" +
@@ -1046,6 +1067,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: compile'\n" +
                 "        run: mvn compile $MAVEN_CLI_OPTS\n" +
                 "  security-check:\n" +
@@ -1077,6 +1102,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: test'\n" +
                 "        run: mvn test $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +
@@ -1148,11 +1177,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        with:\n" +
                 "          distribution: 'adopt'\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        if: 'true'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: pom-artifact\n" +
+                "      - name: 'Maven: versions:set'\n" +
+                "        run: |\n" +
+                "          mvn release:update-versions -DdevelopmentVersion=0.0.1-SNAPSHOT $MAVEN_CLI_OPTS\n" +
+                "          mvn versions:set -DnewVersion=$VERSION $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Maven: package'\n" +
                 "        run: mvn package -P prod -Dcode.coverage=0.00 -DskipTests=true $MAVEN_CLI_OPTS\n" +
                 "      - name: 'Artifact: prepare'\n" +

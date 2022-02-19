@@ -6,6 +6,7 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BuildTemplateStageService implements TemplateStageService {
 
@@ -71,7 +72,20 @@ public class BuildTemplateStageService implements TemplateStageService {
             needs.add(compileTemplateStageService.getJobId());
         }
 
+        String mkdirCommand = "mkdir -p artifact/target";
+        String copyCommand = "cp target/*.jar artifact/target/";
+
+        List<String> modules = new ArrayList<>(mojo.getProject().getModules());
+
+        if (!modules.isEmpty()) {
+
+            mkdirCommand = modules.stream().map(it -> "mkdir -p artifact/" + it + "/target").collect(Collectors.joining(" && "));
+            copyCommand = modules.stream().map(it -> "cp " + it + "/target/*.jar artifact/" + it + "/target/").collect(Collectors.joining(" && "));
+        }
+
         return template.replaceFirst("%NEEDS%", String.join(", ", String.join(", ", needs)))
+                .replace("%MKDIR_COMMAND%", mkdirCommand)
+                .replace("%COPY_COMMAND%", copyCommand)
                 .replace("%POM_ARTIFACT%", "'true'");
     }
 }

@@ -277,7 +277,16 @@ public class PipelineGeneratorUtil {
         return (existsHelmFile(project) || existsDockerfile(project)) && hasSourceCode(project);
     }
 
+    public static boolean isMavenArtifactRepo(MavenProject project) {
+
+        return (!existsHelmFile(project) && !existsDockerfile(project));
+    }
+
     public static Properties findProperties(String stageName) {
+
+        if (StringUtils.isEmpty(stageName)) {
+            return null;
+        }
 
         String fileName = ("." + stageName).toLowerCase();
 
@@ -324,6 +333,15 @@ public class PipelineGeneratorUtil {
     public static String applyProperties(String template, String stageName) {
 
         return applyProperties(template, stageName, Collections.emptyMap());
+    }
+
+    public static String applyProperties(String template, Map<String, Object> globalVariables) {
+
+        for (Map.Entry<String, Object> entry : globalVariables.entrySet()) {
+            template = template.replace("%" + entry.getKey() + "%", String.valueOf(entry.getValue()));
+        }
+
+        return template;
     }
 
     public static String applyProperties(String template, String stageName, Map<String, Object> globalVariables) {
