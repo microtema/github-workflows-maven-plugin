@@ -77,8 +77,11 @@ public class BuildTemplateStageService implements TemplateStageService {
 
         List<String> modules = new ArrayList<>(mojo.getProject().getModules());
 
-        if (!modules.isEmpty()) {
+        if (PipelineGeneratorUtil.isMavenPomRepo(mojo.getProject())) {
+            copyCommand = "cp -r target/* artifact/target/";
+        }
 
+        if (!modules.isEmpty()) {
             mkdirCommand = modules.stream().map(it -> "mkdir -p artifact/" + it + "/target").collect(Collectors.joining(" && "));
             copyCommand = modules.stream().map(it -> "cp " + it + "/target/*.jar artifact/" + it + "/target/").collect(Collectors.joining(" && "));
         }

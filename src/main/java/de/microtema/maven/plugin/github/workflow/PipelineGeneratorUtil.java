@@ -116,6 +116,12 @@ public class PipelineGeneratorUtil {
 
     public static boolean hasSonarProperties(MavenProject project) {
 
+        String projectKey = getProperty(project, "sonar.url", "false");
+
+        if (StringUtils.equalsIgnoreCase(projectKey, "false")) {
+            return false;
+        }
+
         return project.getProperties().entrySet()
                 .stream().anyMatch(it -> String.valueOf(it.getKey()).startsWith("sonar."));
     }
@@ -280,6 +286,16 @@ public class PipelineGeneratorUtil {
     public static boolean isMavenArtifactRepo(MavenProject project) {
 
         return (!existsHelmFile(project) && !existsDockerfile(project));
+    }
+
+    public static boolean isMavenPomRepo(MavenProject project) {
+
+        return !existsHelmFile(project) && !existsDockerfile(project) && !hasSourceCode(project);
+    }
+
+    public static boolean isMavenLibraryRepo(MavenProject project) {
+
+        return !existsHelmFile(project) && !existsDockerfile(project) && hasSourceCode(project);
     }
 
     public static Properties findProperties(String stageName) {

@@ -45,6 +45,14 @@ public class DownstreamTemplateStageService implements TemplateStageService {
             return false;
         }
 
+        if (PipelineGeneratorUtil.isMavenPomRepo(mojo.getProject())) {
+            return false;
+        }
+
+        if (PipelineGeneratorUtil.isMavenLibraryRepo(mojo.getProject())) {
+            return false;
+        }
+
         List<String> stageNames = metaData.getStageNames();
 
         return mojo.getDownStreams().entrySet().stream().anyMatch(it -> stageNames.contains(it.getKey()));

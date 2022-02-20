@@ -20,9 +20,9 @@ public class BlackDuckScanTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        String property = PipelineGeneratorUtil.getProperty(mojo.getProject(), "detect.project.name", null);
+        String property = PipelineGeneratorUtil.getProperty(mojo.getProject(), "detect.project.name", "false");
 
-        return StringUtils.isNotEmpty(property);
+        return !StringUtils.equalsIgnoreCase("false", property);
     }
 
     @Override
