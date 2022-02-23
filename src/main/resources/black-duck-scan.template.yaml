@@ -16,8 +16,8 @@ security-check:
       with:
         args: |
           --blackduck.url="%blackduck.url%" \
-          --blackduck.api.token="${{secrets.BLACK_DUCK_TOKEN}}" \
+          --blackduck.api.token="${{ secrets.BLACK_DUCK_TOKEN }}" \
           --detect.project.name="%detect.project.name%" \
-          --detect.project.version.name="%detect.project.version.name%" \
+          --detect.project.version.name="$VERSION" \
           --detect.project.version.update=true \
           --detect.maven.build.command="$MAVEN_CLI_OPTS"
