@@ -12,6 +12,7 @@ security-check:
     - name: 'Maven: package'
       run: mvn package -DskipTests=true -DskipITs=true -DskipUTs=true $MAVEN_CLI_OPTS
     - name: 'BlackDuck: scan'
+      continue-on-error: true
       uses: blackducksoftware/github-action@2.1
       with:
         args: |
