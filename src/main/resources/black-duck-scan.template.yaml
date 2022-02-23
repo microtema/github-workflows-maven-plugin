@@ -19,4 +19,5 @@ security-check:
           --blackduck.api.token="${{secrets.BLACK_DUCK_TOKEN}}" \
           --detect.project.name="%detect.project.name%" \
           --detect.project.version.name="%detect.project.version.name%" \
-          --detect.project.version.update=true
+          --detect.project.version.update=true \
+          --detect.maven.build.command="$MAVEN_CLI_OPTS"
