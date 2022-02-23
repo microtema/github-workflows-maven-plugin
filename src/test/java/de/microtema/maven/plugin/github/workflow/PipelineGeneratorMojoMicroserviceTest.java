@@ -73,7 +73,7 @@ class PipelineGeneratorMojoMicroserviceTest {
 
         sut.runsOn = "self-hosted, azure-runners";
 
-        properties.put("sonar.url", "http://localhost:9000");
+        properties.put("sonar.host.url", "http://localhost:9000");
     }
 
     @Test
@@ -86,7 +86,7 @@ class PipelineGeneratorMojoMicroserviceTest {
         when(project.getVersion()).thenReturn("1.1.0-SNAPSHOT");
         when(project.getProperties()).thenReturn(properties);
 
-        properties.put("sonar.url", "http://localhost:9000");
+        properties.put("sonar.host.url", "http://localhost:9000");
 
         sut.stages.put("none", "feature/*");
 

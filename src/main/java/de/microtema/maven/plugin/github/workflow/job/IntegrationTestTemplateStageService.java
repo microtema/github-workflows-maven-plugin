@@ -13,6 +13,11 @@ public class IntegrationTestTemplateStageService implements TemplateStageService
     }
 
     @Override
+    public String getJobId() {
+        return "it-test";
+    }
+
+    @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
         if (!access(mojo, metaData)) {

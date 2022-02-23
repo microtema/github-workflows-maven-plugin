@@ -88,7 +88,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
-                "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +
                 "    \\ -DdeployAtEnd=true\"\n" +
@@ -229,29 +228,10 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "        with:\n" +
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
-                "  quality-gate:\n" +
-                "    name: Quality Gate\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ unit-test, it-test ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Artifact: download'\n" +
-                "        uses: actions/download-artifact@v2\n" +
-                "        with:\n" +
-                "          name: target-artifact\n" +
-                "      - name: 'Maven: verify'\n" +
-                "        run: mvn verify -DskipTests=true -Dcode.coverage=0.00 $MAVEN_CLI_OPTS\n" +
-                "      - name: 'Maven: sonar'\n" +
-                "        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=${GITHUB_REF##*/} $MAVEN_CLI_OPTS\n" +
                 "  build:\n" +
                 "    name: Build\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ quality-gate, security-check ]\n" +
+                "    needs: [ unit-test, it-test ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +

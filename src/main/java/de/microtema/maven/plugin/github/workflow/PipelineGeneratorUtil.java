@@ -116,7 +116,7 @@ public class PipelineGeneratorUtil {
 
     public static boolean hasSonarProperties(MavenProject project) {
 
-        String projectKey = getProperty(project, "sonar.url", "false");
+        String projectKey = getProperty(project, "sonar.host.url", "false");
 
         if (StringUtils.equalsIgnoreCase(projectKey, "false")) {
             return false;
