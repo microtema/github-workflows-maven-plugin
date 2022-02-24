@@ -608,6 +608,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target/surefire-reports/st\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/st/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/st/\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact\n" +
                 "  performance-test:\n" +
                 "    name: '[DEV] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -953,6 +963,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target/surefire-reports/st\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/st/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/st/\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact\n" +
                 "  performance-test:\n" +
                 "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
@@ -1339,6 +1359,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target/surefire-reports/st\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/st/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/st/\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact\n" +
                 "  \n" +
                 "  system-test-qa:\n" +
                 "    name: '[QA] System Test'\n" +
@@ -1357,6 +1387,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
                 "      - name: 'Maven: system test'\n" +
                 "        run: mvn integration-test -P it -DtestType=ST -DsourceType=st -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
+                "      - name: 'Artifact: prepare'\n" +
+                "        run: |\n" +
+                "          mkdir -p artifact/target/surefire-reports/st\n" +
+                "          cp -r target/surefire-reports/* artifact/target/surefire-reports/st/\n" +
+                "          cp -r target/jacoco.exec artifact/target/surefire-reports/st/\n" +
+                "      - name: 'Test result'\n" +
+                "        uses: actions/upload-artifact@v2\n" +
+                "        with:\n" +
+                "          name: target-artifact\n" +
+                "          path: artifact\n" +
                 "  performance-test-stage:\n" +
                 "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +

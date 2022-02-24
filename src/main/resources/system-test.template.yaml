@@ -15,3 +15,13 @@ system-test:
         java-version: ${{ env.JAVA_VERSION }}
     - name: 'Maven: system test'
       run: mvn integration-test -P it -DtestType=%TEST_TYPE% -DsourceType=%SOURCE_TYPE% -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS
+    - name: 'Artifact: prepare'
+      run: |
+        mkdir -p artifact/target/surefire-reports/st
+        cp -r target/surefire-reports/* artifact/target/surefire-reports/st/
+        cp -r target/jacoco.exec artifact/target/surefire-reports/st/
+    - name: 'Test result'
+      uses: actions/upload-artifact@v2
+      with:
+        name: target-artifact
+        path: artifact
