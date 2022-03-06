@@ -55,9 +55,12 @@ public class PerformanceTestTemplateStageService implements TemplateStageService
                     .map(e -> e.getJobIds(metaData, it))
                     .collect(Collectors.joining(", "));
 
+            boolean privateNetwork = PipelineGeneratorUtil.isPrivateNetwork(it);
+
             return defaultTemplate
                     .replace("performance-test:", multipleStages ? "performance-test-" + it.toLowerCase() + ":" : "performance-test:")
                     .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Performance Test")
+                    .replaceAll("%PRIVATE_NETWORK%", String.valueOf(privateNetwork))
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining(System.lineSeparator()));

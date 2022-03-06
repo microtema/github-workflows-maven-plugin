@@ -6,9 +6,21 @@ system-test:
   env:
     API_KEY: %API_KEY%
     STAGE_NAME: %STAGE_NAME%
+    SERVICE_URL: %SERVICE_URL%
+    AKS_NAMESPACE: %AKS_NAMESPACE%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
+    - name: 'AKS: Set context'
+      if: ${{ '%PRIVATE_NETWORK%' }}
+      uses: azure/aks-set-context@v1
+      with:
+        creds: %AKS_CREDENTIALS%
+        cluster-name: %AKS_CLUSTER_NAME%
+        resource-group: %AKS_RESOURCE_GROUP%
+    - name: 'Shell: port-forward'
+      if: ${{ '%PRIVATE_NETWORK%' }}
+      run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &
     - name: 'Java: Setup'
       uses: actions/setup-java@v1
       with:

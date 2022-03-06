@@ -594,9 +594,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
                 "        with:\n" +
-                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
-                "          cluster-name: aks-mbld\n" +
-                "          resource-group: rg-mbld-dev-aks\n" +
+                "          creds: ${{ secrets.DEV_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: dev-cluster\n" +
+                "          resource-group: dev-rg\n" +
                 "      - name: 'Shell: port-forward'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
@@ -610,9 +610,21 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: dev.key\n" +
                 "      STAGE_NAME: dev\n" +
+                "      SERVICE_URL: http://dev:8080/git/info\n" +
+                "      AKS_NAMESPACE: dev-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.DEV_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: dev-cluster\n" +
+                "          resource-group: dev-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -637,6 +649,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: dev.key\n" +
                 "      STAGE_NAME: dev\n" +
+                "      SERVICE_URL: http://dev:8080/git/info\n" +
+                "      AKS_NAMESPACE: dev-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -644,6 +658,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.DEV_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: dev-cluster\n" +
+                "          resource-group: dev-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "  downstream:\n" +
@@ -960,9 +984,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
                 "        with:\n" +
-                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
-                "          cluster-name: aks-mbld\n" +
-                "          resource-group: rg-mbld-dev-aks\n" +
+                "          creds: ${{ secrets.STAGE_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: stage-cluster\n" +
+                "          resource-group: stage-rg\n" +
                 "      - name: 'Shell: port-forward'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
@@ -976,9 +1000,21 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
+                "      SERVICE_URL: http://stage:8080/git/info\n" +
+                "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.STAGE_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: stage-cluster\n" +
+                "          resource-group: stage-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1003,6 +1039,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
+                "      SERVICE_URL: http://stage:8080/git/info\n" +
+                "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -1010,6 +1048,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.STAGE_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: stage-cluster\n" +
+                "          resource-group: stage-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n", answer);
     }
@@ -1354,9 +1402,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
                 "        with:\n" +
-                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
-                "          cluster-name: aks-mbld\n" +
-                "          resource-group: rg-mbld-dev-aks\n" +
+                "          creds: ${{ secrets.STAGE_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: stage-cluster\n" +
+                "          resource-group: stage-rg\n" +
                 "      - name: 'Shell: port-forward'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
@@ -1378,9 +1426,9 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
                 "        with:\n" +
-                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
-                "          cluster-name: aks-mbld\n" +
-                "          resource-group: rg-mbld-dev-aks\n" +
+                "          creds: ${{ secrets.QA_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: qa-cluster\n" +
+                "          resource-group: qa-rg\n" +
                 "      - name: 'Shell: port-forward'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
@@ -1394,9 +1442,21 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
+                "      SERVICE_URL: http://stage:8080/git/info\n" +
+                "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.STAGE_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: stage-cluster\n" +
+                "          resource-group: stage-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1422,9 +1482,21 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: qa.key\n" +
                 "      STAGE_NAME: qa\n" +
+                "      SERVICE_URL: http://qa:8080/git/info\n" +
+                "      AKS_NAMESPACE: qa-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.QA_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: qa-cluster\n" +
+                "          resource-group: qa-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1449,6 +1521,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
+                "      SERVICE_URL: http://stage:8080/git/info\n" +
+                "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -1456,6 +1530,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.STAGE_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: stage-cluster\n" +
+                "          resource-group: stage-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "  \n" +
@@ -1467,6 +1551,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: qa.key\n" +
                 "      STAGE_NAME: qa\n" +
+                "      SERVICE_URL: http://qa:8080/git/info\n" +
+                "      AKS_NAMESPACE: qa-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -1474,6 +1560,16 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.QA_AKS_CREDENTIALS }}\n" +
+                "          cluster-name: qa-cluster\n" +
+                "          resource-group: qa-rg\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Maven: jmeter'\n" +
                 "        run: mvn compile jmeter:jmeter -P performance-$STAGE_NAME -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS\n" +
                 "  downstream-qa-e2e-test:\n" +

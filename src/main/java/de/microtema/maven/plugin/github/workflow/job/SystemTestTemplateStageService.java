@@ -62,8 +62,10 @@ public class SystemTestTemplateStageService implements TemplateStageService {
                     .collect(Collectors.joining("\n"));
 
             String needs = readinessTemplateStageService.getJobIds(metaData, it);
+            boolean privateNetwork = PipelineGeneratorUtil.isPrivateNetwork(it);
 
-            return defaultTemplate.replace("%NEEDS%", needs);
+            return defaultTemplate.replace("%NEEDS%", needs)
+                    .replaceAll("%PRIVATE_NETWORK%", String.valueOf(privateNetwork));
 
         }).collect(Collectors.joining("\n"));
     }
