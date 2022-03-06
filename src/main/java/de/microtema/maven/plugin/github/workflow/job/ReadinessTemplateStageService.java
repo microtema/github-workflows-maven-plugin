@@ -55,6 +55,8 @@ public class ReadinessTemplateStageService implements TemplateStageService {
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
 
+            boolean privateNetwork = PipelineGeneratorUtil.isPrivateNetwork(it);
+
             String needs = templateStageServices.stream().filter(e -> e.access(mojo, metaData))
                     .map(e -> e.getJobIds(metaData, it))
                     .collect(Collectors.joining(", "));
@@ -62,6 +64,7 @@ public class ReadinessTemplateStageService implements TemplateStageService {
             return defaultTemplate
                     .replace("readiness:", multipleStages ? "readiness-" + it.toLowerCase() + ":" : "readiness:")
                     .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Readiness Check")
+                    .replaceAll("%PRIVATE_NETWORK%", String.valueOf(privateNetwork))
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));

@@ -325,6 +325,20 @@ public class PipelineGeneratorUtil {
         return properties;
     }
 
+    public static boolean isPrivateNetwork(String stageName) {
+
+        Properties properties = findProperties(stageName);
+
+        if (Objects.isNull(properties)) {
+
+            return false;
+        }
+
+        String serviceUrl = properties.getProperty("SERVICE_URL", "false");
+
+        return StringUtils.contains(serviceUrl, "localhost");
+    }
+
     /**
      * convert integration-test ->  IT
      *

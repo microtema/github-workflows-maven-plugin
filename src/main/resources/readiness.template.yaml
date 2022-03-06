@@ -7,6 +7,17 @@ readiness:
   env:
     API_KEY: %API_KEY%
     SERVICE_URL: %SERVICE_URL%
+    AKS_NAMESPACE: %AKS_NAMESPACE%
   steps:
+    - name: 'AKS: Set context'
+      if: ${{ '%PRIVATE_NETWORK%' }}
+      uses: azure/aks-set-context@v1
+      with:
+        creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}
+        cluster-name: aks-mbld
+        resource-group: rg-mbld-dev-aks
+    - name: 'Shell: port-forward'
+      if: ${{ '%PRIVATE_NETWORK%' }}
+      run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &
     - name: 'Shell: readiness'
       run: while [[ "$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done

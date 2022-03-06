@@ -588,7 +588,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: dev.key\n" +
                 "      SERVICE_URL: http://dev:8080/git/info\n" +
+                "      AKS_NAMESPACE: dev-namespace\n" +
                 "    steps:\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
+                "          cluster-name: aks-mbld\n" +
+                "          resource-group: rg-mbld-dev-aks\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test:\n" +
@@ -943,7 +954,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      SERVICE_URL: http://stage:8080/git/info\n" +
+                "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
+                "          cluster-name: aks-mbld\n" +
+                "          resource-group: rg-mbld-dev-aks\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test:\n" +
@@ -1326,7 +1348,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      SERVICE_URL: http://stage:8080/git/info\n" +
+                "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
+                "          cluster-name: aks-mbld\n" +
+                "          resource-group: rg-mbld-dev-aks\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  \n" +
@@ -1339,7 +1372,18 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    env:\n" +
                 "      API_KEY: qa.key\n" +
                 "      SERVICE_URL: http://qa:8080/git/info\n" +
+                "      AKS_NAMESPACE: qa-namespace\n" +
                 "    steps:\n" +
+                "      - name: 'AKS: Set context'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        uses: azure/aks-set-context@v1\n" +
+                "        with:\n" +
+                "          creds: ${{ secrets.HELM_AZURE_DEV_CREDENTIALS }}\n" +
+                "          cluster-name: aks-mbld\n" +
+                "          resource-group: rg-mbld-dev-aks\n" +
+                "      - name: 'Shell: port-forward'\n" +
+                "        if: ${{ 'false' }}\n" +
+                "        run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &\n" +
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test-stage:\n" +
