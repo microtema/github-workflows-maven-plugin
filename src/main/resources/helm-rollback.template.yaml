@@ -1,11 +1,8 @@
-deployment:
+rollback:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
-  needs: [ %NEEDS% ]
   environment: %STAGE_NAME%
-  if: ${{ always() }}
   env:
-    CONFIG_FILE: ./helm/env_%STAGE_NAME%/values.yaml
     AKS_NAMESPACE: %AKS_NAMESPACE%
   steps:
     - name: 'Checkout'
@@ -20,8 +17,7 @@ deployment:
       uses: azure/setup-helm@v1
       with:
         version: v3.5.4
-    - name: 'Helm: Deploy'
-      run: |
-        export DEPLOYMENT_TIME=$(date '+%Y%m%d-%H%M%S')
-        helm upgrade $APP_NAME helm --namespace $AKS_NAMESPACE --values $CONFIG_FILE --install --atomic --wait --timeout 300s --set image.tag=$VERSION --set deploymentTime=$DEPLOYMENT_TIME
-        helm history $APP_NAME --namespace $AKS_NAMESPACE --max 25
+    - name: 'Helm: Rollback'
+      run: helm rollback $APP_NAME $VERSION --namespace $AKS_NAMESPACE
+    - name: 'Helm: History'
+      run: helm history $APP_NAME --namespace $AKS_NAMESPACE --max 25

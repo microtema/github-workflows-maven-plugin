@@ -1,6 +1,7 @@
 package de.microtema.maven.plugin.github.workflow.job;
 
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
+import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
 import java.util.stream.Stream;
@@ -27,11 +28,19 @@ public class SecurityTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (PipelineGeneratorUtil.isSpeedBranch(metaData.getBranchName())) {
+            return false;
+        }
+
         return Stream.of(blackDuckScanTemplateStageService, dependencyCheckTemplateStageService).anyMatch(it -> it.access(mojo, metaData));
     }
 
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        if (!access(mojo, metaData)) {
+            return null;
+        }
 
         if (blackDuckScanTemplateStageService.access(mojo, metaData)) {
 

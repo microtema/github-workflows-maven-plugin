@@ -7,6 +7,8 @@ public class MetaData {
 
     private String branchName;
 
+    private String branchFillName;
+
     private String branchPattern;
 
     private String stageName;
@@ -43,5 +45,13 @@ public class MetaData {
 
     public void setStageNames(List<String> stageNames) {
         this.stageNames = stageNames;
+    }
+
+    public String getBranchFullName() {
+        return branchFillName;
+    }
+
+    public void setBranchFullName(String branchFillName) {
+        this.branchFillName = branchFillName;
     }
 }

@@ -392,4 +392,9 @@ public class PipelineGeneratorUtil {
 
         return template;
     }
+
+    public static boolean isSpeedBranch(String branchName) {
+
+        return StringUtils.startsWith(branchName, "speed");
+    }
 }

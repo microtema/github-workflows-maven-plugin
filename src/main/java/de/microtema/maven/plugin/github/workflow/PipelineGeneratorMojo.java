@@ -48,6 +48,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "code-paths")
     String codePaths;
 
+    @Parameter(property = "generate-rollback-template")
+    boolean generateRollbackTemplate;
+
     private String appName;
 
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
@@ -61,6 +64,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
 
+        runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
+        runsOn = Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.joining(", "));
+
         // Skip maven sub modules
         if (!PipelineGeneratorUtil.isGitRepo(project)) {
 
@@ -73,14 +79,25 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         File rootDir = getOrCreateWorkflowsDir();
 
-        List<MetaData> workflows = getWorkflowFiles();
-
         cleanupWorkflows(rootDir);
 
         applyDefaultVariables();
 
+        List<MetaData> workflows = getWorkflowFiles();
+
         for (MetaData metaData : workflows) {
             executeImpl(metaData, workflows);
+        }
+
+        if (!generateRollbackTemplate) {
+            return;
+        }
+
+        // Generate rollback workflows
+        workflows = getRollbackWorkflowFiles();
+
+        for (MetaData metaData : workflows) {
+            executeRollbackImpl(metaData);
         }
     }
 
@@ -209,9 +226,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     String getWorkflowFileName(MetaData metaData, List<MetaData> workflows) {
 
-        String branchName = metaData.getBranchName();
+        String branchName = metaData.getBranchFullName();
 
-        boolean duplicate = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchName(), branchName)).count() > 1;
+        boolean duplicate = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchFullName(), branchName)).count() > 1;
 
         String workflowName = branchName + workflowFilePostFixName;
 
@@ -233,9 +250,15 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
             for (String branchPattern : branches) {
 
-                String branchName = branchPattern.replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
+                List<String> branchNames = Stream.of(branchPattern.split("/")).filter(it -> !it.startsWith("*")).collect(Collectors.toList());
+                String branchName = branchNames.get(0).replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
+                String branchFullName = branchName;
 
-                Optional<MetaData> optionalMetaData = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchName(), branchName)).findFirst();
+                if (branchNames.size() > 1) {
+                    branchFullName = String.join("-", branchNames);
+                }
+
+                Optional<MetaData> optionalMetaData = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchFullName(), branchName)).findFirst();
 
                 MetaData metaData = new MetaData();
 
@@ -251,8 +274,34 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
                 metaData.setStageName(stageName);
                 metaData.setBranchName(branchName);
+                metaData.setBranchFullName(branchFullName);
                 metaData.setBranchPattern(branchPattern);
             }
+        }
+
+        return workflows;
+    }
+
+    List<MetaData> getRollbackWorkflowFiles() {
+
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(project)) {
+
+            return Collections.emptyList();
+        }
+
+        List<MetaData> workflows = new ArrayList<>();
+
+        for (String stageName : stages.keySet()) {
+
+            if (StringUtils.equalsIgnoreCase(stageName, "none")) {
+                continue;
+            }
+
+            MetaData metaData = new MetaData();
+
+            metaData.setStageName(stageName);
+
+            workflows.add(metaData);
         }
 
         return workflows;
@@ -291,7 +340,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 .replace("%PIPELINE_NAME%", getPipelineName(metaData))
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
                 .replace("  %ENV%", getVariablesTemplate(defaultVariables))
-                .replace("  %JOBS%", getStagesTemplate(metaData));
+                .replace("  %JOBS%", getStagesTemplate(metaData, templateStageServices));
 
         String workflowFileName = getWorkflowFileName(metaData, workflows);
 
@@ -302,10 +351,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         if (PipelineGeneratorUtil.hasMavenWrapper(project)) {
             pipeline = pipeline.replaceAll("mvn ", "./mvnw ");
         }
-
-        runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
-
-        runsOn = Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.joining(", "));
 
         boolean supportVersionJob = Stream.of("develop", "feature").noneMatch(it -> StringUtils.equalsIgnoreCase(it, metaData.getBranchName()));
 
@@ -320,6 +365,45 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    void executeRollbackImpl(MetaData metaData) {
+
+        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+
+        File dir = new File(rootPath, githubWorkflowsDir);
+
+        String pipeline = PipelineGeneratorUtil.getTemplate("pipeline-rollback");
+
+        RollbackTemplateStageService rollbackTemplateStageService = ClassUtil.createInstance(RollbackTemplateStageService.class);
+
+        Map<String, String> templateVariables = new HashMap<>(Collections.singletonMap("APP_NAME", project.getArtifactId()));
+
+        pipeline = pipeline
+                .replace("%PIPELINE_NAME%", getPipelineName(metaData.getStageName()))
+                .replace("  %ENV%", getVariablesTemplate(templateVariables))
+                .replace("  %JOBS%", getStagesTemplate(metaData, Collections.singletonList(rollbackTemplateStageService)));
+
+        String workflowFileName = metaData.getStageName() + "-rollback" + workflowFilePostFixName;
+
+        File githubWorkflow = new File(dir, workflowFileName);
+
+        logMessage("Generate Github Workflows Pipeline for (rollback) " + appName + " -> " + workflowFileName);
+
+        pipeline = pipeline.replaceAll("%RUNS_ON%", String.join(", ", runsOn));
+
+        pipeline = PipelineGeneratorUtil.removeEmptyLines(pipeline);
+
+        try (PrintWriter out = new PrintWriter(githubWorkflow)) {
+            out.println(pipeline);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    protected String getPipelineName(String stageName) {
+
+        return ("[" + stageName + " | Rollback] ").toUpperCase() + appName;
     }
 
     protected String getPipelineName(MetaData metaData) {
@@ -352,7 +436,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return PipelineGeneratorUtil.trimEmptyLines(template);
     }
 
-    String getStagesTemplate(MetaData metaData) {
+    String getStagesTemplate(MetaData metaData, List<TemplateStageService> templateStageServices) {
 
         return templateStageServices.stream()
                 .map(it -> it.getTemplate(this, metaData))

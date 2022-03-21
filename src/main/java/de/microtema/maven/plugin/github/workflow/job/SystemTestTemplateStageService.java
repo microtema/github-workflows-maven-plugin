@@ -22,6 +22,10 @@ public class SystemTestTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (PipelineGeneratorUtil.isSpeedBranch(metaData.getBranchName())) {
+            return false;
+        }
+
         if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
             return false;
         }

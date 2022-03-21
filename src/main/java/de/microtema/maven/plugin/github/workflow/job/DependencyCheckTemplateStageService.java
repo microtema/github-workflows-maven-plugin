@@ -14,6 +14,10 @@ public class DependencyCheckTemplateStageService implements TemplateStageService
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (PipelineGeneratorUtil.isSpeedBranch(metaData.getBranchName())) {
+            return false;
+        }
+
         return PipelineGeneratorUtil.hasSourceCode(mojo.getProject());
     }
 

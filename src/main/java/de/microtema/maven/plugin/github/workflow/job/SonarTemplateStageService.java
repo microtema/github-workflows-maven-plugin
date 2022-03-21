@@ -18,6 +18,10 @@ public class SonarTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (PipelineGeneratorUtil.isSpeedBranch(metaData.getBranchName())) {
+            return false;
+        }
+
         if (!PipelineGeneratorUtil.hasSourceCode(mojo.getProject())) {
             return false;
         }
