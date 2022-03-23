@@ -48,8 +48,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "code-paths")
     String codePaths;
 
-    @Parameter(property = "generate-rollback-template")
-    boolean generateRollbackTemplate;
+    @Parameter(property = "generate-rollback")
+    boolean generateRollback;
 
     private String appName;
 
@@ -89,7 +89,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             executeImpl(metaData, workflows);
         }
 
-        if (!generateRollbackTemplate) {
+        if (!generateRollback) {
             return;
         }
 
