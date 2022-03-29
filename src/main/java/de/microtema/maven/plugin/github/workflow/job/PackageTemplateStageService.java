@@ -34,7 +34,7 @@ public class PackageTemplateStageService implements TemplateStageService {
 
         if (!StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master")) {
 
-            template = template.replace("$VERSION.$GITHUB_SHA", "$VERSION");
+            template = template.replace("$VERSION.$SHORT_SHA", "$VERSION");
         }
 
         return PipelineGeneratorUtil.applyProperties(template, metaData.getStageName());

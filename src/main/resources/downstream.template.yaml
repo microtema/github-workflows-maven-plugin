@@ -2,7 +2,6 @@ downstream:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
-  if: ${{ always() }}
   env:
     DOWNSTREAM_REPOSITORY: %DOWNSTREAM_REPOSITORY%
     REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%

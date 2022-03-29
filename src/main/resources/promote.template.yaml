@@ -2,7 +2,6 @@ promote:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
-  if: ${{ always() }}
   steps:
     - name: 'Shell: promote'
       run: echo 'TBD'

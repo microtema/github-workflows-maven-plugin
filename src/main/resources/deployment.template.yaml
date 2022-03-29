@@ -2,7 +2,6 @@ deployment:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
-  if: ${{ always() }}
   env:
     DEPLOYMENT_REPOSITORY: %DEPLOYMENT_REPOSITORY%
     REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%

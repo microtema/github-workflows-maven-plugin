@@ -2,7 +2,6 @@ versioning:
   name: Versioning
   runs-on: [ %RUNS_ON% ]
   needs: [ initialize ]
-  if: ${{ needs.initialize.outputs.code-changed == 'true' }}
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

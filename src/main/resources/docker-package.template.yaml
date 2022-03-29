@@ -18,9 +18,11 @@ package:
       uses: actions/download-artifact@v2
       with:
         name: target-artifact
+    - name: 'Shell: short sha'
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
     - name: 'Docker: login'
       run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY
     - name: 'Docker: build'
-      run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA .
+      run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION.$SHORT_SHA .
     - name: 'Docker: push'
-      run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION.$GITHUB_SHA
+      run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION.$SHORT_SHA

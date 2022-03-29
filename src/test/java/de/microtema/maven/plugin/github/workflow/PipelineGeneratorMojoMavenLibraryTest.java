@@ -112,7 +112,6 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ initialize ]\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +

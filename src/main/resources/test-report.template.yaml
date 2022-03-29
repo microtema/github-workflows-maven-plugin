@@ -1,9 +1,0 @@
-Test Report:
-  stage: report
-  script:
-    - echo 'mvn report -Preport'
-  only:
-    refs:
-      - develop
-      - /^release/.*$/
-      - master

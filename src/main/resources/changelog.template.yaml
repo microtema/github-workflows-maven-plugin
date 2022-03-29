@@ -1,8 +1,0 @@
-Change Log:
-  <<: *stage-template
-  stage: report
-  script:
-    - echo 'mvn changelog -P changelog $MAVEN_CLI_OPTS'
-  only:
-    refs:
-      - master

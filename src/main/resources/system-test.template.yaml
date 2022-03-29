@@ -2,7 +2,6 @@ system-test:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
-  if: ${{ always() }}
   env:
     API_KEY: %API_KEY%
     STAGE_NAME: %STAGE_NAME%

@@ -133,7 +133,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ initialize ]\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -353,7 +352,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ initialize ]\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -535,6 +533,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Shell: short sha'\n" +
+                "        run: echo \"SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`\" >> $GITHUB_ENV\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
@@ -558,7 +558,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[DEV] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
@@ -566,7 +565,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[DEV] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -584,7 +582,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    env:\n" +
                 "      API_KEY: dev.key\n" +
                 "      SERVICE_URL: http://dev:8080/git/info\n" +
@@ -606,7 +603,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[DEV] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: dev.key\n" +
                 "      STAGE_NAME: dev\n" +
@@ -645,7 +641,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[DEV] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: dev.key\n" +
                 "      STAGE_NAME: dev\n" +
@@ -674,7 +669,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, performance-test ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      DOWNSTREAM_REPOSITORY: microtema/github-workflows-maven-plugin\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -743,7 +737,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ initialize ]\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -925,6 +918,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Shell: short sha'\n" +
+                "        run: echo \"SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`\" >> $GITHUB_ENV\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
@@ -948,7 +943,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
@@ -956,7 +950,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -974,7 +967,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      SERVICE_URL: http://stage:8080/git/info\n" +
@@ -996,7 +988,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
@@ -1035,7 +1026,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
@@ -1120,7 +1110,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: Versioning\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ initialize ]\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
                 "        uses: actions/checkout@v2\n" +
@@ -1302,6 +1291,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/download-artifact@v2\n" +
                 "        with:\n" +
                 "          name: target-artifact\n" +
+                "      - name: 'Shell: short sha'\n" +
+                "        run: echo \"SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`\" >> $GITHUB_ENV\n" +
                 "      - name: 'Docker: login'\n" +
                 "        run: docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY\n" +
                 "      - name: 'Docker: build'\n" +
@@ -1339,7 +1330,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
@@ -1348,7 +1338,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[QA] Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    steps:\n" +
                 "      - name: 'Shell: promote'\n" +
                 "        run: echo 'TBD'\n" +
@@ -1356,7 +1345,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote-stage ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -1374,7 +1362,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[QA] Deployment'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ promote-qa ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -1392,7 +1379,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment-stage ]\n" +
                 "    timeout-minutes: 15\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      SERVICE_URL: http://stage:8080/git/info\n" +
@@ -1416,7 +1402,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment-qa ]\n" +
                 "    timeout-minutes: 15\n" +
-                "    if: ${{ needs.initialize.outputs.code-changed == 'true' }}\n" +
                 "    env:\n" +
                 "      API_KEY: qa.key\n" +
                 "      SERVICE_URL: http://qa:8080/git/info\n" +
@@ -1438,7 +1423,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness-stage ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
@@ -1478,7 +1462,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[QA] System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness-qa ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: qa.key\n" +
                 "      STAGE_NAME: qa\n" +
@@ -1517,7 +1500,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[STAGE] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test-stage, readiness-stage ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: stage.key\n" +
                 "      STAGE_NAME: stage\n" +
@@ -1547,7 +1529,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: '[QA] Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test-qa, readiness-qa ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      API_KEY: qa.key\n" +
                 "      STAGE_NAME: qa\n" +
@@ -1576,7 +1557,6 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test-qa, performance-test-qa ]\n" +
-                "    if: ${{ always() }}\n" +
                 "    env:\n" +
                 "      DOWNSTREAM_REPOSITORY: qa-e2e-workflow.yaml\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
