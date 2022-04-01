@@ -340,7 +340,7 @@ public class PipelineGeneratorUtil {
     }
 
     /**
-     * convert integration-test ->  IT
+     * Convert integration-test to IT
      *
      * @param testType may not be null
      * @return String
