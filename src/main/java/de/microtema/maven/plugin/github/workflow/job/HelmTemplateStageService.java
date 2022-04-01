@@ -12,11 +12,14 @@ public class HelmTemplateStageService implements TemplateStageService {
 
     private final VersioningTemplateStageService versioningTemplateStageService;
     private final PackageTemplateStageService packageTemplateStageService;
+    private final TagTemplateStageService tagTemplateStageService;
 
     public HelmTemplateStageService(VersioningTemplateStageService versioningTemplateStageService,
-                                    PackageTemplateStageService packageTemplateStageService) {
+                                    PackageTemplateStageService packageTemplateStageService,
+                                    TagTemplateStageService tagTemplateStageService) {
         this.versioningTemplateStageService = versioningTemplateStageService;
         this.packageTemplateStageService = packageTemplateStageService;
+        this.tagTemplateStageService = tagTemplateStageService;
     }
 
     @Override
@@ -47,6 +50,8 @@ public class HelmTemplateStageService implements TemplateStageService {
 
         List<String> stageNames = metaData.getStageNames();
 
+        boolean masterBranch = StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master");
+
         boolean multipleStages = stageNames.size() > 1;
 
         return stageNames.stream().map(it -> {
@@ -55,7 +60,10 @@ public class HelmTemplateStageService implements TemplateStageService {
 
             template = PipelineGeneratorUtil.applyProperties(template, it);
 
-            if (versioningTemplateStageService.access(mojo, metaData)) {
+            if (tagTemplateStageService.access(mojo, metaData)) {
+
+                template = template.replaceAll("%NEEDS%", tagTemplateStageService.getJobId());
+            } else if (versioningTemplateStageService.access(mojo, metaData)) {
 
                 template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobId());
             } else {
@@ -66,6 +74,7 @@ public class HelmTemplateStageService implements TemplateStageService {
             return template
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
                     .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
+                    .replace("$VERSION.$SHORT_SHA", masterBranch ? "$VERSION.$SHORT_SHA" : "$VERSION")
                     .replace("%STAGE_NAME%", it);
 
         }).collect(Collectors.joining());
