@@ -30,7 +30,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+        if (Stream.of("feature", "bugfix", "master").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
             return false;
         }
 

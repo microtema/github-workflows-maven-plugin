@@ -6,6 +6,7 @@ import com.github.mustachejava.MustacheFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 
 import java.io.*;
@@ -73,9 +74,24 @@ public class PipelineGeneratorUtil {
         return new File(getRootPath(project), "settings.xml").exists();
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean existsLiquibase(MavenProject project) {
 
-        return new File(getRootPath(project), "src/main/resources/db/changelog").exists();
+        boolean changelog = new File(getRootPath(project), "src/main/resources/db/changelog").exists();
+
+        if (!changelog) {
+            return false;
+        }
+
+        List<Dependency> runtimeDependencies = project.getDependencies();
+
+        if (CollectionUtils.isEmpty(runtimeDependencies)) {
+            return false;
+        }
+
+        return runtimeDependencies
+                .stream()
+                .noneMatch(it -> StringUtils.equalsIgnoreCase("liquibase-core", it.getArtifactId()) && StringUtils.equalsIgnoreCase("compile", it.getScope()));
     }
 
     public static boolean existsFlyway(MavenProject project) {

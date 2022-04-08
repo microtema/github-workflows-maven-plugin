@@ -35,7 +35,8 @@ public class ReadinessTemplateStageService implements TemplateStageService {
         return metaData.getStageNames()
                 .stream()
                 .map(PipelineGeneratorUtil::findProperties)
-                .filter(Objects::nonNull).anyMatch(it -> it.containsKey("SERVICE_URL"));
+                .filter(Objects::nonNull)
+                .anyMatch(it -> it.containsKey("SERVICE_URL"));
     }
 
     @Override

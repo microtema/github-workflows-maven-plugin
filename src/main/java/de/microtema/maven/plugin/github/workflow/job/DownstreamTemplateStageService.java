@@ -20,22 +20,19 @@ public class DownstreamTemplateStageService implements TemplateStageService {
     public DownstreamTemplateStageService(
             BuildTemplateStageService buildTestTemplateStageService,
             DeploymentTemplateStageService deploymentTemplateStageService,
+            ReadinessTemplateStageService readinessTemplateStageService,
             PublishTemplateStageService publishTemplateStageService,
             SystemTestTemplateStageService systemTestTemplateStageService,
             PerformanceTestTemplateStageService performanceTestTemplateStageService) {
 
-        multipleStageTemplateStageServices.add(systemTestTemplateStageService);
         multipleStageTemplateStageServices.add(performanceTestTemplateStageService);
+        multipleStageTemplateStageServices.add(systemTestTemplateStageService);
+        multipleStageTemplateStageServices.add(readinessTemplateStageService);
 
         this.deploymentTemplateStageService = deploymentTemplateStageService;
 
         singleStageTemplateStageServices.add(publishTemplateStageService);
         singleStageTemplateStageServices.add(buildTestTemplateStageService);
-    }
-
-    @Override
-    public String getJobName() {
-        return "downstream";
     }
 
     @Override
@@ -122,7 +119,7 @@ public class DownstreamTemplateStageService implements TemplateStageService {
             needs = multipleStageTemplateStageServices.stream()
                     .filter(t -> t.access(mojo, metaData))
                     .map(t -> t.getJobIds(metaData, stageName))
-                    .collect(Collectors.joining(", "));
+                    .findFirst().orElse(StringUtils.EMPTY);
 
             if (StringUtils.isEmpty(needs)) {
                 needs = deploymentTemplateStageService.getJobIds(metaData, stageName);

@@ -5,16 +5,18 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LiquibaseTemplateStageService implements TemplateStageService {
 
-    private final PackageTemplateStageService packageTemplateStageService;
+    private final List<TemplateStageService> templateStageServices = new ArrayList<>();
 
-    public LiquibaseTemplateStageService(PackageTemplateStageService packageTemplateStageService) {
-        this.packageTemplateStageService = packageTemplateStageService;
+    public LiquibaseTemplateStageService(TagTemplateStageService tagTemplateStageService, PackageTemplateStageService packageTemplateStageService) {
+        this.templateStageServices.add(tagTemplateStageService);
+        this.templateStageServices.add(packageTemplateStageService);
     }
 
     @Override
@@ -49,12 +51,16 @@ public class LiquibaseTemplateStageService implements TemplateStageService {
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
 
-            String needs = packageTemplateStageService.getJobId();
+            String needs = templateStageServices.stream()
+                    .filter(t -> t.access(mojo, metaData))
+                    .findFirst().map(t -> t.getJobIds(metaData, it))
+                    .orElse("build");
 
             return defaultTemplate
                     .replace("db-migration:", multipleStages ? "db-migration-" + it.toLowerCase() + ":" : "db-migration:")
                     .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Database Changelog")
-                    .replace("%NEEDS%", needs);
+                    .replace("%NEEDS%", needs)
+                    .replace("%STAGE_NAME%", it);
 
         }).collect(Collectors.joining("\n"));
     }

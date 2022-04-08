@@ -2,6 +2,7 @@ db-migration:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
+  environment: %STAGE_NAME%
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

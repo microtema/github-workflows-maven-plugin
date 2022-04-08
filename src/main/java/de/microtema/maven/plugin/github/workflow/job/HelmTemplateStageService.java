@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 
 public class HelmTemplateStageService implements TemplateStageService {
 
-    private final VersioningTemplateStageService versioningTemplateStageService;
+    private final DbMigrationTemplateStageService dbMigrationTemplateStageService;
     private final PackageTemplateStageService packageTemplateStageService;
     private final TagTemplateStageService tagTemplateStageService;
 
-    public HelmTemplateStageService(VersioningTemplateStageService versioningTemplateStageService,
+    public HelmTemplateStageService(DbMigrationTemplateStageService dbMigrationTemplateStageService,
                                     PackageTemplateStageService packageTemplateStageService,
                                     TagTemplateStageService tagTemplateStageService) {
-        this.versioningTemplateStageService = versioningTemplateStageService;
+        this.dbMigrationTemplateStageService = dbMigrationTemplateStageService;
         this.packageTemplateStageService = packageTemplateStageService;
         this.tagTemplateStageService = tagTemplateStageService;
     }
@@ -60,12 +60,15 @@ public class HelmTemplateStageService implements TemplateStageService {
 
             template = PipelineGeneratorUtil.applyProperties(template, it);
 
-            if (tagTemplateStageService.access(mojo, metaData)) {
+            if (dbMigrationTemplateStageService.access(mojo, metaData)) {
+
+                template = template.replaceAll("%NEEDS%", dbMigrationTemplateStageService.getJobIds(metaData, it));
+            } else if (tagTemplateStageService.access(mojo, metaData)) {
 
                 template = template.replaceAll("%NEEDS%", tagTemplateStageService.getJobId());
-            } else if (versioningTemplateStageService.access(mojo, metaData)) {
+            } else if (packageTemplateStageService.access(mojo, metaData)) {
 
-                template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobId());
+                template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobIds(metaData, it));
             } else {
 
                 template = template.replaceAll("\\[ %NEEDS% \\]", "[ ]");

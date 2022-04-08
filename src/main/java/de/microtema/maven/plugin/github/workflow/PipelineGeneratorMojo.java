@@ -62,7 +62,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     public void execute() {
 
-        appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
+        appName = getAppDisplayName();
 
         runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
         runsOn = Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.joining(", "));
@@ -481,5 +481,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public Map<String, Object> getVariables() {
 
         return new LinkedHashMap<>(variables);
+    }
+
+    public String getAppDisplayName() {
+
+        return Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
     }
 }

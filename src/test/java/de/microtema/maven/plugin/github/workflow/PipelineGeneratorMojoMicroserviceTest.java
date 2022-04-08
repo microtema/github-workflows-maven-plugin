@@ -67,6 +67,9 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.githubWorkflowsDir = "./target/.github/workflows";
 
         sut.variables.put("DOCKER_REGISTRY", "docker.registry.local");
+        sut.variables.put("DOCKER_REGISTRY_USER", "docker.user");
+        sut.variables.put("DOCKER_REGISTRY_PASSWORD", "docker.password");
+
         sut.variables.put("SERVICE_URL", "http://localhost:8080");
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
         sut.variables.put("REPO_ACCESS_TOKEN", "${{ secrets.REPO_ACCESS_TOKEN }}");
@@ -668,7 +671,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  downstream:\n" +
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ system-test, performance-test ]\n" +
+                "    needs: [ performance-test ]\n" +
                 "    env:\n" +
                 "      DOWNSTREAM_REPOSITORY: microtema/github-workflows-maven-plugin\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -1556,7 +1559,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  downstream-qa-e2e-test:\n" +
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ system-test-qa, performance-test-qa ]\n" +
+                "    needs: [ performance-test-qa ]\n" +
                 "    env:\n" +
                 "      DOWNSTREAM_REPOSITORY: qa-e2e-workflow.yaml\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +

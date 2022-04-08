@@ -13,11 +13,7 @@ public class TagTemplateStageService implements TemplateStageService {
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
 
     public TagTemplateStageService(BuildTemplateStageService buildTemplateStageService,
-                                   PackageTemplateStageService packageTemplateStageService,
-                                   LiquibaseTemplateStageService liquibaseTemplateStageService,
-                                   FlywayTemplateStageService flywayTemplateStageService) {
-        templateStageServices.add(flywayTemplateStageService);
-        templateStageServices.add(liquibaseTemplateStageService);
+                                   PackageTemplateStageService packageTemplateStageService) {
         templateStageServices.add(packageTemplateStageService);
         templateStageServices.add(buildTemplateStageService);
     }
@@ -43,6 +39,6 @@ public class TagTemplateStageService implements TemplateStageService {
                 .map(TemplateStageService::getJobId)
                 .orElse("compile");
 
-        return template.replace("%NEEDS%", needs);
+        return template.replace("%NEEDS%", needs).replace("%APP_DISPLAY_NAME%", mojo.getAppDisplayName());
     }
 }
