@@ -413,4 +413,17 @@ public class PipelineGeneratorUtil {
 
         return StringUtils.startsWith(branchName, "speed");
     }
+
+    public static boolean isSameDockerRegistry(List<String> stageNames) {
+
+        if (stageNames.size() == 1) {
+            return true;
+        }
+
+        return stageNames.stream()
+                .map(PipelineGeneratorUtil::findProperties)
+                .filter(Objects::nonNull)
+                .map(it -> it.getProperty("DOCKER_REGISTRY"))
+                .collect(Collectors.toSet()).size() == 1;
+    }
 }

@@ -6,7 +6,6 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +37,7 @@ public class PackageTemplateStageService implements TemplateStageService {
         List<String> stageNames = metaData.getStageNames();
 
         boolean multipleStages = stageNames.size() > 1;
-        boolean sameDockerRegistry = isSameDockerRegistry(stageNames);
+        boolean sameDockerRegistry = PipelineGeneratorUtil.isSameDockerRegistry(stageNames);
         boolean masterBranch = StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master");
 
         String dockerTag = masterBranch ? "$VERSION.$SHORT_SHA" : "$VERSION";
@@ -61,19 +60,6 @@ public class PackageTemplateStageService implements TemplateStageService {
             return getTemplate(defaultTemplate, "package-" + it.toLowerCase(), "[" + it.toUpperCase() + "] Package", dockerTag);
 
         }).collect(Collectors.joining("\n"));
-    }
-
-    private boolean isSameDockerRegistry(List<String> stageNames) {
-
-        if (stageNames.size() == 1) {
-            return true;
-        }
-
-        return stageNames.stream()
-                .map(PipelineGeneratorUtil::findProperties)
-                .filter(Objects::nonNull)
-                .map(it -> it.getProperty("DOCKER_REGISTRY"))
-                .collect(Collectors.toSet()).size() == 1;
     }
 
     private String getTemplate(String template, String jobId, String jobName, String imageTag) {

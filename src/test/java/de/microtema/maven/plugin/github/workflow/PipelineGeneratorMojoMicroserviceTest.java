@@ -517,7 +517,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  package:\n" +
-                "    name: Package\n" +
+                "    name: 'Package'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ build ]\n" +
                 "    env:\n" +
@@ -545,7 +545,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "  db-migration:\n" +
-                "    name: '[DEV] Database Changelog'\n" +
+                "    name: Database Migration\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -555,7 +555,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
+                "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote:\n" +
                 "    name: '[DEV] Promote'\n" +
@@ -902,7 +902,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  package:\n" +
-                "    name: Package\n" +
+                "    name: 'Package'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ build ]\n" +
                 "    env:\n" +
@@ -930,7 +930,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "  db-migration:\n" +
-                "    name: '[STAGE] Database Changelog'\n" +
+                "    name: Database Migration\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -940,7 +940,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
+                "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote:\n" +
                 "    name: '[STAGE] Promote'\n" +
@@ -1275,7 +1275,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  package:\n" +
-                "    name: Package\n" +
+                "    name: 'Package'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ build ]\n" +
                 "    env:\n" +
@@ -1302,8 +1302,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
-                "  db-migration-stage:\n" +
-                "    name: '[STAGE] Database Changelog'\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1313,21 +1313,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
-                "        run: echo 'TBD'\n" +
-                "  \n" +
-                "  db-migration-qa:\n" +
-                "    name: '[QA] Database Changelog'\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ package ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
+                "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote-stage:\n" +
                 "    name: '[STAGE] Promote'\n" +
