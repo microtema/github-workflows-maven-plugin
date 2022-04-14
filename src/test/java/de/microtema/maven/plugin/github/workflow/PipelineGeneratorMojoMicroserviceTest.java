@@ -110,6 +110,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - feature/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -329,6 +330,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - develop\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -714,6 +716,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - release/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -1087,6 +1090,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - release/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +

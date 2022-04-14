@@ -1,0 +1,75 @@
+notification:
+  name: '%JOB_NAME%'
+  runs-on: [ %RUNS_ON% ]
+  needs: [ %NEEDS% ]
+  if: always()
+  env:
+    STAGE_NAME: %STAGE_DISPLAY_NAME%
+    WEBHOOK_URL: %NOTIFICATION_WEBHOOK_URL%
+  steps:
+    - name: 'Shell: status'
+      id: check
+      run: |
+        url="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs"
+
+        if [ "$(curl -s -H "Authorization: token $GITHUB_TOKEN" "${url}" | jq -r '.jobs[] | select(.status == "completed" and .conclusion == "failure").conclusion' | wc -l)" -gt 0 ]; then
+          status="failure"
+          status_color="#dc3545"
+          status_icon=":x:"
+        elif [ "$(curl -s -H "Authorization: token $GITHUB_TOKEN" "${url}" | jq -r '.jobs[] | select(.status == "completed" and .conclusion == "cancelled").conclusion' | wc -l)" -gt 0 ]; then
+          status="cancelled"
+          status_color="#ffc107"
+          status_icon=":warning:"
+        else
+          status="success"
+          status_color="#2cbe4e"
+          status_icon=":white_check_mark:"
+        fi
+
+        echo "::set-output name=status::${status}"
+        echo "::set-output name=status_color::${status_color}"
+        echo "::set-output name=status_icon::${status_icon}"
+        echo "::set-output name=commit_id::${GITHUB_SHA}"
+        echo "::set-output name=repo_url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+    - name: 'Shell: create payload'
+      run: |
+        echo '{
+          "icon_emoji": "github",
+          "text": "${{ env.APP_DISPLAY_NAME }}",
+          "attachments": [
+            {
+              "color": "${{ steps.check.outputs.status_color }}",
+              "title": "Workflow Details",
+              "fields": [
+                {
+                  "short": true,
+                  "title": "Workflow",
+                  "value": "<${{ steps.check.outputs.repo_url }}|${{ env.APP_DISPLAY_NAME }}>"
+                },
+                {
+                  "short": true,
+                  "title": "Status",
+                  "value": "${{ steps.check.outputs.status_icon }} ${{ steps.check.outputs.status }}"
+                },
+                {
+                  "short": true,
+                  "title": "Version",
+                  "value": "${{ env.VERSION }}"
+                },
+                {
+                  "short": true,
+                  "title": "Commit Id",
+                  "value": "<${{ steps.check.outputs.repo_url }}/commit/${{ steps.check.outputs.commit_id }}|${{ steps.check.outputs.commit_id }}>"
+                },
+                {
+                  "short": true,
+                  "title": "Stage",
+                  "value": "${{ env.STAGE_NAME }}"
+                }
+              ]
+            }
+          ]
+        }' > payload.json
+    - name: 'Shell: curl'
+      run: |
+        curl -H 'Content-Type: application/json' -d '@payload.json' $WEBHOOK_URL

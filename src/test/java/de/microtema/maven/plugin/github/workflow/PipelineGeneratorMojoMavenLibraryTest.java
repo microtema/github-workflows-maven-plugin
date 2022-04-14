@@ -87,6 +87,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      - feature/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
                 "  MAVEN_CLI_OPTS: \"--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true\\\n" +

@@ -121,11 +121,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PerformanceTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DownstreamTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(NotificationTemplateStageService.class));
     }
 
     void applyDefaultVariables() {
 
         defaultVariables.put("APP_NAME", project.getArtifactId());
+        defaultVariables.put("APP_DISPLAY_NAME", appName);
 
         if (PipelineGeneratorUtil.isDeploymentRepo(project)) {
             return;
@@ -276,6 +278,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 metaData.setBranchName(branchName);
                 metaData.setBranchFullName(branchFullName);
                 metaData.setBranchPattern(branchPattern);
+                metaData.setDownStreams(downStreams);
             }
         }
 
