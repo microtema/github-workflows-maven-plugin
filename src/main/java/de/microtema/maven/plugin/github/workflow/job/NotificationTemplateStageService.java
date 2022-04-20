@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class NotificationTemplateStageService implements TemplateStageService {
 
@@ -28,11 +27,7 @@ public class NotificationTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
-            return false;
-        }
-
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
+        if (!metaData.isDeployable()) {
             return false;
         }
 
@@ -77,7 +72,7 @@ public class NotificationTemplateStageService implements TemplateStageService {
 
                     return defaultTemplate
                             .replace("notification:", multipleStages ? "notification-" + it.toLowerCase() + ":" : "notification:")
-                            .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Notification")
+                            .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Notification", it, multipleStages))
                             .replace("%" + WEBHOOK_URL + "%", notificationWebhookUrl)
                             .replace("%STAGE_DISPLAY_NAME%", it.toUpperCase())
                             .replace("%NEEDS%", needs);

@@ -26,11 +26,11 @@ public class SystemTestTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
+        if (!metaData.isDeployable()) {
             return false;
         }
 
-        if (Stream.of("feature", "bugfix", "master").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+        if (Stream.of("master").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
             return false;
         }
 
@@ -81,7 +81,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
         template = PipelineGeneratorUtil.applyProperties(template, stageName);
 
         String jobId = "system-test";
-        String jobName = "[" + stageName.toUpperCase() + "]";
+        String jobName = PipelineGeneratorUtil.getJobName("System Test", stageName, multipleStages);
 
         if (multipleStages) {
             jobId += "-" + stageName.toLowerCase();
@@ -89,10 +89,8 @@ public class SystemTestTemplateStageService implements TemplateStageService {
 
         if (multipleTests) {
             jobId += "-" + testType.toLowerCase();
-            jobName += " (" + testType.toUpperCase() + ")";
+            jobName = PipelineGeneratorUtil.getJobName("System Test (" + testType.toUpperCase() + ")", stageName, multipleStages);
         }
-
-        jobName += " System Test";
 
         return template
                 .replace("system-test:", jobId + ":")

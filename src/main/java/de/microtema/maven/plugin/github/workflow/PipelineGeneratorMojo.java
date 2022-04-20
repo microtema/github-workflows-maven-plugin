@@ -248,6 +248,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         for (Map.Entry<String, String> stage : stages.entrySet()) {
 
             String stageName = stage.getKey();
+
             String[] branches = StringUtils.split(stage.getValue(), ",");
 
             for (String branchPattern : branches) {
@@ -278,7 +279,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 metaData.setBranchName(branchName);
                 metaData.setBranchFullName(branchFullName);
                 metaData.setBranchPattern(branchPattern);
-                metaData.setDownStreams(downStreams);
+                metaData.setDownStreams(getDownStreams());
+                metaData.setDeployable(!StringUtils.equalsIgnoreCase(stageName, "none") && PipelineGeneratorUtil.isMicroserviceRepo(project));
             }
         }
 
@@ -473,7 +475,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     public Map<String, String> getDownStreams() {
 
-        return downStreams;
+        return new LinkedHashMap<>(downStreams);
     }
 
     public List<String> getRunsOn() {

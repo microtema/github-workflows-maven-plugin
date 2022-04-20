@@ -426,4 +426,14 @@ public class PipelineGeneratorUtil {
                 .map(it -> it.getProperty("DOCKER_REGISTRY"))
                 .collect(Collectors.toSet()).size() == 1;
     }
+
+    public static String getJobName(String jobName, String stageName, boolean multipleStages) {
+
+        if (multipleStages) {
+
+            return "[" + stageName.toUpperCase() + "] " + jobName;
+        }
+
+        return jobName;
+    }
 }

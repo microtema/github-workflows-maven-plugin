@@ -560,7 +560,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote:\n" +
-                "    name: '[DEV] Promote'\n" +
+                "    name: 'Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -583,7 +583,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "  readiness:\n" +
-                "    name: '[DEV] Readiness Check'\n" +
+                "    name: 'Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -605,7 +605,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test:\n" +
-                "    name: '[DEV] System Test'\n" +
+                "    name: 'System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
                 "    env:\n" +
@@ -643,7 +643,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  performance-test:\n" +
-                "    name: '[DEV] Performance Test'\n" +
+                "    name: 'Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
                 "    env:\n" +
@@ -946,7 +946,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote:\n" +
-                "    name: '[STAGE] Promote'\n" +
+                "    name: 'Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -969,7 +969,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "  readiness:\n" +
-                "    name: '[STAGE] Readiness Check'\n" +
+                "    name: 'Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -991,7 +991,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test:\n" +
-                "    name: '[STAGE] System Test'\n" +
+                "    name: 'System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
                 "    env:\n" +
@@ -1029,7 +1029,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  performance-test:\n" +
-                "    name: '[STAGE] Performance Test'\n" +
+                "    name: 'Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
                 "    env:\n" +

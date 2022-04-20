@@ -3,13 +3,11 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ReadinessTemplateStageService implements TemplateStageService {
 
@@ -24,11 +22,7 @@ public class ReadinessTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
-            return false;
-        }
-
-        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+        if (!metaData.isDeployable()) {
             return false;
         }
 
@@ -64,7 +58,7 @@ public class ReadinessTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("readiness:", multipleStages ? "readiness-" + it.toLowerCase() + ":" : "readiness:")
-                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Readiness Check")
+                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Readiness Check", it, multipleStages))
                     .replaceAll("%PRIVATE_NETWORK%", String.valueOf(privateNetwork))
                     .replace("%NEEDS%", needs);
 

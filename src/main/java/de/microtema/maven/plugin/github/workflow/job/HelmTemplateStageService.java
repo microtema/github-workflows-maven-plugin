@@ -30,11 +30,7 @@ public class HelmTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
-            return false;
-        }
-
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "bugfix")) {
+        if (!metaData.isDeployable()) {
             return false;
         }
 
@@ -73,7 +69,7 @@ public class HelmTemplateStageService implements TemplateStageService {
 
             return template
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
-                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
+                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Deployment", it, multipleStages))
                     .replace("$VERSION.$SHORT_SHA", masterBranch ? "$VERSION.$SHORT_SHA" : "$VERSION")
                     .replace("%STAGE_NAME%", it);
 

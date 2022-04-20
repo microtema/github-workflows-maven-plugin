@@ -13,14 +13,10 @@ public class PublishTemplateStageService implements TemplateStageService {
 
     private final TagTemplateStageService tagTemplateStageService;
 
-    private final HelmTemplateStageService helmTemplateStageService;
-
     public PublishTemplateStageService(BuildTemplateStageService buildTemplateStageService,
-                                       TagTemplateStageService tagTemplateStageService,
-                                       HelmTemplateStageService helmTemplateStageService) {
+                                       TagTemplateStageService tagTemplateStageService) {
         this.buildTemplateStageService = buildTemplateStageService;
         this.tagTemplateStageService = tagTemplateStageService;
-        this.helmTemplateStageService = helmTemplateStageService;
     }
 
     @Override

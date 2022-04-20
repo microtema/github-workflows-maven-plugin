@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PackageTemplateStageService implements TemplateStageService {
 
@@ -20,11 +19,7 @@ public class PackageTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
-            return false;
-        }
-
-        return Stream.of("feature", "bugfix").noneMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it));
+        return metaData.isDeployable();
     }
 
     @Override
@@ -57,7 +52,9 @@ public class PackageTemplateStageService implements TemplateStageService {
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it, mojo.getVariables());
 
-            return getTemplate(defaultTemplate, "package-" + it.toLowerCase(), "[" + it.toUpperCase() + "] Package", dockerTag);
+            String jobName = PipelineGeneratorUtil.getJobName("Package", it, multipleStages);
+
+            return getTemplate(defaultTemplate, "package-" + it.toLowerCase(), jobName, dockerTag);
 
         }).collect(Collectors.joining("\n"));
     }

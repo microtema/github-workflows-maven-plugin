@@ -19,6 +19,8 @@ public class MetaData {
 
     private Map<String, String> downStreams = new LinkedHashMap<>();
 
+    private boolean deployable;
+
     public String getBranchName() {
         return branchName;
     }
@@ -65,5 +67,13 @@ public class MetaData {
 
     public void setDownStreams(Map<String, String> downStreams) {
         this.downStreams = downStreams;
+    }
+
+    public boolean isDeployable() {
+        return deployable;
+    }
+
+    public void setDeployable(boolean deployable) {
+        this.deployable = deployable;
     }
 }

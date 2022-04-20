@@ -5,17 +5,18 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TagTemplateStageService implements TemplateStageService {
 
-    private final List<TemplateStageService> templateStageServices = new ArrayList<>();
+    private final BuildTemplateStageService buildTemplateStageService;
+    private final PackageTemplateStageService packageTemplateStageService;
 
     public TagTemplateStageService(BuildTemplateStageService buildTemplateStageService,
                                    PackageTemplateStageService packageTemplateStageService) {
-        templateStageServices.add(packageTemplateStageService);
-        templateStageServices.add(buildTemplateStageService);
+        this.buildTemplateStageService = buildTemplateStageService;
+        this.packageTemplateStageService = packageTemplateStageService;
     }
 
     @Override
@@ -33,12 +34,32 @@ public class TagTemplateStageService implements TemplateStageService {
 
         String template = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
-        String needs = templateStageServices.stream()
-                .filter(it -> it.access(mojo, metaData))
-                .findFirst()
-                .map(TemplateStageService::getJobId)
-                .orElse("compile");
+        String needs = getJobNeeds(mojo, metaData);
 
         return template.replace("%NEEDS%", needs).replace("%APP_DISPLAY_NAME%", mojo.getAppDisplayName());
+    }
+
+    private String getJobNeeds(PipelineGeneratorMojo mojo, MetaData metaData) {
+
+        List<String> stageNames = metaData.getStageNames();
+        boolean sameDockerRegistry = PipelineGeneratorUtil.isSameDockerRegistry(stageNames);
+
+        if (packageTemplateStageService.access(mojo, metaData)) {
+
+            if (sameDockerRegistry) {
+                return packageTemplateStageService.getJobId();
+            }
+
+            return stageNames.stream()
+                    .map(it -> packageTemplateStageService.getJobIds(metaData, it))
+                    .collect(Collectors.joining(", "));
+        }
+
+        if (buildTemplateStageService.access(mojo, metaData)) {
+
+            return buildTemplateStageService.getJobId();
+        }
+
+        return "compile";
     }
 }
