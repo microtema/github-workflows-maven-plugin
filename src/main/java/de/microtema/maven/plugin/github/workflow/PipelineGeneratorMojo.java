@@ -328,7 +328,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 version = version.replace("-SNAPSHOT", "-RC");
                 break;
             case "hotfix":
-                version = version.replace("-SNAPSHOT", "-FIX");
+                version = version.replace("-SNAPSHOT", "");
                 break;
             case "master":
                 version = version.replace("-SNAPSHOT", "");
