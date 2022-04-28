@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 
 public class HelmTemplateStageService implements TemplateStageService {
 
-    private final VersioningTemplateStageService versioningTemplateStageService;
+    private final DbMigrationTemplateStageService dbMigrationTemplateStageService;
     private final PackageTemplateStageService packageTemplateStageService;
     private final TagTemplateStageService tagTemplateStageService;
 
-    public HelmTemplateStageService(VersioningTemplateStageService versioningTemplateStageService,
+    public HelmTemplateStageService(DbMigrationTemplateStageService dbMigrationTemplateStageService,
                                     PackageTemplateStageService packageTemplateStageService,
                                     TagTemplateStageService tagTemplateStageService) {
-        this.versioningTemplateStageService = versioningTemplateStageService;
+        this.dbMigrationTemplateStageService = dbMigrationTemplateStageService;
         this.packageTemplateStageService = packageTemplateStageService;
         this.tagTemplateStageService = tagTemplateStageService;
     }
@@ -30,11 +30,7 @@ public class HelmTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "feature")) {
-            return false;
-        }
-
-        if (StringUtils.equalsIgnoreCase(metaData.getBranchName(), "bugfix")) {
+        if (!metaData.isDeployable()) {
             return false;
         }
 
@@ -53,6 +49,7 @@ public class HelmTemplateStageService implements TemplateStageService {
         boolean masterBranch = StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master");
 
         boolean multipleStages = stageNames.size() > 1;
+        boolean sameDockerRegistry = PipelineGeneratorUtil.isSameDockerRegistry(stageNames);
 
         return stageNames.stream().map(it -> {
 
@@ -60,12 +57,11 @@ public class HelmTemplateStageService implements TemplateStageService {
 
             template = PipelineGeneratorUtil.applyProperties(template, it);
 
-            if (tagTemplateStageService.access(mojo, metaData)) {
+            String needs = getJobNeeds(mojo, metaData, it, sameDockerRegistry);
 
-                template = template.replaceAll("%NEEDS%", tagTemplateStageService.getJobId());
-            } else if (versioningTemplateStageService.access(mojo, metaData)) {
+            if (StringUtils.isNotEmpty(needs)) {
 
-                template = template.replaceAll("%NEEDS%", packageTemplateStageService.getJobId());
+                template = template.replaceAll("%NEEDS%", needs);
             } else {
 
                 template = template.replaceAll("\\[ %NEEDS% \\]", "[ ]");
@@ -73,10 +69,38 @@ public class HelmTemplateStageService implements TemplateStageService {
 
             return template
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
-                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
+                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Deployment", it, multipleStages))
                     .replace("$VERSION.$SHORT_SHA", masterBranch ? "$VERSION.$SHORT_SHA" : "$VERSION")
                     .replace("%STAGE_NAME%", it);
 
         }).collect(Collectors.joining());
+    }
+
+    private String getJobNeeds(PipelineGeneratorMojo mojo, MetaData metaData, String stageName, boolean sameDockerRegistry) {
+
+        if (dbMigrationTemplateStageService.access(mojo, metaData)) {
+
+            if (sameDockerRegistry) {
+                return dbMigrationTemplateStageService.getJobId();
+            }
+
+            return dbMigrationTemplateStageService.getJobIds(metaData, stageName);
+        }
+
+        if (tagTemplateStageService.access(mojo, metaData)) {
+
+            return tagTemplateStageService.getJobId();
+        }
+
+        if (packageTemplateStageService.access(mojo, metaData)) {
+
+            if (sameDockerRegistry) {
+                return packageTemplateStageService.getJobId();
+            }
+
+            return packageTemplateStageService.getJobIds(metaData, stageName);
+        }
+
+        return null;
     }
 }

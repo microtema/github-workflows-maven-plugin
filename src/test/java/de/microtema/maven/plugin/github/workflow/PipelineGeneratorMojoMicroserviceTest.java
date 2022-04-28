@@ -67,6 +67,9 @@ class PipelineGeneratorMojoMicroserviceTest {
         sut.githubWorkflowsDir = "./target/.github/workflows";
 
         sut.variables.put("DOCKER_REGISTRY", "docker.registry.local");
+        sut.variables.put("DOCKER_REGISTRY_USER", "docker.user");
+        sut.variables.put("DOCKER_REGISTRY_PASSWORD", "docker.password");
+
         sut.variables.put("SERVICE_URL", "http://localhost:8080");
         sut.variables.put("ENV_STAGE_NAME", "ENV_$STAGE_NAME");
         sut.variables.put("REPO_ACCESS_TOKEN", "${{ secrets.REPO_ACCESS_TOKEN }}");
@@ -107,6 +110,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - feature/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -326,6 +330,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - develop\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -514,7 +519,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  package:\n" +
-                "    name: Package\n" +
+                "    name: 'Package'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ build ]\n" +
                 "    env:\n" +
@@ -542,7 +547,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "  db-migration:\n" +
-                "    name: '[DEV] Database Changelog'\n" +
+                "    name: Database Migration\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -552,10 +557,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
+                "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote:\n" +
-                "    name: '[DEV] Promote'\n" +
+                "    name: 'Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -578,7 +583,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "  readiness:\n" +
-                "    name: '[DEV] Readiness Check'\n" +
+                "    name: 'Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -600,7 +605,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test:\n" +
-                "    name: '[DEV] System Test'\n" +
+                "    name: 'System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
                 "    env:\n" +
@@ -638,7 +643,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  performance-test:\n" +
-                "    name: '[DEV] Performance Test'\n" +
+                "    name: 'Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
                 "    env:\n" +
@@ -668,7 +673,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  downstream:\n" +
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ system-test, performance-test ]\n" +
+                "    needs: [ performance-test ]\n" +
                 "    env:\n" +
                 "      DOWNSTREAM_REPOSITORY: microtema/github-workflows-maven-plugin\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +
@@ -711,6 +716,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - release/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -899,7 +905,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  package:\n" +
-                "    name: Package\n" +
+                "    name: 'Package'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ build ]\n" +
                 "    env:\n" +
@@ -927,7 +933,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
                 "  db-migration:\n" +
-                "    name: '[STAGE] Database Changelog'\n" +
+                "    name: Database Migration\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -937,10 +943,10 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
+                "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote:\n" +
-                "    name: '[STAGE] Promote'\n" +
+                "    name: 'Promote'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -963,7 +969,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          ref: master\n" +
                 "          inputs: '{ \"version\": \"${{ env.VERSION }}\" }'\n" +
                 "  readiness:\n" +
-                "    name: '[STAGE] Readiness Check'\n" +
+                "    name: 'Readiness Check'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ deployment ]\n" +
                 "    timeout-minutes: 15\n" +
@@ -985,7 +991,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - name: 'Shell: readiness'\n" +
                 "        run: while [[ \"$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')\" != \"$GITHUB_SHA\" ]]; do sleep 10; done\n" +
                 "  system-test:\n" +
-                "    name: '[STAGE] System Test'\n" +
+                "    name: 'System Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ readiness ]\n" +
                 "    env:\n" +
@@ -1023,7 +1029,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  performance-test:\n" +
-                "    name: '[STAGE] Performance Test'\n" +
+                "    name: 'Performance Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ system-test, readiness ]\n" +
                 "    env:\n" +
@@ -1084,6 +1090,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      - release/*\n" +
                 "env:\n" +
                 "  APP_NAME: \"github-workflows-maven-plugin\"\n" +
+                "  APP_DISPLAY_NAME: \"github-workflows-maven-plugin Maven Mojo\"\n" +
                 "  GITHUB_TOKEN: \"${{ secrets.GITHUB_TOKEN }}\"\n" +
                 "  SONAR_TOKEN: \"${{ secrets.SONAR_TOKEN }}\"\n" +
                 "  JAVA_VERSION: \"17.x\"\n" +
@@ -1272,7 +1279,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "          name: target-artifact\n" +
                 "          path: artifact\n" +
                 "  package:\n" +
-                "    name: Package\n" +
+                "    name: 'Package'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ build ]\n" +
                 "    env:\n" +
@@ -1299,8 +1306,8 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        run: docker build -t $DOCKER_REGISTRY/$APP_NAME:$VERSION .\n" +
                 "      - name: 'Docker: push'\n" +
                 "        run: docker push $DOCKER_REGISTRY/$APP_NAME:$VERSION\n" +
-                "  db-migration-stage:\n" +
-                "    name: '[STAGE] Database Changelog'\n" +
+                "  db-migration:\n" +
+                "    name: Database Migration\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
@@ -1310,21 +1317,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
                 "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
-                "        run: echo 'TBD'\n" +
-                "  \n" +
-                "  db-migration-qa:\n" +
-                "    name: '[QA] Database Changelog'\n" +
-                "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ package ]\n" +
-                "    steps:\n" +
-                "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
-                "      - name: 'Java: Setup'\n" +
-                "        uses: actions/setup-java@v1\n" +
-                "        with:\n" +
-                "          java-version: ${{ env.JAVA_VERSION }}\n" +
-                "      - name: 'Liquibase: changelog'\n" +
+                "      - name: 'Flyway: migration'\n" +
                 "        run: echo 'TBD'\n" +
                 "  promote-stage:\n" +
                 "    name: '[STAGE] Promote'\n" +
@@ -1556,7 +1549,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "  downstream-qa-e2e-test:\n" +
                 "    name: 'E2E Test'\n" +
                 "    runs-on: [ self-hosted, azure-runners ]\n" +
-                "    needs: [ system-test-qa, performance-test-qa ]\n" +
+                "    needs: [ performance-test-qa ]\n" +
                 "    env:\n" +
                 "      DOWNSTREAM_REPOSITORY: qa-e2e-workflow.yaml\n" +
                 "      REPO_ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}\n" +

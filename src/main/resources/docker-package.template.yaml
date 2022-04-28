@@ -1,7 +1,7 @@
 package:
-  name: Package
+  name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
-  needs: [ build ]
+  needs: [ %NEEDS% ]
   env:
     DOCKER_REGISTRY: %DOCKER_REGISTRY%
     DOCKER_REGISTRY_USER: %DOCKER_REGISTRY_USER%

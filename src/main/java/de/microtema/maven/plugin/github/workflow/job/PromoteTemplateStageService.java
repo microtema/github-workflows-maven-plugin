@@ -3,11 +3,9 @@ package de.microtema.maven.plugin.github.workflow.job;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PromoteTemplateStageService implements TemplateStageService {
 
@@ -32,7 +30,7 @@ public class PromoteTemplateStageService implements TemplateStageService {
             return false;
         }
 
-        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+        if (!metaData.isDeployable()) {
             return false;
         }
 
@@ -64,7 +62,7 @@ public class PromoteTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("promote:", multipleStages ? "promote-" + it.toLowerCase() + ":" : "promote:")
-                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Promote")
+                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Promote", it, multipleStages))
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));

@@ -62,7 +62,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     public void execute() {
 
-        appName = Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
+        appName = getAppDisplayName();
 
         runsOn = Optional.ofNullable(runsOn).orElse("ubuntu-latest");
         runsOn = Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.joining(", "));
@@ -121,11 +121,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PerformanceTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DownstreamTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(NotificationTemplateStageService.class));
     }
 
     void applyDefaultVariables() {
 
         defaultVariables.put("APP_NAME", project.getArtifactId());
+        defaultVariables.put("APP_DISPLAY_NAME", appName);
 
         if (PipelineGeneratorUtil.isDeploymentRepo(project)) {
             return;
@@ -246,6 +248,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         for (Map.Entry<String, String> stage : stages.entrySet()) {
 
             String stageName = stage.getKey();
+
             String[] branches = StringUtils.split(stage.getValue(), ",");
 
             for (String branchPattern : branches) {
@@ -276,6 +279,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 metaData.setBranchName(branchName);
                 metaData.setBranchFullName(branchFullName);
                 metaData.setBranchPattern(branchPattern);
+                metaData.setDownStreams(getDownStreams());
+                metaData.setDeployable(!StringUtils.equalsIgnoreCase(stageName, "none") && PipelineGeneratorUtil.isMicroserviceRepo(project));
             }
         }
 
@@ -323,7 +328,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 version = version.replace("-SNAPSHOT", "-RC");
                 break;
             case "hotfix":
-                version = version.replace("-SNAPSHOT", "-FIX");
+                version = version.replace("-SNAPSHOT", "");
                 break;
             case "master":
                 version = version.replace("-SNAPSHOT", "");
@@ -470,7 +475,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     public Map<String, String> getDownStreams() {
 
-        return downStreams;
+        return new LinkedHashMap<>(downStreams);
     }
 
     public List<String> getRunsOn() {
@@ -481,5 +486,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public Map<String, Object> getVariables() {
 
         return new LinkedHashMap<>(variables);
+    }
+
+    public String getAppDisplayName() {
+
+        return Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
     }
 }

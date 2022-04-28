@@ -5,18 +5,21 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PackageTemplateStageService implements TemplateStageService {
+
+    private final BuildTemplateStageService buildTemplateStageService;
+
+    public PackageTemplateStageService(BuildTemplateStageService buildTemplateStageService) {
+        this.buildTemplateStageService = buildTemplateStageService;
+    }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject())) {
-            return false;
-        }
-
-        return Stream.of("feature", "bugfix").noneMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it));
+        return metaData.isDeployable();
     }
 
     @Override
@@ -26,17 +29,44 @@ public class PackageTemplateStageService implements TemplateStageService {
             return null;
         }
 
-        String template = PipelineGeneratorUtil.getTemplate("docker-package");
+        List<String> stageNames = metaData.getStageNames();
 
-        if (!PipelineGeneratorUtil.existsDockerfile(mojo.getProject())) {
-            template = PipelineGeneratorUtil.getTemplate("jib-package"); // fallback to maven plugin
+        boolean multipleStages = stageNames.size() > 1;
+        boolean sameDockerRegistry = PipelineGeneratorUtil.isSameDockerRegistry(stageNames);
+        boolean masterBranch = StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master");
+
+        String dockerTag = masterBranch ? "$VERSION.$SHORT_SHA" : "$VERSION";
+
+        if (!multipleStages || sameDockerRegistry) {
+
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate("docker-package");
+
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, metaData.getStageName());
+
+            return getTemplate(defaultTemplate, "package", "Package", dockerTag);
         }
 
-        if (!StringUtils.equalsIgnoreCase(metaData.getBranchName(), "master")) {
+        return stageNames.stream().map(it -> {
 
-            template = template.replace("$VERSION.$SHORT_SHA", "$VERSION");
-        }
+            String defaultTemplate = PipelineGeneratorUtil.getTemplate("docker-package");
 
-        return PipelineGeneratorUtil.applyProperties(template, metaData.getStageName());
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it, mojo.getVariables());
+
+            String jobName = PipelineGeneratorUtil.getJobName("Package", it, multipleStages);
+
+            return getTemplate(defaultTemplate, "package-" + it.toLowerCase(), jobName, dockerTag);
+
+        }).collect(Collectors.joining("\n"));
+    }
+
+    private String getTemplate(String template, String jobId, String jobName, String imageTag) {
+
+        String needs = buildTemplateStageService.getJobId();
+
+        return template
+                .replace("package:", jobId + ":")
+                .replace("%JOB_NAME%", jobName)
+                .replace("%NEEDS%", needs)
+                .replace("$VERSION.$SHORT_SHA", imageTag);
     }
 }

@@ -4,6 +4,7 @@ import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
 import de.microtema.maven.plugin.github.workflow.model.JobData;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -20,22 +21,19 @@ public class DownstreamTemplateStageService implements TemplateStageService {
     public DownstreamTemplateStageService(
             BuildTemplateStageService buildTestTemplateStageService,
             DeploymentTemplateStageService deploymentTemplateStageService,
+            ReadinessTemplateStageService readinessTemplateStageService,
             PublishTemplateStageService publishTemplateStageService,
             SystemTestTemplateStageService systemTestTemplateStageService,
             PerformanceTestTemplateStageService performanceTestTemplateStageService) {
 
-        multipleStageTemplateStageServices.add(systemTestTemplateStageService);
         multipleStageTemplateStageServices.add(performanceTestTemplateStageService);
+        multipleStageTemplateStageServices.add(systemTestTemplateStageService);
+        multipleStageTemplateStageServices.add(readinessTemplateStageService);
 
         this.deploymentTemplateStageService = deploymentTemplateStageService;
 
         singleStageTemplateStageServices.add(publishTemplateStageService);
         singleStageTemplateStageServices.add(buildTestTemplateStageService);
-    }
-
-    @Override
-    public String getJobName() {
-        return "downstream";
     }
 
     @Override
@@ -111,6 +109,34 @@ public class DownstreamTemplateStageService implements TemplateStageService {
         }).collect(Collectors.joining("\n"));
     }
 
+    @Override
+    public String getJobIds(MetaData metaData, String stageName) {
+
+        List<String> stageNames = metaData.getStageNames();
+
+        String jobName = getJobId();
+
+        if (CollectionUtils.size(stageNames) == 1) {
+            return jobName;
+        }
+
+        Map<String, String> downStreams = metaData.getDownStreams();
+
+        return stageNames.stream()
+                .filter(downStreams::containsKey)
+                .filter(it -> StringUtils.equalsIgnoreCase(it, stageName))
+                .map(it -> {
+                    String downStream = downStreams.get(it);
+
+                    String[] parts = downStream.split(":");
+
+                    JobData jobData = getJobData(parts, it);
+
+                    return ("downstream-" + jobData.getId()).toLowerCase();
+                })
+                .collect(Collectors.joining(" "));
+    }
+
     private String getJobNames(PipelineGeneratorMojo mojo, MetaData metaData, String stageName) {
 
         boolean microserviceRepo = PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject());
@@ -122,7 +148,7 @@ public class DownstreamTemplateStageService implements TemplateStageService {
             needs = multipleStageTemplateStageServices.stream()
                     .filter(t -> t.access(mojo, metaData))
                     .map(t -> t.getJobIds(metaData, stageName))
-                    .collect(Collectors.joining(", "));
+                    .findFirst().orElse(StringUtils.EMPTY);
 
             if (StringUtils.isEmpty(needs)) {
                 needs = deploymentTemplateStageService.getJobIds(metaData, stageName);
