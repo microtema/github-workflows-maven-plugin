@@ -1,0 +1,13 @@
+validate:
+  name: Validate
+  runs-on: [ self-hosted ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+    - name: Terraform Validate
+      working-directory: %WORKING_DIRECTORY%
+      run: terraform validate

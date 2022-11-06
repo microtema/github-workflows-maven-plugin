@@ -2,6 +2,9 @@ deployment:
   name: Deployment
   runs-on: [ self-hosted ]
   needs: [ plan ]
+  if: ${{ needs.plan.outputs.planExitcode == 2 }}
+  env:
+    TF_CLI_ARGS: "-input=false"
   steps:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -15,4 +18,4 @@ deployment:
         aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
     - name: Terraform Apply
       working-directory: %WORKING_DIRECTORY%
-      run: terraform apply -input=false tfplan
+      run: terraform apply tfplan

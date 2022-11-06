@@ -2,6 +2,8 @@ plan:
   name: Planing
   runs-on: [ self-hosted ]
   needs: [ initialize ]
+  env:
+    TF_CLI_ARGS: "-input=false -detailed-exitcode -var-file=env/.%STAGE_NAME%.tfvars"
   steps:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -14,5 +16,8 @@ plan:
         aws-access-key-id: %AWS_ACCESS_KEY_ID%
         aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
     - name: Terraform Plan
+      id: plan
       working-directory: %WORKING_DIRECTORY%
-      run: terraform plan -input=false -out=tfplan
+      run: terraform plan -out=tfplan
+  outputs:
+    planExitcode: ${{ steps.plan.outputs.exitcode }}
