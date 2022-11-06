@@ -1,0 +1,18 @@
+deployment:
+  name: Deployment
+  runs-on: [ self-hosted ]
+  needs: [ plan ]
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: %AWS_REGION%
+        aws-access-key-id: %AWS_ACCESS_KEY_ID%
+        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+    - name: Terraform Apply
+      working-directory: %WORKING_DIRECTORY%
+      run: terraform apply -input=false tfplan

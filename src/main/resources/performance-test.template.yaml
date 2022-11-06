@@ -11,9 +11,14 @@ performance-test:
     - name: 'Checkout'
       uses: actions/checkout@v2
     - name: 'Java: Setup'
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
         java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'adopt'
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4
+      with:
+        maven-version: 3.8.2
     - name: 'AKS: Set context'
       if: ${{ '%PRIVATE_NETWORK%' }}
       uses: azure/aks-set-context@v1

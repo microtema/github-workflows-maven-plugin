@@ -6,11 +6,10 @@ deployment:
     DEPLOYMENT_REPOSITORY: %DEPLOYMENT_REPOSITORY%
     REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
-    - name: Trigger deployment workflow
+    - name: Trigger Deployment Workflow
       uses: benc-uk/workflow-dispatch@v1
       with:
         workflow: '%WORKFLOW%'
         repo: ${{ env.DEPLOYMENT_REPOSITORY }}
         token: ${{ env.REPO_ACCESS_TOKEN }}
-        ref: master
-        inputs: '{ "version": "${{ env.VERSION }}" }'
+        ref: ${{ github.ref }}

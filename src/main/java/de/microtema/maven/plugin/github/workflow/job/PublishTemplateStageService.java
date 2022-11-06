@@ -26,6 +26,10 @@ public class PublishTemplateStageService implements TemplateStageService {
             return false;
         }
 
+        if (PipelineGeneratorUtil.existsTerraformFile(mojo.getProject())) {
+            return false;
+        }
+
         return PipelineGeneratorUtil.isMavenArtifactRepo(mojo.getProject());
     }
 

@@ -69,6 +69,11 @@ public class PipelineGeneratorUtil {
         return new File(getRootPath(project), "helm").exists();
     }
 
+    public static boolean existsTerraformFile(MavenProject project) {
+
+        return new File(getRootPath(project), "terraform").exists();
+    }
+
     public static boolean existsMavenSettings(MavenProject project) {
 
         return new File(getRootPath(project), "settings.xml").exists();
@@ -110,9 +115,14 @@ public class PipelineGeneratorUtil {
             return true;
         }
 
+        if (new File(getRootPath(project), "src/main/kotlin").exists()) {
+            return true;
+        }
+
         List<String> modules = new ArrayList<>(project.getModules());
 
-        return modules.stream().anyMatch(it -> new File(new File(getRootPath(project), it), "/src/main/java").exists());
+        return modules.stream().anyMatch(it -> new File(new File(getRootPath(project), it), "/src/main/java").exists()) ||
+                modules.stream().anyMatch(it -> new File(new File(getRootPath(project), it), "/src/main/kotlin").exists());
     }
 
     public static boolean isGitRepo(MavenProject project) {
@@ -126,6 +136,7 @@ public class PipelineGeneratorUtil {
 
         excludes.removeIf(it -> it.startsWith("../"));
         excludes.removeIf(it -> new File(new File(getRootPath(project), it), "src/main/java").exists());
+        excludes.removeIf(it -> new File(new File(getRootPath(project), it), "src/main/kotlin").exists());
 
         return excludes;
     }
@@ -148,19 +159,12 @@ public class PipelineGeneratorUtil {
 
         if (CollectionUtils.isEmpty(project.getModules())) {
 
-            File rootDir = new File(rootPath, "src/test/java");
-
-            return findFile(rootDir.toPath(), "Test.java");
+            return Stream.of("java", "kotlin", "groovy").anyMatch(it -> new File(rootPath, "src/test/" + it).exists());
         }
 
         List<String> modules = new ArrayList<>(project.getModules());
 
-        return modules.stream().anyMatch(it -> {
-
-            File rootDir = new File(new File(getRootPath(project), it), "/src/test/java");
-
-            return findFile(rootDir.toPath(), "Test.java");
-        });
+        return modules.stream().anyMatch(it -> Stream.of("java", "kotlin", "groovy").anyMatch(m -> new File(new File(getRootPath(project), it), "/src/test/" + m).exists()));
     }
 
     public static boolean existsIntegrationTests(MavenProject project) {
@@ -291,7 +295,7 @@ public class PipelineGeneratorUtil {
             return false;
         }
 
-        return existsHelmFile(project);
+        return existsHelmFile(project) || existsTerraformFile(project);
     }
 
     public static boolean isMicroserviceRepo(MavenProject project) {

@@ -10,6 +10,10 @@ public class VersioningTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
+        if (PipelineGeneratorUtil.existsTerraformFile(mojo.getProject())) {
+            return false;
+        }
+
         return PipelineGeneratorUtil.hasSourceCode(mojo.getProject()) || !PipelineGeneratorUtil.existsHelmFile(mojo.getProject());
     }
 

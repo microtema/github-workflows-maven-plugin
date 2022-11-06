@@ -1,0 +1,18 @@
+plan:
+  name: Planing
+  runs-on: [ self-hosted ]
+  needs: [ initialize ]
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: %AWS_REGION%
+        aws-access-key-id: %AWS_ACCESS_KEY_ID%
+        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+    - name: Terraform Plan
+      working-directory: %WORKING_DIRECTORY%
+      run: terraform plan -input=false -out=tfplan

@@ -1,0 +1,36 @@
+package:
+  name: '%JOB_NAME%'
+  runs-on: [ %RUNS_ON% ]
+  needs: [ %NEEDS% ]
+  env:
+    AWS_ACCESS_KEY_ID: %AWS_ACCESS_KEY_ID%
+    AWS_SECRET_ACCESS_KEY: %AWS_SECRET_ACCESS_KEY%
+    AWS_REGION: %AWS_REGION%
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: 'Artifact: download'
+      uses: actions/download-artifact@v2
+      with:
+        name: target-artifact
+    - name: 'Shell: short sha'
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+    - name: Build, tag, and push the image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.APP_NAME }}
+        IMAGE_TAG: ${{ env.VERSION }}
+      run: |
+        docker build -t $ECR_REGISTRY/$APP_NAME:$VERSION.$SHORT_SHA .
+        echo "Pushing image to $ECR_REGISTRY/$APP_NAME:$VERSION.$SHORT_SHA"
+        docker push $ECR_REGISTRY/$APP_NAME:$VERSION.$SHORT_SHA

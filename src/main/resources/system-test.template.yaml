@@ -21,9 +21,14 @@ system-test:
       if: ${{ '%PRIVATE_NETWORK%' }}
       run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &
     - name: 'Java: Setup'
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
         java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'adopt'
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4
+      with:
+        maven-version: 3.8.2
     - name: 'Maven: system test'
       run: mvn integration-test -P it -DtestType=%TEST_TYPE% -DsourceType=%SOURCE_TYPE% -DstageName=$STAGE_NAME -DapiKey=$API_KEY $MAVEN_CLI_OPTS
     - name: 'Artifact: prepare'

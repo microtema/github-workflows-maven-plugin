@@ -57,6 +57,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     private final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
 
+    private final PipelineTemplateStageService pipelineTemplateStageService = ClassUtil.createInstance(PipelineTemplateStageService.class);
+
     @Parameter(property = "env-folder")
     String envFolder = ".github/env";
 
@@ -110,12 +112,14 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(IntegrationTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SonarTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(TerraformPlanTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(TagTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PublishTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DbMigrationTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PromoteTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(TerraformApplyTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(HelmTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(ReadinessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
@@ -167,7 +171,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         String mavenCliOptions = "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true";
 
         if (PipelineGeneratorUtil.existsMavenSettings(project)) {
-            mavenCliOptions = "-DrepoUsername=${{ secrets.MAVEN_REPO_USER }} -DrepoPassword=${{ secrets.MAVEN_REPO_PASSWORD }} -s settings.xml " + mavenCliOptions;
+            mavenCliOptions = "-s settings.xml " + mavenCliOptions;
+            defaultVariables.put("ARTIFACTORY_USER", variables.getOrDefault("ARTIFACTORY_USER", "${{ secrets.ARTIFACTORY_USER }}"));
+            defaultVariables.put("ARTIFACTORY_PW", variables.getOrDefault("ARTIFACTORY_PW", "${{ secrets.ARTIFACTORY_PW }}"));
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
@@ -339,10 +345,11 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         defaultVariables.put("VERSION", version);
 
-        String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
+        String pipeline = pipelineTemplateStageService.getTemplate(this, metaData);
 
         pipeline = pipeline
                 .replace("%PIPELINE_NAME%", getPipelineName(metaData))
+                .replace("%VERSION%", version)
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
                 .replace("  %ENV%", getVariablesTemplate(defaultVariables))
                 .replace("  %JOBS%", getStagesTemplate(metaData, templateStageServices));
@@ -418,7 +425,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return appName;
         }
 
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(project)) {
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(project) && !PipelineGeneratorUtil.existsTerraformFile(project)) {
 
             return appName;
         }

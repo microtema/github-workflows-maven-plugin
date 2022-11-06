@@ -6,8 +6,13 @@ security-check:
     - name: 'Checkout'
       uses: actions/checkout@v2
     - name: 'Java: Setup'
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
         java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'adopt'
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4
+      with:
+        maven-version: 3.8.2
     - name: 'Maven: dependency-check'
       run: mvn dependency-check:help -P security -Ddownloader.quick.query.timestamp=false $MAVEN_CLI_OPTS

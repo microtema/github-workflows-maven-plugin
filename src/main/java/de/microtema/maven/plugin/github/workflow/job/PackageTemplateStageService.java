@@ -6,6 +6,8 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class PackageTemplateStageService implements TemplateStageService {
@@ -39,7 +41,7 @@ public class PackageTemplateStageService implements TemplateStageService {
 
         if (!multipleStages || sameDockerRegistry) {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate("docker-package");
+            String defaultTemplate = getSpecificTemplate(metaData.getStageName());
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, metaData.getStageName());
 
@@ -48,7 +50,7 @@ public class PackageTemplateStageService implements TemplateStageService {
 
         return stageNames.stream().map(it -> {
 
-            String defaultTemplate = PipelineGeneratorUtil.getTemplate("docker-package");
+            String defaultTemplate = getSpecificTemplate(it);
 
             defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it, mojo.getVariables());
 
@@ -57,6 +59,24 @@ public class PackageTemplateStageService implements TemplateStageService {
             return getTemplate(defaultTemplate, "package-" + it.toLowerCase(), jobName, dockerTag);
 
         }).collect(Collectors.joining("\n"));
+    }
+
+    private String getSpecificTemplate(String stageName) {
+
+        Properties properties = PipelineGeneratorUtil.findProperties(stageName);
+
+        if (Objects.isNull(properties)) {
+
+            return PipelineGeneratorUtil.getTemplate("docker-package");
+        }
+
+        String accessKeyId = properties.getProperty("AWS_ACCESS_KEY_ID", null);
+
+        if (Objects.nonNull(accessKeyId)) {
+            return PipelineGeneratorUtil.getTemplate("ecr-docker-package");
+        }
+
+        return PipelineGeneratorUtil.getTemplate("docker-package");
     }
 
     private String getTemplate(String template, String jobId, String jobName, String imageTag) {
