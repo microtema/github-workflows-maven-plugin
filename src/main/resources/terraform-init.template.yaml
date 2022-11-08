@@ -1,7 +1,6 @@
 initialize:
   name: Initialize
   runs-on: [ self-hosted ]
-    needs: [ validate ]
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

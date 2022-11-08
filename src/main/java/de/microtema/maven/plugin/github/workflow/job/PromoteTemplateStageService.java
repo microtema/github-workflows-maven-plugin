@@ -62,7 +62,7 @@ public class PromoteTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("promote:", multipleStages ? "promote-" + it.toLowerCase() + ":" : "promote:")
-                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Promote", it, multipleStages))
+                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Promote Env", it, multipleStages))
                     .replace("%NEEDS%", needs);
 
         }).collect(Collectors.joining("\n"));

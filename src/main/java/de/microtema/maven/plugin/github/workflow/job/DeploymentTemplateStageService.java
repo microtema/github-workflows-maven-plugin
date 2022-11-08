@@ -54,7 +54,7 @@ public class DeploymentTemplateStageService implements TemplateStageService {
 
             return defaultTemplate
                     .replace("deployment:", multipleStages ? "deployment-" + it.toLowerCase() + ":" : "deployment:")
-                    .replace("%JOB_NAME%", "[" + it.toUpperCase() + "] Deployment")
+                    .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Deployment", it.toUpperCase(), multipleStages))
                     .replace("%NEEDS%", needs)
                     .replace("%WORKFLOW%", workflow);
 

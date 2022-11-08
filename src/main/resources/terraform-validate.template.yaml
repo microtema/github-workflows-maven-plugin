@@ -1,6 +1,7 @@
 validate:
   name: Validate
   runs-on: [ self-hosted ]
+  needs: [ initialize ]
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2
@@ -8,6 +9,12 @@ validate:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: %AWS_REGION%
+        aws-access-key-id: %AWS_ACCESS_KEY_ID%
+        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
     - name: Terraform Validate
       working-directory: %WORKING_DIRECTORY%
-      run: terraform validate
+      run: terraform init && terraform validate

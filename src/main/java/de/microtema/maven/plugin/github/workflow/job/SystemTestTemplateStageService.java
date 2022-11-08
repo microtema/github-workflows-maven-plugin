@@ -94,7 +94,7 @@ public class SystemTestTemplateStageService implements TemplateStageService {
 
         return template
                 .replace("system-test:", jobId + ":")
-                .replace("%JOB_NAME%", jobName)
+                .replace("%JOB_NAME%", PipelineGeneratorUtil.getJobName("Promote Env", jobName, multipleStages))
                 .replace("%TEST_TYPE%", parseTestType(testType))
                 .replace("%SOURCE_TYPE%", testType)
                 .replace("%STAGE_NAME%", stageName.toLowerCase());

@@ -1,9 +1,11 @@
 plan:
   name: Planing
   runs-on: [ self-hosted ]
-  needs: [ initialize ]
+  needs: [ validate ]
   env:
-    TF_CLI_ARGS: "-input=false -detailed-exitcode -var-file=env/.%STAGE_NAME%.tfvars"
+    TF_CLI_ARGS: "-input=false -var-file=env/.dev.tfvars\
+     \ -var=commit_id=${{ github.event.inputs.commitId }}\
+     \ -var=image_tag=${{ github.event.inputs.version }}"
   steps:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -16,8 +18,5 @@ plan:
         aws-access-key-id: %AWS_ACCESS_KEY_ID%
         aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
     - name: Terraform Plan
-      id: plan
       working-directory: %WORKING_DIRECTORY%
       run: terraform plan -out=tfplan
-  outputs:
-    planExitcode: ${{ steps.plan.outputs.exitcode }}

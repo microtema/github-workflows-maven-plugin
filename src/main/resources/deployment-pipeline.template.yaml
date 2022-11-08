@@ -16,11 +16,11 @@ on:
         required: true
         description: 'New Release Version'
         default: '%VERSION%'
-    commitId:
-      type: string
-      required: true
-      description: 'Short Commit ID'
-      default: '8c570c4'
+      commitId:
+        type: string
+        required: true
+        description: 'Short Commit ID'
+        default: '8c570c4'
 
   %ENV%
 

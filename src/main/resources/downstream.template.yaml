@@ -12,4 +12,4 @@ downstream:
         workflow: '%WORKFLOW%'
         repo: ${{ env.DOWNSTREAM_REPOSITORY }}
         token: ${{ env.REPO_ACCESS_TOKEN }}
-        ref: master
+        ref: ${{ github.ref }}

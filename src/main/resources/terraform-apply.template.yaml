@@ -2,7 +2,6 @@ deployment:
   name: Deployment
   runs-on: [ self-hosted ]
   needs: [ plan ]
-  if: ${{ needs.plan.outputs.planExitcode == 2 }}
   env:
     TF_CLI_ARGS: "-input=false"
   steps:

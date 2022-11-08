@@ -104,8 +104,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     }
 
     void injectTemplateStageServices() {
-        templateStageServices.add(ClassUtil.createInstance(TerraformValidateTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(InitializeTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(TerraformValidateTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));

@@ -6,6 +6,8 @@ deployment:
     DEPLOYMENT_REPOSITORY: %DEPLOYMENT_REPOSITORY%
     REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
+    - name: 'Shell: short sha'
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
     - name: Trigger Deployment Workflow
       uses: benc-uk/workflow-dispatch@v1
       with:
@@ -13,3 +15,4 @@ deployment:
         repo: ${{ env.DEPLOYMENT_REPOSITORY }}
         token: ${{ env.REPO_ACCESS_TOKEN }}
         ref: ${{ github.ref }}
+        inputs: '{ "version": "${{ env.VERSION }}", "commitId": "${{ env.SHORT_SHA }}" }'
