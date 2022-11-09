@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PackageTemplateStageService implements TemplateStageService {
 
@@ -21,7 +22,11 @@ public class PackageTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return metaData.isDeployable();
+        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+            return false;
+        }
+
+        return PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject());
     }
 
     @Override

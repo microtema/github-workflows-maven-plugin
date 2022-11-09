@@ -1,7 +1,7 @@
 package de.microtema.maven.plugin.github.workflow;
 
 import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
-import de.microtema.maven.plugin.github.workflow.job.npm.*;
+import de.microtema.maven.plugin.github.workflow.job.terraform.*;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import de.microtema.model.converter.util.ClassUtil;
 
@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 
 import static de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil.*;
 
-public class NpmPipelineGeneratorMojo extends PipelineGeneratorMojo {
+public class TerraformPipelineGeneratorMojo extends PipelineGeneratorMojo {
 
-    public NpmPipelineGeneratorMojo(PipelineGeneratorMojo mojo) {
+    private final PipelineTemplateStageService pipelineTemplateStageService;
+
+    public TerraformPipelineGeneratorMojo(PipelineGeneratorMojo mojo) {
         this.project = mojo.project;
         this.downStreams = mojo.downStreams;
         this.stages = mojo.stages;
@@ -23,6 +25,7 @@ public class NpmPipelineGeneratorMojo extends PipelineGeneratorMojo {
         this.githubWorkflowsDir = mojo.githubWorkflowsDir;
         this.runsOn = mojo.runsOn;
         this.appName = mojo.getAppDisplayName();
+        this.pipelineTemplateStageService = ClassUtil.createInstance(PipelineTemplateStageService.class);
     }
 
     public void execute() {
@@ -43,42 +46,17 @@ public class NpmPipelineGeneratorMojo extends PipelineGeneratorMojo {
     }
 
     void injectTemplateStageServices() {
-        templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(UnitTestTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(IntegrationTestTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
+
+        templateStageServices.add(ClassUtil.createInstance(InitializeTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(ValidateTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(PackagingTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(ReadinessTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(DownstreamTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(NotificationTemplateStageService.class));
     }
 
     void applyDefaultVariables() {
 
         defaultVariables.put("APP_NAME", project.getArtifactId());
         defaultVariables.put("APP_DISPLAY_NAME", appName);
-
-        defaultVariables.put("GITHUB_TOKEN", "${{ secrets.GITHUB_TOKEN }}");
-
-        if (PipelineGeneratorUtil.hasSonarProperties(project)) {
-
-            String sonarToken = PipelineGeneratorUtil.getProperty(project, "sonar.login", "${{ secrets.SONAR_TOKEN }}");
-
-            defaultVariables.put("SONAR_TOKEN", sonarToken);
-        }
-
-        defaultVariables.put("NODE_VERSION", PipelineGeneratorUtil.getProperty(project, "node.version", "16"));
-
-        if (!downStreams.isEmpty()) {
-
-            String variableValue = variables.getOrDefault("REPO_ACCESS_TOKEN", "${{ secrets.REPO_ACCESS_TOKEN }}");
-
-            variableValue = PipelineGeneratorUtil.wrapSecretVariable(variableValue);
-
-            variables.put("REPO_ACCESS_TOKEN", variableValue);
-        }
     }
 
     void executeImpl(MetaData metaData, List<MetaData> workflows) {
@@ -108,7 +86,7 @@ public class NpmPipelineGeneratorMojo extends PipelineGeneratorMojo {
 
         defaultVariables.put("VERSION", version);
 
-        String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
+        String pipeline = pipelineTemplateStageService.getTemplate(this, metaData);
 
         pipeline = pipeline
                 .replace("%PIPELINE_NAME%", getPipelineName(metaData))

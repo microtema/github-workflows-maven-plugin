@@ -1,9 +1,11 @@
-deployment:
-  name: Deployment
+packaging:
+  name: Planing
   runs-on: [ self-hosted ]
-  needs: [ plan ]
+  needs: [ validate ]
   env:
-    TF_CLI_ARGS: "-input=false"
+    TF_CLI_ARGS: "-input=false -var-file=env/.dev.tfvars\
+     \ -var=commit_id=${{ github.event.inputs.commitId }}\
+     \ -var=image_tag=${{ github.event.inputs.version }}"
   steps:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -15,6 +17,6 @@ deployment:
         aws-region: %AWS_REGION%
         aws-access-key-id: %AWS_ACCESS_KEY_ID%
         aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
-    - name: Terraform Apply
+    - name: Terraform Plan
       working-directory: %WORKING_DIRECTORY%
-      run: terraform apply tfplan
+      run: terraform plan -out=tfplan

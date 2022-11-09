@@ -1,28 +1,29 @@
-package de.microtema.maven.plugin.github.workflow.job;
+package de.microtema.maven.plugin.github.workflow.job.terraform;
 
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
+import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.stream.Stream;
 
-public class TerraformInitTemplateStageService implements TemplateStageService {
+public class DeploymentTemplateStageService implements TemplateStageService {
 
     @Override
     public String getTemplateName() {
-        return "terraform-init";
+        return "terraform/deployment";
     }
 
     @Override
     public String getJobId() {
-        return "initialize";
+        return "deployment";
     }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (Stream.of("bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
             return false;
         }
 

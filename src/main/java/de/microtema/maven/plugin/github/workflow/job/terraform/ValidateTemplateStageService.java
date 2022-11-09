@@ -1,22 +1,23 @@
-package de.microtema.maven.plugin.github.workflow.job;
+package de.microtema.maven.plugin.github.workflow.job.terraform;
 
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
+import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.stream.Stream;
 
-public class TerraformPlanTemplateStageService implements TemplateStageService {
+public class ValidateTemplateStageService implements TemplateStageService {
 
     @Override
     public String getTemplateName() {
-        return "terraform-plan";
+        return "terraform/validate";
     }
 
     @Override
     public String getJobId() {
-        return "plan";
+        return "validate";
     }
 
     @Override
@@ -40,7 +41,6 @@ public class TerraformPlanTemplateStageService implements TemplateStageService {
 
         String template = PipelineGeneratorUtil.applyProperties(defaultTemplate, metaData.getStageName());
 
-        return template.replace("%WORKING_DIRECTORY%", "./terraform")
-                .replace("%STAGE_NAME%", metaData.getStageName());
+        return template.replace("%WORKING_DIRECTORY%", "./terraform");
     }
 }

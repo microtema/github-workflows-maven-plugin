@@ -1,0 +1,28 @@
+############## Created by de.microtema:github-workflow-maven-plugin ############
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+# Files under .github/workflows folder are generated and should not be edited. #
+################################################################################
+
+name: '%PIPELINE_NAME%'
+
+on:
+  push:
+    branches:
+      - %BRANCH_NAME%
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: 'New Release Version'
+        default: '%VERSION%'
+      commitId:
+        type: string
+        required: true
+        description: 'Short Commit ID'
+        default: '8c570c4'
+
+  %ENV%
+
+jobs:
+  %JOBS%

@@ -40,19 +40,13 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "runs-on")
     String runsOn;
 
-    @Parameter(property = "code-paths")
-    String codePaths;
-
     @Parameter(property = "generate-rollback")
     boolean generateRollback;
 
     final List<TemplateStageService> templateStageServices = new ArrayList<>();
     final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
-    final PipelineTemplateStageService pipelineTemplateStageService = ClassUtil.createInstance(PipelineTemplateStageService.class);
-    String appName;
 
-    @Parameter(property = "env-folder")
-    String envFolder = ".github/env";
+    String appName;
 
     public void execute() {
 
@@ -69,13 +63,20 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return;
         }
 
-        boolean isNodeJsRepo = PipelineGeneratorUtil.isNodeJsRepo(project);
-
-        if (isNodeJsRepo) {
+        if (PipelineGeneratorUtil.isNodeJsRepo(project)) {
 
             NpmPipelineGeneratorMojo npmPipelineGeneratorMojo = new NpmPipelineGeneratorMojo(this);
 
             npmPipelineGeneratorMojo.execute();
+
+            return;
+        }
+
+        if (PipelineGeneratorUtil.isTerraformRepo(project)) {
+
+            TerraformPipelineGeneratorMojo terraformPipelineGeneratorMojo = new TerraformPipelineGeneratorMojo(this);
+
+            terraformPipelineGeneratorMojo.execute();
 
             return;
         }
@@ -108,7 +109,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     void injectTemplateStageServices() {
         templateStageServices.add(ClassUtil.createInstance(InitializeTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(TerraformValidateTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(VersioningTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(CompileTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SecurityTemplateStageService.class));
@@ -116,14 +116,12 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(IntegrationTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SonarTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(BuildTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(TerraformPlanTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PackageTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(TagTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PublishTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DbMigrationTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PromoteTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DeploymentTemplateStageService.class));
-        templateStageServices.add(ClassUtil.createInstance(TerraformApplyTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(HelmTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(ReadinessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
@@ -305,7 +303,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         defaultVariables.put("VERSION", version);
 
-        String pipeline = pipelineTemplateStageService.getTemplate(this, metaData);
+        String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 
         pipeline = pipeline
                 .replace("%PIPELINE_NAME%", getPipelineName(metaData))

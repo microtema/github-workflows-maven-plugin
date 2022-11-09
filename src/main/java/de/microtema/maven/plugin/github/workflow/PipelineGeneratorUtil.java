@@ -319,6 +319,11 @@ public class PipelineGeneratorUtil {
         return new File(getRootPath(project), "package.json").exists();
     }
 
+    public static boolean isTerraformRepo(MavenProject project) {
+
+        return new File(getRootPath(project), "terraform/main.tf").exists();
+    }
+
     public static boolean isMicroserviceRepo(MavenProject project) {
 
         return (existsHelmFile(project) || existsDockerfile(project)) && hasSourceCode(project);
