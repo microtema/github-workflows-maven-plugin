@@ -1,0 +1,20 @@
+deployment:
+  name: '%JOB_NAME%'
+  runs-on: [ %RUNS_ON% ]
+  needs: [ build ]
+  env:
+    BUILD_DIR: %BUILD_DIR%
+    S3_BUCKET: %S3_BUCKET%
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: %AWS_REGION%
+        aws-access-key-id: %AWS_ACCESS_KEY_ID%
+        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+    - name: 'Artifact: download'
+      uses: actions/download-artifact@v2
+      with:
+        name: dist-artifact
+    - name: 'AWS: S3 Sync'
+      run: aws s3 sync ./$BUILD_DIR/* $S3_BUCKET

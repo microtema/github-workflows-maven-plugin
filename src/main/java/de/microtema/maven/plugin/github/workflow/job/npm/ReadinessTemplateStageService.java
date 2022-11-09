@@ -1,32 +1,44 @@
-package de.microtema.maven.plugin.github.workflow.job;
+package de.microtema.maven.plugin.github.workflow.job.npm;
 
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
+import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ReadinessTemplateStageService implements TemplateStageService {
 
     private final List<TemplateStageService> templateStageServices = new ArrayList<>();
 
-    public ReadinessTemplateStageService(HelmTemplateStageService helmTemplateStageService,
-                                         DeploymentTemplateStageService deploymentTemplateStageService) {
-        this.templateStageServices.add(helmTemplateStageService);
+    public ReadinessTemplateStageService(DeploymentTemplateStageService deploymentTemplateStageService) {
         this.templateStageServices.add(deploymentTemplateStageService);
+    }
+
+    @Override
+    public String getTemplateName() {
+
+        return "npm/readiness";
+    }
+
+    @Override
+    public String getJobId() {
+
+        return "readiness";
     }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return metaData.getStageNames()
-                .stream()
-                .map(PipelineGeneratorUtil::findProperties)
-                .filter(Objects::nonNull)
-                .anyMatch(it -> it.containsKey("S3_BUCKET"));
+        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+            return false;
+        }
+
+        return PipelineGeneratorUtil.isNodeJsRepo(mojo.getProject());
     }
 
     @Override

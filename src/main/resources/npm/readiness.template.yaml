@@ -1,0 +1,16 @@
+readiness:
+  name: '%JOB_NAME%'
+  runs-on: [ %RUNS_ON% ]
+  needs: [ %NEEDS% ]
+  timeout-minutes: 15
+  env:
+    S3_BUCKET: %S3_BUCKET%
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: %AWS_REGION%
+        aws-access-key-id: %AWS_ACCESS_KEY_ID%
+        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+    - name: 'Shell: readiness'
+      run: while [[ "$(aws s3 cp $S3_BUCKET/git-info.json - | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done

@@ -1,7 +1,8 @@
-package de.microtema.maven.plugin.github.workflow.job;
+package de.microtema.maven.plugin.github.workflow.job.npm;
 
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorMojo;
 import de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil;
+import de.microtema.maven.plugin.github.workflow.job.TemplateStageService;
 import de.microtema.maven.plugin.github.workflow.model.JobData;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,41 +22,21 @@ public class DownstreamTemplateStageService implements TemplateStageService {
     public DownstreamTemplateStageService(
             BuildTemplateStageService buildTestTemplateStageService,
             DeploymentTemplateStageService deploymentTemplateStageService,
-            ReadinessTemplateStageService readinessTemplateStageService,
-            PublishTemplateStageService publishTemplateStageService,
-            SystemTestTemplateStageService systemTestTemplateStageService,
-            PerformanceTestTemplateStageService performanceTestTemplateStageService) {
-
-        multipleStageTemplateStageServices.add(performanceTestTemplateStageService);
-        multipleStageTemplateStageServices.add(systemTestTemplateStageService);
-        multipleStageTemplateStageServices.add(readinessTemplateStageService);
+            ReadinessTemplateStageService readinessTemplateStageService) {
 
         this.deploymentTemplateStageService = deploymentTemplateStageService;
 
-        singleStageTemplateStageServices.add(publishTemplateStageService);
+        multipleStageTemplateStageServices.add(readinessTemplateStageService);
+
+        singleStageTemplateStageServices.add(readinessTemplateStageService);
         singleStageTemplateStageServices.add(buildTestTemplateStageService);
     }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (PipelineGeneratorUtil.isSpeedBranch(metaData.getBranchName())) {
-            return false;
-        }
-
         if (Objects.isNull(mojo.getDownStreams())) {
             return false;
-        }
-
-        if (!PipelineGeneratorUtil.isNodeJsRepo(mojo.getProject())) {
-
-            if (PipelineGeneratorUtil.isMavenPomRepo(mojo.getProject())) {
-                return false;
-            }
-
-            if (PipelineGeneratorUtil.isMavenLibraryRepo(mojo.getProject())) {
-                return false;
-            }
         }
 
         List<String> stageNames = metaData.getStageNames();

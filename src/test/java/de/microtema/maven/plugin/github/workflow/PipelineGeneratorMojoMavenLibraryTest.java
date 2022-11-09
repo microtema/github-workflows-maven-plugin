@@ -48,7 +48,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
     @Test
     void unMask() {
 
-        String answer = sut.unMask("\"${KUBERNETES_VERSION:-1.11}\"");
+        String answer = PipelineGeneratorUtil.unMask("\"${KUBERNETES_VERSION:-1.11}\"");
 
         assertEquals("${KUBERNETES_VERSION:-1.11}", answer);
     }

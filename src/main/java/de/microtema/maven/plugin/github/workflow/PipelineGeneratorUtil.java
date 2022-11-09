@@ -1,8 +1,13 @@
 package de.microtema.maven.plugin.github.workflow;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +25,8 @@ import java.util.stream.Stream;
 public class PipelineGeneratorUtil {
 
     private final static MustacheFactory MUSTACHE_FACTORY = new DefaultMustacheFactory();
+
+    private final static ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
 
     public static String compileTemplate(String templateName, Object context) {
 
@@ -109,6 +116,11 @@ public class PipelineGeneratorUtil {
         return new File(getRootPath(project), "src/test/jmeter").exists();
     }
 
+    public static boolean hasE2ETests(MavenProject project) {
+
+        return new File(getRootPath(project), "e2e").exists();
+    }
+
     public static boolean hasSourceCode(MavenProject project) {
 
         if (new File(getRootPath(project), "src/main/java").exists()) {
@@ -116,6 +128,10 @@ public class PipelineGeneratorUtil {
         }
 
         if (new File(getRootPath(project), "src/main/kotlin").exists()) {
+            return true;
+        }
+
+        if (new File(getRootPath(project), "src/main.ts").exists()) {
             return true;
         }
 
@@ -298,6 +314,11 @@ public class PipelineGeneratorUtil {
         return existsHelmFile(project) || existsTerraformFile(project);
     }
 
+    public static boolean isNodeJsRepo(MavenProject project) {
+
+        return new File(getRootPath(project), "package.json").exists();
+    }
+
     public static boolean isMicroserviceRepo(MavenProject project) {
 
         return (existsHelmFile(project) || existsDockerfile(project)) && hasSourceCode(project);
@@ -439,5 +460,133 @@ public class PipelineGeneratorUtil {
         }
 
         return jobName;
+    }
+
+    public static String unMask(String value) {
+
+        if (StringUtils.isEmpty(value)) {
+            return StringUtils.EMPTY;
+        }
+
+        return value.replaceAll("\"", "");
+    }
+
+    public static String wrapSecretVariable(String variableValue) {
+
+        if (variableValue.startsWith("secrets.")) {
+
+            return "${{ " + variableValue + " }}";
+        }
+
+        return variableValue;
+    }
+
+    public static File getOrCreateWorkflowsDir(MavenProject project, String githubWorkflowsDir) {
+
+        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+
+        File rootDir = new File(rootPath, githubWorkflowsDir);
+        if (!rootDir.exists()) {
+
+            boolean mkdirs = rootDir.mkdirs();
+
+            if (mkdirs) {
+                logMessage("Create .github directories");
+            }
+        }
+        return rootDir;
+    }
+
+    public static void cleanupWorkflows(File rootDir, String workflowFilePostFixName) {
+
+        File[] files = rootDir.listFiles((dir, name) -> StringUtils.contains(name, workflowFilePostFixName));
+
+        if (Objects.isNull(files) || files.length == 0) {
+            return;
+        }
+
+        Stream.of(files).forEach(it -> logMessage("Delete " + it.getName() + " workflow -> " + it.delete()));
+    }
+
+    public static String getWorkflowFileName(MetaData metaData, List<MetaData> workflows, String workflowFilePostFixName) {
+
+        String branchName = metaData.getBranchFullName();
+
+        boolean duplicate = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchFullName(), branchName)).count() > 1;
+
+        String workflowName = branchName + workflowFilePostFixName;
+
+        if (duplicate) {
+            workflowName = branchName + "-" + metaData.getStageName() + workflowFilePostFixName;
+        }
+
+        return workflowName;
+    }
+
+    public static List<MetaData> getWorkflowFiles(MavenProject project, Map<String, String> stages, Map<String, String> downStreams) {
+
+        List<MetaData> workflows = new ArrayList<>();
+
+        for (Map.Entry<String, String> stage : stages.entrySet()) {
+
+            String stageName = stage.getKey();
+
+            String[] branches = StringUtils.split(stage.getValue(), ",");
+
+            for (String branchPattern : branches) {
+
+                List<String> branchNames = Stream.of(branchPattern.split("/")).filter(it -> !it.startsWith("*")).collect(Collectors.toList());
+                String branchName = branchNames.get(0).replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
+                String branchFullName = branchName;
+
+                if (branchNames.size() > 1) {
+                    branchFullName = String.join("-", branchNames);
+                }
+
+                Optional<MetaData> optionalMetaData = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchFullName(), branchName)).findFirst();
+
+                MetaData metaData = new MetaData();
+
+                if (optionalMetaData.isPresent()) {
+                    metaData = optionalMetaData.get();
+                } else {
+                    workflows.add(metaData);
+                }
+
+                List<String> stageNames = metaData.getStageNames();
+
+                stageNames.add(stageName);
+
+                metaData.setStageName(stageName);
+                metaData.setBranchName(branchName);
+                metaData.setBranchFullName(branchFullName);
+                metaData.setBranchPattern(branchPattern);
+                metaData.setDownStreams(downStreams);
+                metaData.setDeployable(!StringUtils.equalsIgnoreCase(stageName, "none") && PipelineGeneratorUtil.isMicroserviceRepo(project));
+            }
+        }
+
+        return workflows;
+    }
+
+    static public String getVariablesTemplate(Map<String, String> branchVariables) {
+
+        branchVariables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
+
+        String template = null;
+        try {
+            template = objectMapper.writeValueAsString(Collections.singletonMap("env", branchVariables));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return PipelineGeneratorUtil.trimEmptyLines(template);
+    }
+
+    public static void logMessage(String message) {
+
+        System.out.println("+----------------------------------+");
+        System.out.println(message);
+        System.out.println("+----------------------------------+");
     }
 }

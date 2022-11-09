@@ -1,15 +1,10 @@
 package de.microtema.maven.plugin.github.workflow;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import de.microtema.maven.plugin.github.workflow.job.*;
 import de.microtema.maven.plugin.github.workflow.model.MetaData;
 import de.microtema.model.converter.util.ClassUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -21,12 +16,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.microtema.maven.plugin.github.workflow.PipelineGeneratorUtil.*;
+
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.COMPILE)
 public class PipelineGeneratorMojo extends AbstractMojo {
 
     String workflowFilePostFixName = "-workflow.yaml";
-
-    ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
 
     String githubWorkflowsDir = ".github/workflows";
 
@@ -51,13 +46,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "generate-rollback")
     boolean generateRollback;
 
-    private String appName;
-
-    private final List<TemplateStageService> templateStageServices = new ArrayList<>();
-
-    private final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
-
-    private final PipelineTemplateStageService pipelineTemplateStageService = ClassUtil.createInstance(PipelineTemplateStageService.class);
+    final List<TemplateStageService> templateStageServices = new ArrayList<>();
+    final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
+    final PipelineTemplateStageService pipelineTemplateStageService = ClassUtil.createInstance(PipelineTemplateStageService.class);
+    String appName;
 
     @Parameter(property = "env-folder")
     String envFolder = ".github/env";
@@ -77,6 +69,17 @@ public class PipelineGeneratorMojo extends AbstractMojo {
             return;
         }
 
+        boolean isNodeJsRepo = PipelineGeneratorUtil.isNodeJsRepo(project);
+
+        if (isNodeJsRepo) {
+
+            NpmPipelineGeneratorMojo npmPipelineGeneratorMojo = new NpmPipelineGeneratorMojo(this);
+
+            npmPipelineGeneratorMojo.execute();
+
+            return;
+        }
+
         injectTemplateStageServices();
 
         File rootDir = getOrCreateWorkflowsDir();
@@ -85,7 +88,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         applyDefaultVariables();
 
-        List<MetaData> workflows = getWorkflowFiles();
+        List<MetaData> workflows = getWorkflowFiles(project, stages, downStreams);
 
         for (MetaData metaData : workflows) {
             executeImpl(metaData, workflows);
@@ -146,6 +149,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
             defaultVariables.put("SONAR_TOKEN", sonarToken);
         }
+
 
         if (!defaultVariables.containsKey("JAVA_VERSION")) {
 
@@ -208,7 +212,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     File getOrCreateWorkflowsDir() {
 
-        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+        String rootPath = getRootPath(project);
 
         File rootDir = new File(rootPath, githubWorkflowsDir);
         if (!rootDir.exists()) {
@@ -248,52 +252,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return workflowName;
     }
 
-    List<MetaData> getWorkflowFiles() {
-
-        List<MetaData> workflows = new ArrayList<>();
-
-        for (Map.Entry<String, String> stage : stages.entrySet()) {
-
-            String stageName = stage.getKey();
-
-            String[] branches = StringUtils.split(stage.getValue(), ",");
-
-            for (String branchPattern : branches) {
-
-                List<String> branchNames = Stream.of(branchPattern.split("/")).filter(it -> !it.startsWith("*")).collect(Collectors.toList());
-                String branchName = branchNames.get(0).replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY);
-                String branchFullName = branchName;
-
-                if (branchNames.size() > 1) {
-                    branchFullName = String.join("-", branchNames);
-                }
-
-                Optional<MetaData> optionalMetaData = workflows.stream().filter(it -> StringUtils.equalsIgnoreCase(it.getBranchFullName(), branchName)).findFirst();
-
-                MetaData metaData = new MetaData();
-
-                if (optionalMetaData.isPresent()) {
-                    metaData = optionalMetaData.get();
-                } else {
-                    workflows.add(metaData);
-                }
-
-                List<String> stageNames = metaData.getStageNames();
-
-                stageNames.add(stageName);
-
-                metaData.setStageName(stageName);
-                metaData.setBranchName(branchName);
-                metaData.setBranchFullName(branchFullName);
-                metaData.setBranchPattern(branchPattern);
-                metaData.setDownStreams(getDownStreams());
-                metaData.setDeployable(!StringUtils.equalsIgnoreCase(stageName, "none") && PipelineGeneratorUtil.isMicroserviceRepo(project));
-            }
-        }
-
-        return workflows;
-    }
-
     List<MetaData> getRollbackWorkflowFiles() {
 
         if (!PipelineGeneratorUtil.isMicroserviceRepo(project)) {
@@ -321,7 +279,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     void executeImpl(MetaData metaData, List<MetaData> workflows) {
 
-        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+        String rootPath = getRootPath(project);
+        boolean isNodeJsRepo = PipelineGeneratorUtil.isNodeJsRepo(project);
 
         File dir = new File(rootPath, githubWorkflowsDir);
 
@@ -361,7 +320,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         logMessage("Generate Github Workflows Pipeline for " + appName + " -> " + workflowFileName);
 
-        if (PipelineGeneratorUtil.hasMavenWrapper(project)) {
+        if (PipelineGeneratorUtil.hasMavenWrapper(project) && !isNodeJsRepo) {
             pipeline = pipeline.replaceAll("mvn ", "./mvnw ");
         }
 
@@ -382,7 +341,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
     void executeRollbackImpl(MetaData metaData) {
 
-        String rootPath = PipelineGeneratorUtil.getRootPath(project);
+        String rootPath = getRootPath(project);
 
         File dir = new File(rootPath, githubWorkflowsDir);
 
@@ -434,21 +393,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return ("[" + String.join(", ", metaData.getStageNames()) + "] ").toUpperCase() + appName;
     }
 
-
-    public String getVariablesTemplate(Map<String, String> branchVariables) {
-
-        branchVariables.entrySet().forEach(it -> it.setValue(unMask(it.getValue())));
-
-        String template = null;
-        try {
-            template = objectMapper.writeValueAsString(Collections.singletonMap("env", branchVariables));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return PipelineGeneratorUtil.trimEmptyLines(template);
-    }
-
     String getStagesTemplate(MetaData metaData, List<TemplateStageService> templateStageServices) {
 
         return templateStageServices.stream()
@@ -456,24 +400,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
                 .filter(Objects::nonNull)
                 .map(it -> PipelineGeneratorUtil.trimEmptyLines(it, 2))
                 .collect(Collectors.joining("\n\n"));
-    }
-
-    String unMask(String value) {
-
-        if (StringUtils.isEmpty(value)) {
-            return StringUtils.EMPTY;
-        }
-
-        return value.replaceAll("\"", "");
-    }
-
-    void logMessage(String message) {
-
-        Log log = getLog();
-
-        log.info("+----------------------------------+");
-        log.info(message);
-        log.info("+----------------------------------+");
     }
 
     public MavenProject getProject() {

@@ -1,0 +1,14 @@
+versioning:
+  name: Versioning
+  runs-on: [ %RUNS_ON% ]
+  needs: [ ]
+  steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v2
+    - name: 'Node: Setup'
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: 'NPM: versions'
+      run: echo TBD
+
