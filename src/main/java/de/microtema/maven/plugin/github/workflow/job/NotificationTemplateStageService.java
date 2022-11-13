@@ -17,11 +17,13 @@ public class NotificationTemplateStageService implements TemplateStageService {
     public NotificationTemplateStageService(DownstreamTemplateStageService downstreamTemplateStageService,
                                             PerformanceTestTemplateStageService performanceTestTemplateStageService,
                                             SystemTestTemplateStageService systemTestTemplateStageService,
-                                            ReadinessTemplateStageService readinessTemplateStageService) {
+                                            ReadinessTemplateStageService readinessTemplateStageService,
+                                            UnDeploymentTemplateStageService unDeploymentTemplateStageService) {
         this.templateStageServices.add(downstreamTemplateStageService);
         this.templateStageServices.add(performanceTestTemplateStageService);
         this.templateStageServices.add(systemTestTemplateStageService);
         this.templateStageServices.add(readinessTemplateStageService);
+        this.templateStageServices.add(unDeploymentTemplateStageService);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class NotificationTemplateStageService implements TemplateStageService {
                             .map(e -> e.getJobIds(metaData, it))
                             .map(String::valueOf)
                             .filter(StringUtils::isNotEmpty)
-                            .findFirst().orElseThrow(() -> new NoSuchElementException("Unable to find the job id!"));
+                            .collect(Collectors.joining(", "));
 
                     return defaultTemplate
                             .replace("notification:", multipleStages ? "notification-" + it.toLowerCase() + ":" : "notification:")

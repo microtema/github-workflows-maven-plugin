@@ -7,9 +7,9 @@ readiness:
     DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments
     REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
-    - name: Awaiting completion of Workflow ${{ needs.downstream.outputs.runId }}
+    - name: Awaiting completion of Workflow ${{ needs.deployment.outputs.runId }}
       uses: microtema/workflow-wait@v2.0
       with:
         token: ${{ env.REPO_ACCESS_TOKEN }}
-        repo: ${{ env.DOWNSTREAM_REPOSITORY }}
+        repo: ${{ env.DEPLOYMENT_REPOSITORY }}
         runId: ${{ needs.deployment.outputs.runId }}

@@ -2,6 +2,7 @@ security-check:
   name: Security Check
   runs-on: [ %RUNS_ON% ]
   needs: [ compile ]
+  continue-on-error: true
   steps:
     - name: 'Checkout'
       uses: actions/checkout@v2

@@ -35,6 +35,10 @@ public class UnDeploymentTemplateStageService implements TemplateStageService {
             return false;
         }
 
+        if (!mojo.isUnDeploy()) {
+            return false;
+        }
+
         return PipelineGeneratorUtil.isMicroserviceRepo(mojo.getProject());
     }
 
