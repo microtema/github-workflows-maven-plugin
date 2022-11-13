@@ -17,6 +17,6 @@ public class PipelineTemplateStageService implements TemplateStageService {
             return PipelineGeneratorUtil.getTemplate(getTemplateName());
         }
 
-        return PipelineGeneratorUtil.getTemplate("deployment-pipeline");
+        return PipelineGeneratorUtil.getTemplate("terraform/pipeline");
     }
 }

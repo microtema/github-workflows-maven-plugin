@@ -8,22 +8,26 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.stream.Stream;
 
-public class PackagingTemplateStageService implements TemplateStageService {
+public class UnDeploymentTemplateStageService implements TemplateStageService {
 
     @Override
     public String getTemplateName() {
-        return "terraform/packaging";
+        return "terraform/undeploy";
     }
 
     @Override
     public String getJobId() {
-        return "packaging";
+        return "undeploy";
     }
 
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (Stream.of("bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
+            return false;
+        }
+
+        if (!mojo.isUnDeploy()) {
             return false;
         }
 
@@ -41,7 +45,6 @@ public class PackagingTemplateStageService implements TemplateStageService {
 
         String template = PipelineGeneratorUtil.applyProperties(defaultTemplate, metaData.getStageName());
 
-        return template.replace("%WORKING_DIRECTORY%", "./terraform")
-                .replace("%STAGE_NAME%", metaData.getStageName());
+        return template.replace("%WORKING_DIRECTORY%", "./terraform");
     }
 }

@@ -1,15 +1,15 @@
-deployment:
+undeploy:
   name: '%JOB_NAME%'
   runs-on: [ %RUNS_ON% ]
   needs: [ %NEEDS% ]
+  if: always()
   env:
     DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments
     REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
     - name: 'Shell: short sha'
       run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
-    - name: Trigger Deployment Workflow
-      id: trigger_dispatch
+    - name: Trigger Undeployment Workflow
       uses: microtema/workflow-dispatch@v2.0
       with:
         workflow: '%WORKFLOW%'
@@ -17,5 +17,3 @@ deployment:
         token: ${{ env.REPO_ACCESS_TOKEN }}
         ref: ${{ github.ref }}
         inputs: '{ "version": "${{ env.VERSION }}", "commitId": "${{ env.SHORT_SHA }}" }'
-  outputs:
-    runId: ${{ steps.trigger_dispatch.outputs.runId }}

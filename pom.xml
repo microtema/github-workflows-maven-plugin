@@ -41,7 +41,7 @@
         <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
 
-        <code.coverage>0.50</code.coverage>
+        <code.coverage>0.10</code.coverage>
         <skipTests>false</skipTests>
     </properties>
 

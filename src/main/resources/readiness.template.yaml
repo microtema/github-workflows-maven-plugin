@@ -4,19 +4,12 @@ readiness:
   needs: [ %NEEDS% ]
   timeout-minutes: 15
   env:
-    API_KEY: %API_KEY%
-    SERVICE_URL: %SERVICE_URL%
-    AKS_NAMESPACE: %AKS_NAMESPACE%
+    DEPLOYMENT_REPOSITORY: ${{ github.repository }}-deployments
+    REPO_ACCESS_TOKEN: %REPO_ACCESS_TOKEN%
   steps:
-    - name: 'AKS: Set context'
-      if: ${{ '%PRIVATE_NETWORK%' }}
-      uses: azure/aks-set-context@v1
+    - name: Awaiting completion of Workflow ${{ needs.downstream.outputs.runId }}
+      uses: microtema/workflow-wait@v2.0
       with:
-        creds: %AKS_CREDENTIALS%
-        cluster-name: %AKS_CLUSTER_NAME%
-        resource-group: %AKS_RESOURCE_GROUP%
-    - name: 'Shell: port-forward'
-      if: ${{ '%PRIVATE_NETWORK%' }}
-      run: kubectl -n $AKS_NAMESPACE port-forward service/$APP_NAME 8080:80 &
-    - name: 'Shell: readiness'
-      run: while [[ "$(curl -H X-API-KEY:$API_KEY -s $SERVICE_URL | jq -r '.commitId')" != "$GITHUB_SHA" ]]; do sleep 10; done
+        token: ${{ env.REPO_ACCESS_TOKEN }}
+        repo: ${{ env.DOWNSTREAM_REPOSITORY }}
+        runId: ${{ needs.deployment.outputs.runId }}

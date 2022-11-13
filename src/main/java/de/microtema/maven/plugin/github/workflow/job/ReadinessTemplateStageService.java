@@ -6,7 +6,6 @@ import de.microtema.maven.plugin.github.workflow.model.MetaData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ReadinessTemplateStageService implements TemplateStageService {
@@ -22,11 +21,7 @@ public class ReadinessTemplateStageService implements TemplateStageService {
     @Override
     public boolean access(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        return metaData.getStageNames()
-                .stream()
-                .map(PipelineGeneratorUtil::findProperties)
-                .filter(Objects::nonNull)
-                .anyMatch(it -> it.containsKey("S3_BUCKET"));
+        return PipelineGeneratorUtil.existsDockerfile(mojo.getProject());
     }
 
     @Override
@@ -44,7 +39,7 @@ public class ReadinessTemplateStageService implements TemplateStageService {
 
             String defaultTemplate = PipelineGeneratorUtil.getTemplate(getTemplateName());
 
-            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it);
+            defaultTemplate = PipelineGeneratorUtil.applyProperties(defaultTemplate, it, mojo.getVariables());
 
             String needs = templateStageServices.stream().filter(e -> e.access(mojo, metaData))
                     .map(e -> e.getJobIds(metaData, it))

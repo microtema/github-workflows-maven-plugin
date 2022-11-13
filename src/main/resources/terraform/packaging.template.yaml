@@ -3,7 +3,7 @@ packaging:
   runs-on: [ self-hosted ]
   needs: [ validate ]
   env:
-    TF_CLI_ARGS: "-input=false -var-file=env/.dev.tfvars\
+    TF_CLI_ARGS: "-input=false -var-file=env/.%STAGE_NAME%.tfvars\
      \ -var=commit_id=${{ github.event.inputs.commitId }}\
      \ -var=image_tag=${{ github.event.inputs.version }}"
   steps:

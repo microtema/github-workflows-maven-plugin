@@ -1,11 +1,14 @@
-initialize:
-  name: Initialize
+undeploy:
+  name: Undeploy
   runs-on: [ self-hosted ]
+  needs: [ initialize ]
+  env:
+    TF_CLI_ARGS: "-auto-approve -var-file=env/.%STAGE_NAME%.tfvars\
+     \ -var=commit_id=${{ github.event.inputs.commitId }}\
+     \ -var=image_tag=${{ github.event.inputs.version }}"
   steps:
     - name: UUID ${{ github.event.inputs.commitId }}
       run: echo UUID ${{ github.event.inputs.commitId }}
-    - name: 'Checkout'
-      uses: actions/checkout@v2
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
@@ -16,6 +19,6 @@ initialize:
         aws-region: %AWS_REGION%
         aws-access-key-id: %AWS_ACCESS_KEY_ID%
         aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
-    - name: Terraform Initialize
+    - name: Terraform Destroy
       working-directory: %WORKING_DIRECTORY%
-      run: terraform init
+      run: terraform destroy

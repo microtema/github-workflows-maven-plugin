@@ -43,6 +43,9 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     @Parameter(property = "generate-rollback")
     boolean generateRollback;
 
+    @Parameter(property = "undeploy")
+    boolean undeploy;
+
     final List<TemplateStageService> templateStageServices = new ArrayList<>();
     final LinkedHashMap<String, String> defaultVariables = new LinkedHashMap<>();
 
@@ -125,6 +128,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         templateStageServices.add(ClassUtil.createInstance(HelmTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(ReadinessTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(SystemTestTemplateStageService.class));
+        templateStageServices.add(ClassUtil.createInstance(UnDeploymentTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(PerformanceTestTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(DownstreamTemplateStageService.class));
         templateStageServices.add(ClassUtil.createInstance(NotificationTemplateStageService.class));
@@ -147,7 +151,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
             defaultVariables.put("SONAR_TOKEN", sonarToken);
         }
-
 
         if (!defaultVariables.containsKey("JAVA_VERSION")) {
 
@@ -278,35 +281,17 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     void executeImpl(MetaData metaData, List<MetaData> workflows) {
 
         String rootPath = getRootPath(project);
-        boolean isNodeJsRepo = PipelineGeneratorUtil.isNodeJsRepo(project);
 
         File dir = new File(rootPath, githubWorkflowsDir);
 
-        String version = project.getVersion();
-
-        switch (metaData.getBranchName()) {
-            case "feature":
-            case "develop":
-                break;
-            case "release":
-                version = version.replace("-SNAPSHOT", "-RC");
-                break;
-            case "hotfix":
-                version = version.replace("-SNAPSHOT", "");
-                break;
-            case "master":
-                version = version.replace("-SNAPSHOT", "");
-                version = version.replace("-RC", "");
-                version = version.replace("-FIX", "");
-                break;
-        }
+        String version = getVersion(metaData.getBranchName(), project.getVersion());
 
         defaultVariables.put("VERSION", version);
 
         String pipeline = PipelineGeneratorUtil.getTemplate("pipeline");
 
         pipeline = pipeline
-                .replace("%PIPELINE_NAME%", getPipelineName(metaData))
+                .replace("%PIPELINE_NAME%", getPipelineName(project, metaData, appName))
                 .replace("%VERSION%", version)
                 .replace("%BRANCH_NAME%", metaData.getBranchPattern())
                 .replace("  %ENV%", getVariablesTemplate(defaultVariables))
@@ -318,7 +303,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         logMessage("Generate Github Workflows Pipeline for " + appName + " -> " + workflowFileName);
 
-        if (PipelineGeneratorUtil.hasMavenWrapper(project) && !isNodeJsRepo) {
+        if (PipelineGeneratorUtil.hasMavenWrapper(project)) {
             pipeline = pipeline.replaceAll("mvn ", "./mvnw ");
         }
 
@@ -350,7 +335,7 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         Map<String, String> templateVariables = new HashMap<>(Collections.singletonMap("APP_NAME", project.getArtifactId()));
 
         pipeline = pipeline
-                .replace("%PIPELINE_NAME%", getPipelineName(metaData.getStageName()))
+                .replace("%PIPELINE_NAME%", getRollbackPipelineName(metaData.getStageName(), appName))
                 .replace("  %ENV%", getVariablesTemplate(templateVariables))
                 .replace("  %JOBS%", getStagesTemplate(metaData, Collections.singletonList(rollbackTemplateStageService)));
 
@@ -371,24 +356,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         }
     }
 
-    protected String getPipelineName(String stageName) {
+    void executeUndeployImpl(MetaData metaData) {
 
-        return ("[" + stageName + " | Rollback] ").toUpperCase() + appName;
-    }
-
-    protected String getPipelineName(MetaData metaData) {
-
-        if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none")) {
-
-            return appName;
-        }
-
-        if (!PipelineGeneratorUtil.isMicroserviceRepo(project) && !PipelineGeneratorUtil.existsTerraformFile(project)) {
-
-            return appName;
-        }
-
-        return ("[" + String.join(", ", metaData.getStageNames()) + "] ").toUpperCase() + appName;
     }
 
     String getStagesTemplate(MetaData metaData, List<TemplateStageService> templateStageServices) {
@@ -410,11 +379,6 @@ public class PipelineGeneratorMojo extends AbstractMojo {
         return new LinkedHashMap<>(downStreams);
     }
 
-    public List<String> getRunsOn() {
-
-        return Stream.of(runsOn.split(",")).map(StringUtils::trim).collect(Collectors.toList());
-    }
-
     public Map<String, Object> getVariables() {
 
         return new LinkedHashMap<>(variables);
@@ -423,5 +387,10 @@ public class PipelineGeneratorMojo extends AbstractMojo {
     public String getAppDisplayName() {
 
         return Optional.ofNullable(project.getName()).orElse(project.getArtifactId());
+    }
+
+    public boolean isUnDeploy() {
+
+        return undeploy;
     }
 }

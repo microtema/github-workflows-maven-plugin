@@ -594,4 +594,50 @@ public class PipelineGeneratorUtil {
         System.out.println(message);
         System.out.println("+----------------------------------+");
     }
+
+    public static String getRollbackPipelineName(String stageName, String appName) {
+
+        return ("[" + stageName + " | Rollback] ").toUpperCase() + appName;
+    }
+
+    public static String getPipelineName(MavenProject project, MetaData metaData, String appName) {
+
+        if (StringUtils.equalsIgnoreCase(metaData.getStageName(), "none")) {
+
+            return appName;
+        }
+
+        if (!PipelineGeneratorUtil.isMicroserviceRepo(project) && !PipelineGeneratorUtil.existsTerraformFile(project)) {
+
+            return appName;
+        }
+
+        return ("[" + String.join(", ", metaData.getStageNames()) + "] ").toUpperCase() + appName;
+    }
+
+    public static String getUndeployPipelineName(String stageName, String appName) {
+
+        return ("[" + stageName + " | Undeploy] ").toUpperCase() + appName;
+    }
+
+    public static String getVersion(String branchName, String version) {
+
+        switch (branchName) {
+            case "feature":
+            case "develop":
+                break;
+            case "release":
+                return version.replace("-SNAPSHOT", "-RC");
+            case "hotfix":
+                return version.replace("-SNAPSHOT", "-FIX");
+            case "master":
+                return version.replace("-SNAPSHOT", "")
+                        .replace("-RC", "")
+                        .replace("-FIX", "");
+            default:
+                return version;
+        }
+
+        return version;
+    }
 }

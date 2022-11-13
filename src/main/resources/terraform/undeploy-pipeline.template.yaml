@@ -6,9 +6,6 @@
 name: '%PIPELINE_NAME%'
 
 on:
-  push:
-    branches:
-      - %BRANCH_NAME%
   workflow_dispatch:
     inputs:
       version:
