@@ -149,6 +149,8 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
             String sonarToken = PipelineGeneratorUtil.getProperty(project, "sonar.login", "${{ secrets.SONAR_TOKEN }}");
 
+            sonarToken = variables.getOrDefault("SONAR_TOKEN", sonarToken);
+
             defaultVariables.put("SONAR_TOKEN", sonarToken);
         }
 
