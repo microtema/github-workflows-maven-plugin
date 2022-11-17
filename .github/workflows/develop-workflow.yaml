@@ -180,6 +180,7 @@ jobs:
     name: Quality Gate
     runs-on: [ ubuntu-latest ]
     needs: [ unit-test, it-test ]
+    continue-on-error: true
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2

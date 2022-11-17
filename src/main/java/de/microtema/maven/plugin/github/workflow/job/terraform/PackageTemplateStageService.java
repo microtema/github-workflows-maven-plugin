@@ -42,6 +42,6 @@ public class PackageTemplateStageService implements TemplateStageService {
         String template = PipelineGeneratorUtil.applyProperties(defaultTemplate, metaData.getStageName());
 
         return template.replace("%WORKING_DIRECTORY%", "./terraform")
-                .replace("%STAGE_NAME%", metaData.getStageName());
+                .replaceAll("%STAGE_NAME%", metaData.getStageName());
     }
 }
