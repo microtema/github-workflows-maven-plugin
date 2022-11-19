@@ -180,8 +180,15 @@ public class PipelineGeneratorMojo extends AbstractMojo {
 
         if (PipelineGeneratorUtil.existsMavenSettings(project)) {
             mavenCliOptions = "-s settings.xml " + mavenCliOptions;
-            defaultVariables.put("ARTIFACTORY_USER", variables.getOrDefault("ARTIFACTORY_USER", "${{ secrets.ARTIFACTORY_USER }}"));
-            defaultVariables.put("ARTIFACTORY_PW", variables.getOrDefault("ARTIFACTORY_PW", "${{ secrets.ARTIFACTORY_PW }}"));
+            for (Map.Entry<String, String> entry : variables.entrySet()) {
+
+                String key = entry.getKey();
+
+                if (StringUtils.startsWith(key, "ARTIFACTORY")) {
+                    String orDefault = variables.getOrDefault(key, "${{ secrets." + key + " }}");
+                    defaultVariables.put(key, wrapSecretVariable(orDefault));
+                }
+            }
         }
 
         defaultVariables.put("MAVEN_CLI_OPTS", mavenCliOptions);
