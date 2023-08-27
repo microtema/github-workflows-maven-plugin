@@ -9,7 +9,7 @@ system-test:
     AKS_NAMESPACE: %AKS_NAMESPACE%
   steps:
     - name: 'Checkout'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: 'AKS: Set context'
       if: ${{ '%PRIVATE_NETWORK%' }}
       uses: azure/aks-set-context@v1

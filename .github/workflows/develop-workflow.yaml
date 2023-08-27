@@ -25,7 +25,7 @@ jobs:
       code-changed: ${{ steps.code-changed.outputs.changed }}
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 100
       - uses: marceloprado/has-changed-path@v1
@@ -38,7 +38,7 @@ jobs:
     needs: [ initialize ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -67,7 +67,7 @@ jobs:
     needs: [ versioning ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -94,7 +94,7 @@ jobs:
     needs: [ compile ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -112,7 +112,7 @@ jobs:
     needs: [ compile ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -149,7 +149,7 @@ jobs:
     needs: [ compile ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -183,7 +183,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -207,7 +207,7 @@ jobs:
     needs: [ quality-gate, security-check ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:
@@ -238,7 +238,7 @@ jobs:
     needs: [ build ]
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: 'Java: Setup'
         uses: actions/setup-java@v2
         with:

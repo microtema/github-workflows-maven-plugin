@@ -5,13 +5,13 @@ initialize:
     - name: UUID ${{ github.event.inputs.commitId }}
       run: echo UUID ${{ github.event.inputs.commitId }}
     - name: 'Checkout'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-region: %AWS_REGION%
         aws-access-key-id: %AWS_ACCESS_KEY_ID%

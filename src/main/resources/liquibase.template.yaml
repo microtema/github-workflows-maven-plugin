@@ -5,7 +5,7 @@ db-migration:
   environment: %STAGE_NAME%
   steps:
     - name: 'Checkout'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: 'Java: Setup'
       uses: actions/setup-java@v2
       with:

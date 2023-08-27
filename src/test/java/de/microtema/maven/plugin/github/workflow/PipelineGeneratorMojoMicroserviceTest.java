@@ -126,7 +126,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "        with:\n" +
                 "          fetch-depth: 100\n" +
                 "      - uses: marceloprado/has-changed-path@v1\n" +
@@ -139,7 +139,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ initialize ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -163,7 +163,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -185,7 +185,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -198,7 +198,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -230,7 +230,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -258,7 +258,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ unit-test, it-test ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -277,7 +277,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -346,7 +346,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "        with:\n" +
                 "          fetch-depth: 100\n" +
                 "      - uses: marceloprado/has-changed-path@v1\n" +
@@ -359,7 +359,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ initialize ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -383,7 +383,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -405,7 +405,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -418,7 +418,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -450,7 +450,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -478,7 +478,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ unit-test, it-test ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -497,7 +497,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -528,7 +528,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      DOCKER_REGISTRY_PASSWORD: %DOCKER_REGISTRY_PASSWORD%\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -552,7 +552,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -615,7 +615,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: dev-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'AKS: Set context'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
@@ -653,7 +653,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: dev-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -732,7 +732,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "        with:\n" +
                 "          fetch-depth: 100\n" +
                 "      - uses: marceloprado/has-changed-path@v1\n" +
@@ -745,7 +745,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ initialize ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -769,7 +769,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -791,7 +791,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -804,7 +804,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -836,7 +836,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -864,7 +864,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ unit-test, it-test ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -883,7 +883,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -914,7 +914,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      DOCKER_REGISTRY_PASSWORD: %DOCKER_REGISTRY_PASSWORD%\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -938,7 +938,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1001,7 +1001,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'AKS: Set context'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
@@ -1039,7 +1039,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1106,7 +1106,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "        with:\n" +
                 "          fetch-depth: 100\n" +
                 "      - uses: marceloprado/has-changed-path@v1\n" +
@@ -1119,7 +1119,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ initialize ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1143,7 +1143,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1165,7 +1165,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1178,7 +1178,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1210,7 +1210,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1238,7 +1238,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ unit-test, it-test ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1257,7 +1257,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ quality-gate, security-check ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -1288,7 +1288,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      DOCKER_REGISTRY_PASSWORD: %DOCKER_REGISTRY_PASSWORD%\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
@@ -1312,7 +1312,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "    needs: [ package ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1423,7 +1423,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'AKS: Set context'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
@@ -1462,7 +1462,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: qa-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'AKS: Set context'\n" +
                 "        if: ${{ 'false' }}\n" +
                 "        uses: azure/aks-set-context@v1\n" +
@@ -1500,7 +1500,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: stage-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -1529,7 +1529,7 @@ class PipelineGeneratorMojoMicroserviceTest {
                 "      AKS_NAMESPACE: qa-namespace\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +

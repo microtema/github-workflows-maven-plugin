@@ -4,7 +4,7 @@ tag:
   needs: [ %NEEDS% ]
   steps:
     - name: 'Checkout'
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: 'Artifact: download'
       uses: actions/download-artifact@v2
       with:

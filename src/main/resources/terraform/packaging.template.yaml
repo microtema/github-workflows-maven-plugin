@@ -19,7 +19,7 @@ packaging:
       with:
         terraform_wrapper: false
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-region: %AWS_REGION%
         aws-access-key-id: %AWS_ACCESS_KEY_ID%

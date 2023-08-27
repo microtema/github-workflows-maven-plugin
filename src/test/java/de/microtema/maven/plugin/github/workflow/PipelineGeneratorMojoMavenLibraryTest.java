@@ -102,7 +102,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "      code-changed: ${{ steps.code-changed.outputs.changed }}\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "        with:\n" +
                 "          fetch-depth: 100\n" +
                 "      - uses: marceloprado/has-changed-path@v1\n" +
@@ -115,7 +115,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    needs: [ initialize ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -139,7 +139,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    needs: [ versioning ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -161,7 +161,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -174,7 +174,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -206,7 +206,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    needs: [ compile ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v1\n" +
                 "        with:\n" +
@@ -234,7 +234,7 @@ class PipelineGeneratorMojoMavenLibraryTest {
                 "    needs: [ unit-test, it-test ]\n" +
                 "    steps:\n" +
                 "      - name: 'Checkout'\n" +
-                "        uses: actions/checkout@v2\n" +
+                "        uses: actions/checkout@v3\n" +
                 "      - name: 'Java: Setup'\n" +
                 "        uses: actions/setup-java@v2\n" +
                 "        with:\n" +
