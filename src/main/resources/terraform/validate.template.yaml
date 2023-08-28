@@ -1,20 +1,33 @@
 validate:
   name: Validate
-  runs-on: [ self-hosted ]
+  runs-on: [ %RUNS_ON% ]
   needs: [ initialize ]
+  environment: %STAGE_NAME%
+  env:
+    AWS_S3_BUCKET: "%APP_NAME%-%STAGE_NAME%-%AWS_REGION%"
+    AWS_REGION: "%AWS_REGION%"
+    AWS_ACCESS_KEY_ID: "%AWS_ACCESS_KEY_ID%"
+    AWS_SECRET_ACCESS_KEY: "%AWS_SECRET_ACCESS_KEY%"
   steps:
-    - name: 'Checkout'
+    - name: Checkout
       uses: actions/checkout@v3
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+        terraform_version: %TERRAFORM_VERSION%
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-region: %AWS_REGION%
-        aws-access-key-id: %AWS_ACCESS_KEY_ID%
-        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+    - name: Terraform Initialize
+      working-directory: %WORKING_DIRECTORY%
+      run: |
+        terraform init \
+          -backend-config="bucket=$AWS_S3_BUCKET" \
+          -backend-config="region=$AWS_REGION"
     - name: Terraform Validate
       working-directory: %WORKING_DIRECTORY%
-      run: terraform init && terraform validate
+      run: terraform validate

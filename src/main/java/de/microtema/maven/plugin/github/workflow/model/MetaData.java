@@ -21,6 +21,8 @@ public class MetaData {
 
     private boolean deployable;
 
+    private String applicationName;
+
     public String getBranchName() {
         return branchName;
     }
@@ -76,4 +78,13 @@ public class MetaData {
     public void setDeployable(boolean deployable) {
         this.deployable = deployable;
     }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
 }

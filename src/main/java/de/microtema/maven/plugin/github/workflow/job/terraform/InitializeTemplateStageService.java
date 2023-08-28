@@ -41,6 +41,11 @@ public class InitializeTemplateStageService implements TemplateStageService {
 
         String template = PipelineGeneratorUtil.applyProperties(defaultTemplate, metaData.getStageName());
 
-        return template.replace("%WORKING_DIRECTORY%", "./terraform");
+        return template
+                .replace("%RUNS_ON%", "self-hosted")
+                .replace("%APP_NAME%", metaData.getApplicationName().toLowerCase())
+                .replaceAll("%STAGE_NAME%", metaData.getBranchName().toLowerCase())
+                .replace("%TERRAFORM_VERSION%", "v1.5.5")
+                .replace("%WORKING_DIRECTORY%", "./terraform");
     }
 }

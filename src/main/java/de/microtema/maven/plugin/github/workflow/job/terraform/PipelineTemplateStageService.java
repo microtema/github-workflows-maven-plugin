@@ -13,10 +13,6 @@ public class PipelineTemplateStageService implements TemplateStageService {
     @Override
     public String getTemplate(PipelineGeneratorMojo mojo, MetaData metaData) {
 
-        if (Stream.of("feature", "bugfix").anyMatch(it -> StringUtils.equalsIgnoreCase(metaData.getBranchName(), it))) {
-            return PipelineGeneratorUtil.getTemplate(getTemplateName());
-        }
-
         return PipelineGeneratorUtil.getTemplate("terraform/pipeline");
     }
 }

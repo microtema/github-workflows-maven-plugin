@@ -422,9 +422,10 @@ public class PipelineGeneratorUtil {
 
     public static String applyProperties(String template, String stageName, Map<String, Object> globalVariables) {
 
-        Properties properties = PipelineGeneratorUtil.findProperties(stageName);
+        Properties properties = getProperties(stageName);
 
         if (Objects.isNull(properties)) {
+
             return template;
         }
 
@@ -437,6 +438,39 @@ public class PipelineGeneratorUtil {
         }
 
         return template;
+    }
+
+    public static Properties getProperties(String stageName) {
+
+        Properties properties = PipelineGeneratorUtil.findProperties(stageName);
+
+        if (Objects.isNull(properties)) {
+
+            char lastChar = stageName.charAt(stageName.length() - 1);
+
+            if (!Character.isDigit(lastChar)) {
+
+                return null;
+            }
+
+            String rootStageName = stageName.substring(0, stageName.length() - 1);
+
+            properties = PipelineGeneratorUtil.findProperties(rootStageName);
+
+            if (Objects.isNull(properties)) {
+                return null;
+            }
+
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                String value = String.valueOf(entry.getValue());
+
+                String newValue = value.replaceAll(rootStageName.toUpperCase(), stageName.toUpperCase());
+
+                entry.setValue(newValue);
+            }
+        }
+
+        return properties;
     }
 
     public static boolean isSpeedBranch(String branchName) {
@@ -562,6 +596,7 @@ public class PipelineGeneratorUtil {
 
                 stageNames.add(stageName);
 
+                metaData.setApplicationName(project.getArtifactId());
                 metaData.setStageName(stageName);
                 metaData.setBranchName(branchName);
                 metaData.setBranchFullName(branchFullName);

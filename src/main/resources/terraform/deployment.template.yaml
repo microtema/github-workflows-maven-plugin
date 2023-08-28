@@ -1,20 +1,44 @@
 deployment:
   name: Deployment
-  runs-on: [ self-hosted ]
+  runs-on: [ %RUNS_ON% ]
   needs: [ packaging ]
+  environment: %STAGE_NAME%
   env:
-    TF_CLI_ARGS: "-input=false"
+    STAGE_NAME: %STAGE_NAME%
+    AWS_S3_BUCKET: "%APP_NAME%-%STAGE_NAME%-%AWS_REGION%"
+    AWS_REGION: "%AWS_REGION%"
+    AWS_ACCESS_KEY_ID: "%AWS_ACCESS_KEY_ID%"
+    AWS_SECRET_ACCESS_KEY: "%AWS_SECRET_ACCESS_KEY%"
   steps:
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+        terraform_version: %TERRAFORM_VERSION%
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-region: %AWS_REGION%
-        aws-access-key-id: %AWS_ACCESS_KEY_ID%
-        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+    - name: Terraform Initialize
+      working-directory: %WORKING_DIRECTORY%
+      run: |
+        terraform init \
+          -backend-config="bucket=$AWS_S3_BUCKET" \
+          -backend-config="region=$AWS_REGION"
+    - name: Terraform Plan
+      working-directory: %WORKING_DIRECTORY%
+      run: |
+        terraform plan -out=tfplan \
+          -input=false \
+          -var=commit_id=`echo ${GITHUB_SHA} | cut -c1-7` \
+          -var=image_tag=$VERSION \
+          -var=stage_name=$STAGE_NAME
     - name: Terraform Apply
       working-directory: %WORKING_DIRECTORY%
-      run: terraform apply tfplan
+      run: |
+        terraform apply tfplan \
+          -input=false

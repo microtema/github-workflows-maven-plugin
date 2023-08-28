@@ -1,21 +1,51 @@
 initialize:
   name: Initialize
-  runs-on: [ self-hosted ]
+  runs-on: [ %RUNS_ON% ]
+  environment: %STAGE_NAME%
+  env:
+    AWS_S3_BUCKET: "%APP_NAME%-%STAGE_NAME%-%AWS_REGION%"
+    AWS_REGION: "%AWS_REGION%"
+    AWS_ACCESS_KEY_ID: "%AWS_ACCESS_KEY_ID%"
+    AWS_SECRET_ACCESS_KEY: "%AWS_SECRET_ACCESS_KEY%"
   steps:
     - name: UUID ${{ github.event.inputs.commitId }}
       run: echo UUID ${{ github.event.inputs.commitId }}
-    - name: 'Checkout'
+    - name: Checkout
       uses: actions/checkout@v3
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+        terraform_version: %TERRAFORM_VERSION%
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-region: %AWS_REGION%
-        aws-access-key-id: %AWS_ACCESS_KEY_ID%
-        aws-secret-access-key: %AWS_SECRET_ACCESS_KEY%
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+    - name: Check Terraform Backend
+      id: s3-check
+      run: |
+        if [ -z "$(aws s3api head-bucket --bucket $AWS_S3_BUCKET 2>&1 || true)" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+    - name: Create Terraform Backend
+      if: steps.s3-check.outputs.exists == 'false'
+      run: |
+        aws s3api create-bucket \
+          --bucket $AWS_S3_BUCKET \
+          --region $AWS_REGION \
+          --create-bucket-configuration "LocationConstraint=$AWS_REGION"
+    - name: Wait Terraform Backend
+      if: steps.s3-check.outputs.exists == 'false'
+      run: |
+        aws s3api wait bucket-exists \
+          --bucket $AWS_S3_BUCKET
     - name: Terraform Initialize
       working-directory: %WORKING_DIRECTORY%
-      run: terraform init
+      run: |
+        terraform init \
+          -backend-config="bucket=$AWS_S3_BUCKET" \
+          -backend-config="region=$AWS_REGION"
